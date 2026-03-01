@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kikky Hairs · Checkout</title>
+  <!-- Fonts & icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    :root {
+      --gold: #b38728;
+      --gold-gradient: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+      --deep-brown: #2c2420;
+      --bg-dark: #120e0c;
+      --bg-soft: #1e1814;
+      --white-off: #f4f4f4;
+      --font-heading: 'Playfair Display', serif;
+      --font-body: 'Montserrat', sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font-body);
+      background: linear-gradient(to bottom, #0c0c0c, #111);
+      color: var(--white-off);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .checkout-container {
+      max-width: 1000px;
+      width: 100%;
+      background: var(--bg-soft);
+      border: 1px solid rgba(179,135,40,0.3);
+      border-radius: 32px;
+      padding: 40px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    }
+    h1 {
+      font-family: var(--font-heading);
+      font-size: 2.2rem;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+    h1 span { color: var(--gold); }
+    .subtitle {
+      color: #aaa;
+      margin-bottom: 30px;
+      font-size: 0.95rem;
+      border-bottom: 1px dashed #333;
+      padding-bottom: 15px;
+    }
+    .checkout-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+    }
+    @media (max-width: 768px) {
+      .checkout-grid { grid-template-columns: 1fr; gap: 30px; }
+    }
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      color: var(--gold);
+      margin-bottom: 20px;
+    }
+    .section-title i { font-size: 1.6rem; }
+    .form-group { margin-bottom: 20px; }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: #ccc;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 14px 18px;
+      background: #2a241f;
+      border: 1px solid #3a3a3a;
+      border-radius: 50px;
+      color: #fff;
+      font-size: 1rem;
+      transition: 0.2s;
+    }
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 2px rgba(179,135,40,0.2);
+    }
+    textarea { border-radius: 24px; resize: vertical; }
+    .cart-summary {
+      background: #2a241f;
+      border-radius: 28px;
+      padding: 25px;
+    }
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #3a3a3a;
+    }
+    .cart-item:last-child { border-bottom: none; }
+    .item-name { font-weight: 500; }
+    .item-price { color: var(--gold); font-weight: 600; }
+    .cart-total {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 2px solid #3a3a3a;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+    .total-amount { color: var(--gold); font-size: 1.5rem; }
+    .btn-pay {
+      width: 100%;
+      padding: 18px;
+      background: var(--gold-gradient);
+      border: none;
+      border-radius: 50px;
+      color: #000;
+      font-weight: 700;
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-top: 30px;
+    }
+    .btn-pay:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(179,135,40,0.3);
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 25px;
+      color: #aaa;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .back-link:hover { color: var(--gold); }
+    .flash-message {
+      background: rgba(179,135,40,0.15);
+      border-left: 4px solid var(--gold);
+      padding: 15px 20px;
+      border-radius: 12px;
+      margin-bottom: 25px;
+    }
+  </style>
+</head>
+<body>
+  <div class="checkout-container">
+    <h1>complete <span>checkout</span></h1>
+    <div class="subtitle">secure payment via Paystack</div>
+
+    <!-- Flash messages (if any) -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="flash-message">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="checkout-grid">
+      <!-- left: customer details -->
+      <div>
+        <div class="section-title">
+          <i class="ri-user-line"></i>
+          <span>your details</span>
+        </div>
+        <form id="paymentForm">
+          <div class="form-group">
+            <label>Full name *</label>
+            <input type="text" id="fullName" required placeholder="e.g. Ada Eze">
+          </div>
+          <div class="form-group">
+            <label>Email address *</label>
+            <input type="email" id="email" required placeholder="you@example.com">
+          </div>
+          <div class="form-group">
+            <label>Phone number *</label>
+            <input type="tel" id="phone" required placeholder="080 1234 5678">
+          </div>
+          <div class="form-group">
+            <label>Delivery address *</label>
+            <textarea id="address" rows="3" required placeholder="House/street, city, state"></textarea>
+          </div>
+        </form>
+      </div>
+
+      <!-- right: cart summary & payment -->
+      <div>
+        <div class="section-title">
+          <i class="ri-shopping-bag-line"></i>
+          <span>your cart</span>
+        </div>
+        <div class="cart-summary" id="cartSummary">
+          <!-- Cart items will be populated by JavaScript -->
+          <div class="cart-item">
+            <span class="item-name">Loading cart...</span>
+          </div>
+        </div>
+        <button class="btn-pay" id="payButton">proceed to pay</button>
+        <a href="{{ url_for('cart') }}" class="back-link"><i class="ri-arrow-left-line"></i> return to cart</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Paystack library -->
+  <script src="https://js.paystack.co/v1/inline.js"></script>
+  <script>
+    (function() {
+      // Retrieve cart from localStorage (assuming you stored it as 'kikkyCart' with items)
+      function getCartItems() {
+        const cart = JSON.parse(localStorage.getItem('kikkyCart')) || [];
+        // If you stored only product IDs, you need to fetch product details.
+        // For this demo, we'll simulate with a static product list.
+        // In a real implementation, you'd have an API to get product details by ID.
+        // Here we'll assume the cart contains objects with name, price, quantity.
+        // Adjust according to your actual cart structure.
+        return cart;
+      }
+
+      function renderCart() {
+        const cart = getCartItems();
+        const summary = document.getElementById('cartSummary');
+        let html = '';
+        let total = 0;
+
+        if (cart.length === 0) {
+          html = '<div class="cart-item"><span class="item-name">Your cart is empty</span></div>';
+        } else {
+          cart.forEach(item => {
+            const price = item.price || 0;
+            const qty = item.quantity || 1;
+            const subtotal = price * qty;
+            total += subtotal;
+            html += `
+              <div class="cart-item">
+                <span class="item-name">${item.name} (x${qty})</span>
+                <span class="item-price">₦${subtotal.toLocaleString()}</span>
+              </div>
+            `;
+          });
+        }
+        html += `
+          <div class="cart-total">
+            <span>Total</span>
+            <span class="total-amount">₦${total.toLocaleString()}</span>
+          </div>
+        `;
+        summary.innerHTML = html;
+        return { cart, total };
+      }
+
+      const { cart, total } = renderCart();
+
+      document.getElementById('payButton').addEventListener('click', function(e) {
+        e.preventDefault();
+
+        // Collect customer details
+        const fullName = document.getElementById('fullName').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const address = document.getElementById('address').value.trim();
+
+        if (!fullName || !email || !phone || !address) {
+          alert('Please fill in all fields');
+          return;
+        }
+
+        if (cart.length === 0) {
+          alert('Your cart is empty');
+          return;
+        }
+
+        // Prepare order data for backend
+        const orderData = {
+          customerName: fullName,
+          customerEmail: email,
+          customerPhone: phone,
+          customerAddress: address,
+          amount: total,
+          items: cart.map(item => ({
+            productId: item.id,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity || 1
+          }))
+        };
+
+        // Initialize Paystack
+        const handler = PaystackPop.setup({
+          key: '{{ public_key }}',  // passed from Flask
+          email: email,
+          amount: total * 100,       // Paystack expects amount in kobo
+          currency: 'NGN',
+          ref: 'KIKKY_' + Math.floor(Math.random() * 1000000000 + 1), // unique reference
+          metadata: {
+            custom_fields: [
+              {
+                display_name: "Full Name",
+                variable_name: "full_name",
+                value: fullName
+              },
+              {
+                display_name: "Phone Number",
+                variable_name: "phone",
+                value: phone
+              },
+              {
+                display_name: "Delivery Address",
+                variable_name: "address",
+                value: address
+              }
+            ]
+          },
+          callback: function(response) {
+            // Send reference and order data to your server for verification
+            fetch('/verify-payment', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                reference: response.reference,
+                orderData: orderData
+              })
+            })
+            .then(res => res.json())
+            .then(data => {
+              if (data.message === 'Payment verified and order saved') {
+                alert('Payment successful! Thank you for your order.');
+                // Clear cart
+                localStorage.removeItem('kikkyCart');
+                // Redirect to order status page
+                window.location.href = '/order/' + response.reference;
+              } else {
+                alert('Payment verification failed: ' + data.message);
+              }
+            })
+            .catch(err => {
+              console.error(err);
+              alert('An error occurred while verifying payment.');
+            });
+          },
+          onClose: function() {
+            alert('Payment window closed.');
+          }
+        });
+        handler.openIframe();
+      });
+    })();
+  </script>
+</body>
+</html>

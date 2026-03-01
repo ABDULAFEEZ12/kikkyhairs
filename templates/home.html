@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Kikky Hairs · soft luxury</title>
+
+  <!-- premium fonts & icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* ----- GLOBAL LUXURY VARIABLES (Kikky Hairs) ----- */
+    :root {
+      --gold: #b38728;
+      --gold-gradient: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+      --deep-brown: #2c2420;        /* soft, warm dark brown */
+      --bg-dark: #120e0c;            /* deep brown-black */
+      --bg-soft: #1e1814;            /* card background */
+      --white-off: #f4f4f4;
+      --cream: #fefaf7;
+      --font-heading: 'Playfair Display', serif;
+      --font-body: 'Montserrat', sans-serif;
+      --soft-shadow: 0 20px 35px -15px rgba(0,0,0,0.5), 0 5px 15px rgba(0,0,0,0.3);
+      --card-hover-shadow: 0 25px 35px -20px rgba(179,135,40,0.3), 0 0 0 1px rgba(179,135,40,0.3);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font-body);
+      background: linear-gradient(to bottom, #0c0c0c, #111111);
+      color: var(--white-off);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, .heading-font { font-family: var(--font-heading); font-weight: 500; letter-spacing: 0.02em; }
+    a { text-decoration: none; color: inherit; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+    /* ----- LEFT SLIDE‑IN MENU (kikky) ----- */
+    #top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 70px;
+      background: rgba(18,14,12,0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 5%;
+      z-index: 1002;
+      border-bottom: 1px solid rgba(179,135,40,0.2);
+    }
+    .brand-logo img { height: 48px; width: auto; }
+    #menu-toggle {
+      width: 44px; height: 44px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem; color: var(--white-off);
+      background: transparent; border: none; cursor: pointer;
+      transition: background 0.2s;
+    }
+    #menu-toggle:hover { background: rgba(179,135,40,0.15); }
+    .header-actions { display: flex; gap: 1rem; align-items: center; }
+    .cart-icon { font-size: 1.5rem; position: relative; cursor: pointer; }
+    #cartCount { 
+      position: absolute; top: -8px; right: -10px; 
+      background: var(--gold); color: #000; font-size: 0.7rem; 
+      border-radius: 50%; width: 18px; height: 18px; display: flex;
+      align-items: center; justify-content: center; font-weight: 600;
+    }
+
+    /* side menu panel */
+    #side-menu {
+      position: fixed;
+      top: 0;
+      left: -320px;
+      width: min(300px, 80vw);
+      height: 100vh;
+      background: rgba(18,14,12,0.97);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-right: 1px solid rgba(179,135,40,0.3);
+      transition: left 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+      z-index: 1003;
+      overflow-y: auto;
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+    }
+    #side-menu.active { left: 0; }
+    .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; }
+    .sidebar-header img { height: 50px; }
+    .close-icon { font-size: 2rem; cursor: pointer; color: var(--gold); }
+    .sidebar-nav ul { list-style: none; }
+    .sidebar-nav li { margin: 1.2rem 0; }
+    .sidebar-nav a { 
+      display: flex; align-items: center; gap: 15px; 
+      font-size: 1.1rem; color: #ddd; transition: 0.2s;
+    }
+    .sidebar-nav a:hover { color: var(--gold); transform: translateX(5px); }
+    .sidebar-social { margin-top: auto; display: flex; gap: 1.5rem; justify-content: center; padding: 2rem 0; }
+    .sidebar-social a { font-size: 1.5rem; color: #aaa; }
+    .sidebar-social a:hover { color: var(--gold); }
+
+    #overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+      display: none; z-index: 1001; cursor: pointer;
+    }
+    #overlay.active { display: block; }
+
+    /* desktop navigation */
+    .desktop-nav { display: none; }
+    @media (min-width: 900px) {
+      .desktop-nav { display: flex; gap: 2.5rem; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; }
+      .desktop-nav a { color: #fff; border-bottom: 2px solid transparent; padding-bottom: 4px; }
+      .desktop-nav a:hover { border-bottom-color: var(--gold); }
+    }
+
+    /* ----- KIKKY HAIRS PREMIUM HERO (kh- prefix) ----- */
+    .kh-hero-section {
+      background: #0c0c0c;
+      background-image: radial-gradient(circle at 80% 20%, #1e1a16 0%, #0a0806 90%);
+      min-height: 90vh;
+      display: flex;
+      align-items: center;
+      padding: 80px 0;
+      margin-top: 70px;
+    }
+    .kh-container {
+      max-width: 1200px; width: 90%; margin: 0 auto;
+      display: grid; grid-template-columns: 1.1fr 0.9fr; align-items: center; gap: 4rem;
+    }
+    .kh-tagline { font-family: var(--font-body); color: var(--gold); text-transform: uppercase; letter-spacing: 3px; font-size: 0.85rem; font-weight: 600; margin-bottom: 1rem; }
+    .kh-headline { font-family: var(--font-heading); color: var(--white-off); font-size: 3.8rem; line-height: 1.1; margin-bottom: 1.5rem; font-weight: 700; }
+    .text-gold-metallic { background: var(--gold-gradient); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .kh-desc { color: #ccc; font-size: 1.1rem; line-height: 1.7; margin-bottom: 2.5rem; max-width: 90%; }
+    .kh-features { display: flex; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 3rem; }
+    .kh-feature-pill { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.2); padding: 10px 20px; border-radius: 50px; color: #fff; font-size: 0.85rem; }
+    .kh-btn-gold { display: inline-flex; align-items: center; justify-content: center; padding: 18px 45px; background: var(--gold-gradient); color: #000; font-weight: 700; text-transform: uppercase; border-radius: 50px; box-shadow: 0 10px 30px rgba(179,135,40,0.2); transition: 0.4s; }
+    .kh-btn-gold:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(179,135,40,0.4); }
+    .kh-image-wrapper { position: relative; display: flex; justify-content: center; }
+    .kh-blob-bg { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 120%; height: 120%; background: radial-gradient(circle, rgba(184,134,11,0.2) 0%, transparent 70%); filter: blur(40px); }
+    .kh-img-main { width: 100%; max-width: 500px; border-radius: 200px 200px 50px 50px; border: 2px solid rgba(212,175,55,0.4); box-shadow: 0 25px 60px -10px #000; }
+    .kh-float-badge { position: absolute; bottom: 40px; right: -20px; background: rgba(18,14,12,0.95); border: 1px solid var(--gold); padding: 15px 25px; backdrop-filter: blur(5px); border-radius: 50px; }
+    .badge-head { font-family: var(--font-heading); color: var(--gold); font-style: italic; }
+
+    /* ----- PRODUCT GRID (soft radius) ----- */
+    .product-grid-section { padding: 60px 5px; background: transparent; }
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+    .section-header h2 { font-size: 2rem; color: #fff; }
+    .link-muted { color: #aaa; display: flex; align-items: center; gap: 5px; }
+    .product-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px;
+    }
+    .product-card {
+      background: #1e1814; border-radius: 24px; overflow: hidden; border: 1px solid #2a2a2a;
+      transition: all 0.3s cubic-bezier(0.23,1,0.32,1); position: relative; display: flex; flex-direction: column;
+    }
+    .product-card:hover { transform: translateY(-8px); box-shadow: var(--card-hover-shadow); border-color: var(--gold); }
+    .card-image-wrapper {
+      position: relative; height: 260px; background: #2a241f; overflow: hidden;
+    }
+    .product-image, .product-video {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;
+      transition: opacity 0.5s ease;
+    }
+    .product-video { opacity: 0; pointer-events: none; }
+    .product-card:hover .product-image { opacity: 0; }
+    .product-card:hover .product-video { opacity: 1; }
+
+    .quick-add-btn {
+      position: absolute; bottom: 15px; right: 15px; width: 45px; height: 45px;
+      border-radius: 50%; background: #fff; border: none; color: #000; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+      transition: 0.3s; opacity: 0; transform: translateY(20px); z-index: 2;
+    }
+    .product-card:hover .quick-add-btn { opacity: 1; transform: translateY(0); }
+    .quick-add-btn:hover { background: var(--gold); color: #fff; }
+
+    .card-details { padding: 20px; display: flex; flex-direction: column; flex-grow: 1; }
+    .category-tag { font-size: 0.75rem; text-transform: uppercase; color: var(--gold); font-weight: 600; margin-bottom: 8px; }
+    .product-title { font-size: 1rem; margin: 0 0 15px; font-weight: 500; color: #fff; line-height: 1.4; }
+    .price-row { margin-top: auto; display: flex; justify-content: space-between; align-items: center; padding-top: 15px; border-top: 1px solid #2a2a2a; }
+    .price { font-weight: 700; font-size: 1.2rem; color: var(--gold); }
+    .view-link { color: #aaa; font-size: 1.2rem; }
+
+    /* ----- KIKKY EXTRA SECTIONS (before/after, testimonials) ----- */
+    .kikky-section { background: transparent; padding: 80px 5%; border-top: 1px solid #2a2a2a; }
+    .comparison-container { position: relative; max-width: 700px; margin: 2rem auto; border-radius: 50px; overflow: hidden; box-shadow: 0 20px 30px -10px #000; }
+    .comparison-image { width: 100%; display: block; }
+    .comparison-overlay { position: absolute; top: 0; left: 0; width: 50%; height: 100%; overflow: hidden; border-right: 3px solid var(--gold); }
+    .slider-handle { position: absolute; top: 0; left: 50%; width: 4px; height: 100%; background: var(--gold); cursor: ew-resize; transform: translateX(-50%); z-index: 20; }
+    .slider-handle::after { content: ""; position: absolute; top: 50%; left: 50%; width: 42px; height: 42px; background: white; border: 2px solid var(--gold); border-radius: 50%; transform: translate(-50%,-50%); }
+    .testimonial-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px,1fr)); gap: 2rem; margin-top: 3rem; }
+    .testimonial-card { background: #1e1814; padding: 2rem; border-radius: 28px; border: 1px solid #2a2a2a; }
+
+    /* ----- CART PANEL (kikky) ----- */
+    .cart-panel {
+      position: fixed; top: 0; right: -400px; width: 360px; height: 100vh;
+      background: #1a1512; border-left: 2px solid var(--gold); z-index: 2000;
+      transition: right 0.4s ease; display: flex; flex-direction: column;
+      box-shadow: -10px 0 30px rgba(0,0,0,0.5); padding: 20px;
+    }
+    .cart-panel.open { right: 0; }
+    .cart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .close-cart { background: none; border: none; color: var(--gold); font-size: 2rem; cursor: pointer; }
+    .cart-items { flex: 1; overflow-y: auto; color: #ccc; }
+    .empty-cart { text-align: center; margin-top: 2rem; color: #666; }
+    .cart-footer { border-top: 1px solid #333; padding-top: 20px; }
+    .cart-total { display: flex; justify-content: space-between; margin-bottom: 15px; }
+    .cart-actions { display: flex; flex-direction: column; gap: 10px; }
+    .btn { background: var(--gold); color: #000; padding: 12px; text-align: center; border-radius: 50px; font-weight: 600; border: none; cursor: pointer; }
+    .btn-ghost { background: transparent; border: 1px solid var(--gold); color: var(--gold); }
+
+    /* ----- FOOTER (Kikky Hairs) ----- */
+    .footer { background: #0c0a08; border-top: 1px solid #2a2a2a; padding: 50px 5% 20px; }
+    .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 3rem; }
+    .footer-col h4 { color: var(--gold); margin-bottom: 1rem; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin: 0.7rem 0; }
+    .footer-col a { color: #aaa; }
+    .footer-col a:hover { color: var(--gold); }
+    .footer-bottom { text-align: center; padding-top: 30px; color: #666; }
+
+    /* responsive */
+    @media (max-width: 968px) {
+      .kh-container { grid-template-columns: 1fr; text-align: center; }
+      .kh-headline { font-size: 2.5rem; }
+      .kh-features { justify-content: center; }
+      .kh-image-wrapper { order: -1; }
+    }
+    @media (max-width: 600px) {
+      .product-grid { grid-template-columns: repeat(2,1fr); gap: 15px; }
+      .card-image-wrapper { height: 160px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- OVERLAY (for side menu) -->
+  <div id="overlay"></div>
+
+  <!-- LEFT SLIDE‑IN MENU (Kikky Hairs) -->
+  <aside id="side-menu">
+    <div class="sidebar-header">
+      <img src="{{ url_for('static', filename='kikkyhairs.jpeg') }}" alt="Kikky Hairs" style="height: 45px;">
+      <i class="ri-close-line close-icon" id="closeSidebar"></i>
+    </div>
+    <nav class="sidebar-nav">
+      <ul>
+        <li><a href="{{ url_for('home') }}"><i class="ri-home-4-line"></i> Home</a></li>
+        <li><a href="{{ url_for('shop') }}"><i class="ri-store-line"></i> Shop</a></li>
+        <li><a href="{{ url_for('collection') }}?cat=bone"><i class="ri-folder-line"></i> Bone straight</a></li>
+        <li><a href="{{ url_for('collection') }}?cat=bounce"><i class="ri-folder-line"></i> Bounce curls</a></li>
+        <li><a href="{{ url_for('collection') }}?cat=colored"><i class="ri-folder-line"></i> Colored units</a></li>
+        <li><a href="{{ url_for('collection') }}?cat=wave"><i class="ri-folder-line"></i> Deep wave</a></li>
+        <li><a href="{{ url_for('collection') }}?cat=frontal"><i class="ri-folder-line"></i> Frontal wigs</a></li>
+      </ul>
+    </nav>
+    <div class="sidebar-social">
+      <a href="tel:+2348123456789" title="Call"><i class="ri-phone-fill"></i></a>
+      <a href="#" target="_blank" title="TikTok"><i class="fab fa-tiktok"></i></a>
+      <a href="#" title="Instagram"><i class="ri-instagram-line"></i></a>
+    </div>
+  </aside>
+
+  <!-- TOP BAR -->
+  <header id="top-bar">
+    <button id="menu-toggle" aria-label="Menu">☰</button>
+    <div class="brand-logo">
+      <a href="{{ url_for('home') }}"><img src="{{ url_for('static', filename='kikkyhairs.jpeg') }}" alt="Kikky Hairs"></a>
+    </div>
+    <nav class="desktop-nav">
+      <a href="{{ url_for('home') }}">Home</a>
+      <a href="{{ url_for('collection') }}">Shop</a>
+      <a href="{{ url_for('collection') }}">Collections</a>
+      <a href="{{ url_for('contact') }}">Contact</a>
+    </nav>
+    <div class="header-actions">
+      <div class="cart-icon" id="cartToggle">
+        <i class="ri-shopping-cart-line open-cart"></i>
+        <span id="cartCount">0</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main>
+
+    <!-- KIKKY HAIRS HERO (unchanged) -->
+    <section class="kh-hero-section">
+      <div class="kh-container">
+        <div class="kh-text-content">
+          <span class="kh-tagline">Lagos Luxury Hair Studio</span>
+          <h1 class="kh-headline">Soft Luxury for the Modern Woman <br><span class="text-gold-metallic">Kikky Hairs</span></h1>
+          <p class="kh-desc">100% human hair wigs crafted for softness, confidence and effortless beauty.</p>
+          <div class="kh-features">
+            <div class="kh-feature-pill"><i class="fa-solid fa-gem"></i> 100% Human Hair</div>
+            <div class="kh-feature-pill"><i class="fa-solid fa-truck-fast"></i> Fast Shipping</div>
+            <div class="kh-feature-pill"><i class="fa-solid fa-check-circle"></i> Quality Guaranteed</div>
+          </div>
+          <a href="{{ url_for('collection') }}" class="kh-btn-gold">Shop Collection</a>
+        </div>
+        <div class="kh-image-wrapper">
+          <div class="kh-blob-bg"></div>
+          <img src="{{ url_for('static', filename='kikkyhairs.jpeg') }}" alt="Kikky Hairs luxury wig" class="kh-img-main">
+          <div class="kh-float-badge"><span class="badge-head">Soft</span><span class="badge-sub"> · effortless</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRODUCT GRID (now dynamic) -->
+    <section class="product-grid-section container">
+      <header class="section-header">
+        <h2>Featured Products</h2>
+        <a href="{{ url_for('collection') }}" class="link-muted">View all <i class="ri-arrow-right-line"></i></a>
+      </header>
+      <div class="product-grid" id="productGrid"></div>
+    </section>
+
+    <!-- KIKKY HAIRS EXTRA SECTIONS (unchanged) -->
+    <section class="kikky-section">
+      <h2 class="heading-font" style="text-align:center; margin-bottom:2rem;">the difference is in the details</h2>
+      <div class="comparison-container" id="comparisonSlider">
+        <img src="{{ url_for('static', filename='wig1.jpg') }}" alt="Before" class="comparison-image">
+        <div class="comparison-overlay" id="overlayImage"><img src="{{ url_for('static', filename='wig2.jpg') }}" alt="After" style="width:100%; height:100%; object-fit:cover; object-position:left;"></div>
+        <div class="slider-handle" id="sliderHandle"></div>
+      </div>
+      <p style="text-align:center; color: #aaa; margin-top:1rem;">← drag gold divider →</p>
+
+      <div style="margin-top:5rem;">
+        <h3 class="heading-font" style="text-align:center;">whispers from our community</h3>
+        <div class="testimonial-grid">
+          <div class="testimonial-card"><p>“The bone straight is pure art. No shedding.”</p><div class="stars" style="color: var(--gold);">★★★★★</div><span>— Adesuwa</span></div>
+          <div class="testimonial-card"><p>“Glueless wig changed my routine. Feels weightless.”</p><div class="stars" style="color: var(--gold);">★★★★★</div><span>— Temilade</span></div>
+          <div class="testimonial-card"><p>“I’ve tried others — Kikky’s texture is softer.”</p><div class="stars" style="color: var(--gold);">★★★★★</div><span>— Folake</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CART PANEL (updated) -->
+    <div id="cart-panel" class="cart-panel">
+      <div class="cart-header">
+        <h3>Your Cart</h3>
+        <button id="closeCart" class="close-cart"><i class="ri-close-line"></i></button>
+      </div>
+      <div id="cart-items" class="cart-items"><p class="empty-cart">Your cart is empty</p></div>
+      <div class="cart-footer">
+        <div class="cart-total"><small>Subtotal</small> <strong id="cart-total">₦0</strong></div>
+        <div class="cart-actions">
+          <a href="{{ url_for('cart') }}" class="btn">View Cart</a>
+          <a href="{{ url_for('checkout') }}" class="btn">Checkout</a>
+          <button id="clear-cart" class="btn btn-ghost">Clear</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER (updated links) -->
+    <footer class="footer">
+      <div class="footer-grid">
+        <div class="footer-col"><h4>About Kikky Hairs</h4><p>Kikky Hairs is a luxury wig studio specializing in premium 100% human hair units.</p></div>
+        <div class="footer-col"><h4>Quick Links</h4><ul><li><a href="{{ url_for('home') }}">Home</a></li><li><a href="{{ url_for('collection') }}">Shop</a></li><li><a href="{{ url_for('contact') }}">Contact</a></li></ul></div>
+        <div class="footer-col"><h4>Contact</h4><ul><li><i class="ri-phone-fill"></i> +234 812 345 6789</li><li><i class="ri-mail-fill"></i> hello@kikkyhairs.ng</li></ul></div>
+      </div>
+      <div class="footer-bottom">© 2026 Kikky Hairs — Lagos, Nigeria</div>
+    </footer>
+  </main>
+
+  <script>
+    (function() {
+      // ----- LEFT MENU (unchanged) -----
+      const menuToggle = document.getElementById('menu-toggle');
+      const sideMenu = document.getElementById('side-menu');
+      const overlay = document.getElementById('overlay');
+      const closeSidebar = document.getElementById('closeSidebar');
+
+      function openMenu() { sideMenu.classList.add('active'); overlay.classList.add('active'); }
+      function closeMenu() { sideMenu.classList.remove('active'); overlay.classList.remove('active'); }
+
+      menuToggle.addEventListener('click', openMenu);
+      closeSidebar.addEventListener('click', closeMenu);
+      overlay.addEventListener('click', closeMenu);
+      document.querySelectorAll('.sidebar-nav a').forEach(link => link.addEventListener('click', closeMenu));
+
+      // ----- GET PRODUCTS FROM FLASK -----
+      const productsFromServer = {{ products | tojson }};
+      const products = productsFromServer.map(p => ({
+        id: p._id,
+        name: p.name || 'Unnamed product',
+        cat: p.category || 'uncategorized',
+        price: p.price || 0,
+        length: p.length || 16,
+        image: p.image || 'https://via.placeholder.com/400x500/1e1814/b38728?text=No+Image',
+        video: p.image || 'https://via.placeholder.com/400x500/b38728/1e1814?text=Video'
+      }));
+
+      // ----- RENDER FEATURED PRODUCTS (first 4) -----
+      function renderFeaturedProducts() {
+        const grid = document.getElementById('productGrid');
+        const featured = products.slice(0, 4);
+        grid.innerHTML = featured.map(p => `
+          <div class="product-card" data-product-id="${p.id}">
+            <div class="card-image-wrapper">
+              <img class="product-image" src="${p.image}" alt="${p.name}">
+              <video class="product-video" muted loop><source src="" type="video/mp4"></video>
+              <button class="quick-add-btn add-to-cart-btn" data-id="${p.id}" data-name="${p.name}" data-price="${p.price}"><i class="ri-shopping-cart-2-line"></i></button>
+            </div>
+            <div class="card-details">
+              <span class="category-tag">${p.cat}</span>
+              <h3 class="product-title"><a href="#">${p.name}</a></h3>
+              <div class="price-row"><span class="price">₦${p.price.toLocaleString()}</span><a href="#" class="view-link"><i class="ri-arrow-right-line"></i></a></div>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // ----- CART FUNCTIONALITY (enhanced) -----
+      let cart = JSON.parse(localStorage.getItem('kikkyCart')) || [];
+
+      function updateCartCount() {
+        document.getElementById('cartCount').innerText = cart.reduce((sum, item) => sum + item.quantity, 0);
+      }
+
+      function renderCartItems() {
+        const cartItemsEl = document.getElementById('cart-items');
+        const cartTotalEl = document.getElementById('cart-total');
+        if (cart.length === 0) {
+          cartItemsEl.innerHTML = '<p class="empty-cart">Your cart is empty</p>';
+          cartTotalEl.innerText = '₦0';
+          return;
+        }
+        let html = '';
+        let total = 0;
+        cart.forEach(item => {
+          total += item.price * item.quantity;
+          html += `<p>${item.name} x${item.quantity} – ₦${(item.price * item.quantity).toLocaleString()}</p>`;
+        });
+        cartItemsEl.innerHTML = html;
+        cartTotalEl.innerText = '₦' + total.toLocaleString();
+      }
+
+      function addToCart(productId, productName, productPrice) {
+        const existing = cart.find(item => item.id === productId);
+        if (existing) {
+          existing.quantity += 1;
+        } else {
+          cart.push({ id: productId, name: productName, price: productPrice, quantity: 1 });
+        }
+        localStorage.setItem('kikkyCart', JSON.stringify(cart));
+        updateCartCount();
+        renderCartItems();
+      }
+
+      document.addEventListener('click', function(e) {
+        const btn = e.target.closest('.add-to-cart-btn');
+        if (!btn) return;
+        e.preventDefault();
+        const id = btn.dataset.id;
+        const name = btn.dataset.name;
+        const price = parseInt(btn.dataset.price);
+        addToCart(id, name, price);
+      });
+
+      document.getElementById('clear-cart')?.addEventListener('click', () => {
+        cart = [];
+        localStorage.removeItem('kikkyCart');
+        updateCartCount();
+        renderCartItems();
+      });
+
+      // ----- CART PANEL TOGGLE -----
+      const cartPanel = document.getElementById('cart-panel');
+      const cartToggle = document.getElementById('cartToggle');
+      const closeCart = document.getElementById('closeCart');
+      cartToggle.addEventListener('click', () => cartPanel.classList.toggle('open'));
+      closeCart.addEventListener('click', () => cartPanel.classList.remove('open'));
+
+      // ----- VIDEO HOVER (unchanged) -----
+      document.querySelectorAll('.product-card').forEach(card => {
+        const video = card.querySelector('.product-video');
+        if (!video) return;
+        card.addEventListener('mouseenter', () => { video.play().catch(()=>{}); });
+        card.addEventListener('mouseleave', () => { video.pause(); video.currentTime = 0; });
+      });
+
+      // ----- BEFORE/AFTER SLIDER (unchanged) -----
+      const container = document.getElementById('comparisonSlider');
+      const overlayImg = document.getElementById('overlayImage');
+      const handle = document.getElementById('sliderHandle');
+      if (container && overlayImg && handle) {
+        let dragging = false, startX, startWidth;
+        const setPos = (percent) => { percent = Math.max(0, Math.min(100, percent)); overlayImg.style.width = percent + '%'; handle.style.left = percent + '%'; };
+        handle.addEventListener('mousedown', (e) => { dragging = true; startX = e.clientX; startWidth = parseFloat(overlayImg.style.width) || 50; e.preventDefault(); });
+        window.addEventListener('mousemove', (e) => { if (!dragging) return; const rect = container.getBoundingClientRect(); let dx = e.clientX - startX; let delta = (dx / rect.width) * 100; setPos(startWidth + delta); });
+        window.addEventListener('mouseup', () => dragging = false);
+        if (!overlayImg.style.width) setPos(50);
+      }
+
+      // scroll progress bar (unchanged)
+      const scrollProgress = document.createElement('div'); 
+      scrollProgress.id = 'scrollProgress'; 
+      scrollProgress.style = 'position:fixed; top:70px; left:0; height:2px; background:#b38728; z-index:1002; width:0%;';
+      document.body.appendChild(scrollProgress);
+      window.addEventListener('scroll', () => {
+        const winScroll = document.documentElement.scrollTop;
+        const height = document.documentElement.scrollHeight - window.innerHeight;
+        const scrolled = (winScroll / height) * 100;
+        scrollProgress.style.width = scrolled + '%';
+      });
+
+      // Initialise
+      renderFeaturedProducts();
+      updateCartCount();
+      renderCartItems();
+    })();
+  </script>
+</body>
+</html>

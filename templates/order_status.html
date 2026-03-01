@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kikky Hairs · Order Status</title>
+  <!-- Fonts & icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    :root {
+      --gold: #b38728;
+      --gold-gradient: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+      --deep-brown: #2c2420;
+      --bg-dark: #120e0c;
+      --bg-soft: #1e1814;
+      --white-off: #f4f4f4;
+      --font-heading: 'Playfair Display', serif;
+      --font-body: 'Montserrat', sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font-body);
+      background: linear-gradient(to bottom, #0c0c0c, #111);
+      color: var(--white-off);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .status-container {
+      max-width: 700px;
+      width: 100%;
+      background: var(--bg-soft);
+      border: 1px solid rgba(179,135,40,0.3);
+      border-radius: 32px;
+      padding: 40px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    }
+    h1 {
+      font-family: var(--font-heading);
+      font-size: 2.2rem;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+    h1 span { color: var(--gold); }
+    .order-ref {
+      background: #2a241f;
+      padding: 15px 20px;
+      border-radius: 50px;
+      display: inline-block;
+      margin: 20px 0;
+      font-family: monospace;
+      font-size: 1.2rem;
+      border: 1px dashed var(--gold);
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 8px 20px;
+      border-radius: 50px;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      margin-left: 15px;
+    }
+    .status-pending { background: #3a3a3a; color: #ccc; }
+    .status-paid { background: #1e3a2a; color: #8bc34a; }
+    .status-shipped { background: #2a3a4a; color: #64b5f6; }
+    .status-delivered { background: #2a3a2a; color: #81c784; }
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 30px 0;
+      background: #2a241f;
+      border-radius: 24px;
+      padding: 25px;
+    }
+    .info-item {
+      display: flex;
+      flex-direction: column;
+    }
+    .info-label {
+      font-size: 0.8rem;
+      color: #aaa;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .info-value {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #fff;
+      margin-top: 4px;
+    }
+    .items-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    .items-table th {
+      text-align: left;
+      padding: 12px 5px;
+      color: var(--gold);
+      border-bottom: 2px solid #3a3a3a;
+    }
+    .items-table td {
+      padding: 12px 5px;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    .total-row {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--gold);
+      text-align: right;
+      margin-top: 20px;
+    }
+    .btn-home {
+      display: inline-block;
+      padding: 14px 30px;
+      background: var(--gold-gradient);
+      border-radius: 50px;
+      color: #000;
+      font-weight: 700;
+      text-decoration: none;
+      margin-top: 30px;
+      transition: 0.3s;
+    }
+    .btn-home:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(179,135,40,0.3);
+    }
+    .not-found {
+      text-align: center;
+      padding: 50px 20px;
+    }
+    .not-found i { font-size: 4rem; color: var(--gold); margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+  <div class="status-container">
+    {% if order %}
+      <h1>order <span>status</span></h1>
+      <div>
+        <span class="order-ref">#{{ order.paymentReference }}</span>
+        <span class="status-badge status-{{ order.status|lower }}">{{ order.status }}</span>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label">customer</span>
+          <span class="info-value">{{ order.customerName }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">email</span>
+          <span class="info-value">{{ order.customerEmail }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">phone</span>
+          <span class="info-value">{{ order.customerPhone }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">delivery address</span>
+          <span class="info-value">{{ order.customerAddress }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">order date</span>
+          <span class="info-value">{{ order.createdAt.strftime('%d %b %Y, %H:%M') }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">payment date</span>
+          <span class="info-value">{{ order.paidAt.strftime('%d %b %Y, %H:%M') if order.paidAt else 'N/A' }}</span>
+        </div>
+      </div>
+
+      <h3 style="margin-bottom: 15px;">items ordered</h3>
+      <table class="items-table">
+        <thead>
+          <tr><th>Product</th><th>Qty</th><th>Price</th><th>Subtotal</th></tr>
+        </thead>
+        <tbody>
+          {% for item in order.items %}
+          <tr>
+            <td>{{ item.name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>₦{{ "{:,.0f}".format(item.price) }}</td>
+            <td>₦{{ "{:,.0f}".format(item.price * item.quantity) }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div class="total-row">total: ₦{{ "{:,.0f}".format(order.amount) }}</div>
+
+      <a href="{{ url_for('home') }}" class="btn-home">continue shopping</a>
+    {% else %}
+      <div class="not-found">
+        <i class="ri-error-warning-line"></i>
+        <h2>order not found</h2>
+        <p style="color:#aaa; margin:15px 0;">The order reference you provided does not exist.</p>
+        <a href="{{ url_for('home') }}" class="btn-home">back to home</a>
+      </div>
+    {% endif %}
+  </div>
+</body>
+</html>

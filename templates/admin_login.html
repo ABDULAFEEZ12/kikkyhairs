@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KikkyHairs · Admin Login</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(to bottom, #0c0c0c, #111);
+      color: #f4f4f4;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .login-container {
+      background: #1e1814;
+      border: 1px solid rgba(179,135,40,0.3);
+      border-radius: 28px;
+      padding: 40px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    }
+    h2 {
+      font-family: 'Playfair Display', serif;
+      color: #b38728;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+    .sub {
+      text-align: center;
+      color: #aaa;
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+      border-bottom: 1px dashed #333;
+      padding-bottom: 1rem;
+    }
+    .flash-message {
+      background: rgba(179,135,40,0.15);
+      border-left: 4px solid #b38728;
+      padding: 12px 15px;
+      border-radius: 8px;
+      margin-bottom: 25px;
+      color: #fff;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #ccc;
+      font-weight: 500;
+    }
+    input {
+      width: 100%;
+      padding: 14px 18px;
+      background: #2a241f;
+      border: 1px solid #3a3a3a;
+      border-radius: 50px;
+      color: #fff;
+      font-size: 1rem;
+      transition: 0.2s;
+    }
+    input:focus {
+      outline: none;
+      border-color: #b38728;
+      box-shadow: 0 0 0 2px rgba(179,135,40,0.2);
+    }
+    button {
+      width: 100%;
+      padding: 16px;
+      background: #b38728;
+      border: none;
+      border-radius: 50px;
+      color: #000;
+      font-weight: 700;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: 0.2s;
+      margin-top: 10px;
+    }
+    button:hover {
+      background: #d4a259;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(179,135,40,0.3);
+    }
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 25px;
+      color: #aaa;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .back-link:hover {
+      color: #b38728;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h2>admin login</h2>
+    <div class="sub">kikky hairs · gold label</div>
+
+    <!-- Flash messages (e.g., "Admin not found") will appear here -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="flash-message">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+      <div class="form-group">
+        <label>Email address</label>
+        <input type="email" name="email" required placeholder="admin@kikky.ng">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" name="password" required placeholder="••••••••">
+      </div>
+      <button type="submit">Login</button>
+    </form>
+    <a href="{{ url_for('home') }}" class="back-link">← back to home</a>
+  </div>
+</body>
+</html>
