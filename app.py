@@ -80,12 +80,13 @@ def home():
         product['_id'] = str(product['_id'])
     return render_template("home.html", products=products)
 
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
 @app.route("/collection")
 def collection():
-    products = list(products_collection.find())
-    for product in products:
-        product['_id'] = str(product['_id'])
-    return render_template("collection.html", products=products)
+    return redirect(url_for("shop"))
 
 @app.route("/shop")
 def shop():
