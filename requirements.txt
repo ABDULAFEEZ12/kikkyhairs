@@ -6,3 +6,4 @@ pyjwt
 requests
 certifi
 gunicorn
+pip freeze
