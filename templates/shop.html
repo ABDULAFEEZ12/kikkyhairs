@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KikkyHair · shop all</title>
+  <title>KikkyHair · gold & brown</title>
   <!-- Google Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
@@ -35,7 +35,7 @@
     a { text-decoration: none; color: inherit; }
     .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
 
-    /* ----- top bar (sticky) ----- */
+    /* ----- top bar (sticky, no hero) ----- */
     #top-bar {
       position: sticky;
       top: 0;
@@ -70,7 +70,7 @@
       align-items: center; justify-content: center; font-weight: 600;
     }
 
-    /* side menu */
+    /* side menu (same as before) */
     #side-menu {
       position: fixed;
       top: 0;
@@ -114,7 +114,7 @@
       .desktop-nav a:hover { border-bottom-color: var(--gold); }
     }
 
-    /* ----- MAIN SHOP SECTION ----- */
+    /* ----- MAIN SHOP SECTION (start here) ----- */
     .collection-header {
       text-align: center;
       padding: 40px 20px 10px;
@@ -206,17 +206,6 @@
     .page-link.active { background: var(--gold); color: #000; border-color: var(--gold); }
     .page-link.next, .page-link.prev { background: transparent; border: 1px solid var(--gold); color: var(--gold); }
 
-    /* comparison & testimonials (kept for consistency) */
-    .kikky-section { background: transparent; padding: 60px 5%; border-top: 1px solid #2a2a2a; }
-    .comparison-container { position: relative; max-width: 700px; margin: 2rem auto; border-radius: 50px; overflow: hidden; box-shadow: 0 20px 30px -10px #000; }
-    .comparison-image { width: 100%; display: block; }
-    .comparison-overlay { position: absolute; top: 0; left: 0; width: 50%; height: 100%; overflow: hidden; border-right: 3px solid var(--gold); }
-    .slider-handle { position: absolute; top: 0; left: 50%; width: 4px; height: 100%; background: var(--gold); cursor: ew-resize; transform: translateX(-50%); z-index: 20; }
-    .slider-handle::after { content: ""; position: absolute; top: 50%; left: 50%; width: 42px; height: 42px; background: white; border: 2px solid var(--gold); border-radius: 50%; transform: translate(-50%,-50%); }
-
-    .testimonial-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px,1fr)); gap: 2rem; margin-top: 3rem; }
-    .testimonial-card { background: #1e1814; padding: 2rem; border-radius: 28px; border: 1px solid #2a2a2a; }
-
     /* cart panel */
     .cart-panel {
       position: fixed; top: 0; right: -400px; width: 360px; height: 100vh;
@@ -275,29 +264,30 @@
   <div id="top-bar">
     <div style="display: flex; align-items: center; gap: 1rem;">
       <button id="menu-toggle"><i class="ri-menu-line"></i></button>
-      <div class="brand-logo"><a href="{{ url_for('home') }}"><img src="https://via.placeholder.com/120x50/120e0c/b38728?text=KIKKY" alt="KikkyHair"></a></div>
+      <div class="brand-logo"><a href="{{ url_for('home') }}"><img src="{{ url_for('static', filename='kikkyhairs.jpeg') }}" alt="Kikky Hairs logo"></a></div>
     </div>
     <div class="header-actions">
       <div class="cart-icon" id="cartIcon"><i class="ri-shopping-cart-line"></i><span id="cartCount">0</span></div>
     </div>
     <nav class="desktop-nav">
       <a href="{{ url_for('home') }}">Home</a>
-      <a href="{{ url_for('collection') }}">Collection</a>
       <a href="{{ url_for('shop') }}">Shop</a>
+      <a href="#">Gallery</a>
     </nav>
   </div>
 
   <!-- side menu -->
   <div id="side-menu">
     <div class="sidebar-header">
-      <img src="https://via.placeholder.com/120x40/120e0c/b38728?text=KIKKY" alt="KikkyHair">
+      <img src="{{ url_for('static', filename='kikkyhairs.jpeg') }}" alt="Kikky Hairs logo">
       <i class="ri-close-line close-icon" id="closeSidebar"></i>
     </div>
     <nav class="sidebar-nav">
       <ul>
         <li><a href="{{ url_for('home') }}"><i class="ri-home-4-line"></i> Home</a></li>
-        <li><a href="{{ url_for('collection') }}"><i class="ri-store-line"></i> Collection</a></li>
-        <li><a href="{{ url_for('shop') }}"><i class="ri-shopping-bag-line"></i> Shop all</a></li>
+        <li><a href="{{ url_for('shop') }}"><i class="ri-store-line"></i> Shop</a></li>
+        <li><a href="{{ url_for('collection') }}?cat=bone"><i class="ri-folder-line"></i> Bone straight</a></li>
+        <li><a href="{{ url_for('collection') }}?cat=bounce"><i class="ri-folder-line"></i> Bounce curls</a></li>
       </ul>
     </nav>
     <div class="sidebar-social">
@@ -308,16 +298,16 @@
   </div>
   <div id="overlay"></div>
 
-  <!-- SHOP HEADER -->
+  <!-- START HERE: explore collection -->
   <div class="collection-header">
-    <h2>shop all</h2>
-    <div class="gold-label">real human hair · gold label</div>
+    <h2>explore collection</h2>
+    <div class="gold-label">Affordable & Luxury</div>
   </div>
 
   <section class="product-grid-section">
     <div class="container">
       <div class="shop-layout">
-        <!-- sidebar categories (same as collection) -->
+        <!-- sidebar categories (simplified) -->
         <aside class="shop-sidebar">
           <div class="filter-group">
             <h3><i class="ri-filter-3-line"></i> Categories</h3>
@@ -345,30 +335,11 @@
     </div>
   </section>
 
-  <!-- before & after + testimonials (optional, kept for design consistency) -->
-  <section class="kikky-section">
-    <div class="container">
-      <h2 style="text-align: center; font-size: 2.2rem;">before <span style="color: var(--gold);">&</span> after</h2>
-      <div class="comparison-container" id="comparisonSlider">
-        <img src="https://via.placeholder.com/700x400/2c2420/5a4a3a?text=BEFORE" class="comparison-image" alt="before">
-        <div class="comparison-overlay" id="overlayImg" style="width:50%;">
-          <img src="https://via.placeholder.com/700x400/b38728/ffffff?text=AFTER" style="width:100%; height:100%; object-fit:cover;" alt="after">
-        </div>
-        <div class="slider-handle" id="sliderHandle"></div>
-      </div>
-      <div class="testimonial-grid">
-        <div class="testimonial-card">“Absolutely in love! The gold bounce is unreal.” – <strong>Chioma</strong></div>
-        <div class="testimonial-card">“Black bone straight, zero shedding. Worth every naira.” – <strong>Debbie</strong></div>
-        <div class="testimonial-card">“Fast shipping and the video preview is so helpful.” – <strong>Lara</strong></div>
-      </div>
-    </div>
-  </section>
-
   <!-- cart panel -->
   <div class="cart-panel" id="cartPanel">
     <div class="cart-header"><h3>your cart</h3><button class="close-cart" id="closeCart"><i class="ri-close-line"></i></button></div>
     <div class="cart-items" id="cartItems"><div class="empty-cart">your cart glows empty ✨</div></div>
-    <div class="cart-footer"><div class="cart-total"><span>total</span><span id="cartTotal">₦0</span></div><div class="cart-actions"><a href="{{ url_for('cart') }}" class="btn">checkout</a></div></div>
+    <div class="cart-footer"><div class="cart-total"><span>total</span><span id="cartTotal">₦0</span></div><div class="cart-actions"><a href="{{ url_for('checkout') }}" class="btn">checkout</a></div></div>
   </div>
 
   <!-- modal container -->
@@ -378,7 +349,7 @@
   <footer class="footer">
     <div class="footer-grid">
       <div class="footer-col"><h4>KikkyHair</h4><p>gold-standard human hair, curated for the bold.</p></div>
-      <div class="footer-col"><h4>quick</h4><ul><li><a href="{{ url_for('home') }}">Home</a></li><li><a href="{{ url_for('collection') }}">Collection</a></li><li><a href="{{ url_for('shop') }}">Shop all</a></li></ul></div>
+      <div class="footer-col"><h4>quick</h4><ul><li><a href="{{ url_for('home') }}">Home</a></li><li><a href="{{ url_for('shop') }}">Shop</a></li></ul></div>
       <div class="footer-col"><h4>connect</h4><ul><li><a href="#"><i class="ri-instagram-line"></i> @kikkyhair</a></li><li><a href="#"><i class="ri-whatsapp-line"></i> +234 800 000</a></li></ul></div>
     </div>
     <div class="footer-bottom">© 2026 KikkyHair — gold & brown elegance</div>
@@ -402,24 +373,21 @@
 
       // ----- GET PRODUCTS FROM FLASK -----
       const productsFromServer = {{ products | tojson }};
-      const products = productsFromServer.map(p => ({
-        id: p._id,
-        name: p.name || 'Unnamed product',
-        cat: p.category || 'uncategorized',
-        price: p.price || 0,
-        length: p.length || 16,
-        image: p.image || 'https://via.placeholder.com/400x500/1e1814/b38728?text=No+Image',
-        video: p.image || 'https://via.placeholder.com/400x500/b38728/1e1814?text=Video'
-      }));
 
-      // Category display names (same as before)
-      const categoryNames = {
-        bone: 'bone straight',
-        bounce: 'bounce curls',
-        colored: 'colored units',
-        wave: 'deep wave',
-        frontal: 'frontal bob'
-      };
+      // Transform to the format expected by the existing JavaScript
+      const products = productsFromServer.map(p => {
+        let id = p._id;
+        if (id && id.$oid) id = id.$oid;
+        return {
+          id: id,
+          name: p.name || 'Unnamed product',
+          cat: p.category || 'uncategorized',
+          price: p.price || 0,
+          length: p.length || 16,
+          image: p.image || 'https://via.placeholder.com/400x500/1e1814/b38728?text=No+Image',
+          video: p.image || 'https://via.placeholder.com/400x500/b38728/1e1814?text=Video'
+        };
+      });
 
       let currentCategory = 'all';
       let currentPage = 1;
@@ -449,7 +417,7 @@
               </div>
               <div class="card-details">
                 <div class="product-length">${lengthDouble}</div>
-                <span class="category-tag">${categoryNames[p.cat] || p.cat}</span>
+                <span class="category-tag">${p.cat}</span>
                 <h3 class="product-title">${p.name}</h3>
                 <div class="price-row"><span class="price">₦${p.price.toLocaleString()}</span><a href="#" class="view-link"><i class="ri-arrow-right-line"></i></a></div>
               </div>
@@ -503,7 +471,7 @@
         }
       });
 
-      // ----- CART FUNCTIONALITY (enhanced) -----
+      // ----- ENHANCED CART -----
       let cart = JSON.parse(localStorage.getItem('kikkyCart')) || [];
 
       function updateCartCount() {
@@ -538,8 +506,7 @@
         localStorage.setItem('kikkyCart', JSON.stringify(cart));
         updateCartCount();
         renderCartItems();
-        // optional: show modal
-        // showModal('success', '✨ added', `${productName} now in your cart`, null);
+        showModal('success', '✨ added', `${productName} now in your cart`, null);
       }
 
       document.addEventListener('click', function(e) {
@@ -583,22 +550,6 @@
       window.closeModal = function() {
         document.getElementById('modalContainer').innerHTML = '';
       }
-
-      // ----- COMPARISON SLIDER (unchanged) -----
-      const slider = document.getElementById('sliderHandle');
-      const overlayImg = document.getElementById('overlayImg');
-      let dragging = false;
-      slider.addEventListener('mousedown', (e)=>{ dragging = true; e.preventDefault(); });
-      window.addEventListener('mousemove', (e)=>{
-        if (!dragging) return;
-        const rect = document.getElementById('comparisonSlider').getBoundingClientRect();
-        let x = e.clientX - rect.left;
-        x = Math.max(0, Math.min(x, rect.width));
-        const percent = (x / rect.width) * 100;
-        overlayImg.style.width = percent + '%';
-        slider.style.left = percent + '%';
-      });
-      window.addEventListener('mouseup', ()=>{ dragging = false; });
 
       // Initial render
       renderProducts();
