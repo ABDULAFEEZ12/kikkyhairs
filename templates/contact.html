@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KikkyHair · contact</title>
+  <!-- Google Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* ----- GLOBAL LUXURY VARIABLES (Kikky Hairs) ----- */
+    :root {
+      --gold: #b38728;
+      --gold-gradient: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+      --deep-brown: #2c2420;
+      --bg-dark: #120e0c;
+      --bg-soft: #1e1814;
+      --white-off: #f4f4f4;
+      --cream: #fefaf7;
+      --font-heading: 'Playfair Display', serif;
+      --font-body: 'Montserrat', sans-serif;
+      --soft-shadow: 0 20px 35px -15px rgba(0,0,0,0.5), 0 5px 15px rgba(0,0,0,0.3);
+      --card-hover-shadow: 0 25px 35px -20px rgba(179,135,40,0.3), 0 0 0 1px rgba(179,135,40,0.3);
+    }
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font-body);
+      background: linear-gradient(to bottom, #0c0c0c, #111111);
+      color: var(--white-off);
+      line-height: 1.7;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+    h1, h2, h3, .heading-font { font-family: var(--font-heading); font-weight: 500; letter-spacing: 0.02em; }
+    a { text-decoration: none; color: inherit; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+    /* ----- top bar (sticky) ----- */
+    #top-bar {
+      position: sticky;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 70px;
+      background: rgba(18,14,12,0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 5%;
+      z-index: 1002;
+      border-bottom: 1px solid rgba(179,135,40,0.2);
+    }
+    .brand-logo img { height: 48px; width: auto; }
+    #menu-toggle {
+      width: 44px; height: 44px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem; color: var(--white-off);
+      background: transparent; border: none; cursor: pointer;
+      transition: background 0.2s;
+    }
+    #menu-toggle:hover { background: rgba(179,135,40,0.15); }
+    .header-actions { display: flex; gap: 1rem; align-items: center; }
+    .cart-icon { font-size: 1.5rem; position: relative; cursor: pointer; }
+    #cartCount { 
+      position: absolute; top: -8px; right: -10px; 
+      background: var(--gold); color: #000; font-size: 0.7rem; 
+      border-radius: 50%; width: 18px; height: 18px; display: flex;
+      align-items: center; justify-content: center; font-weight: 600;
+    }
+
+    /* side menu */
+    #side-menu {
+      position: fixed;
+      top: 0;
+      left: -320px;
+      width: min(300px, 80vw);
+      height: 100vh;
+      background: rgba(18,14,12,0.97);
+      backdrop-filter: blur(20px);
+      border-right: 1px solid rgba(179,135,40,0.3);
+      transition: left 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+      z-index: 1003;
+      overflow-y: auto;
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+    }
+    #side-menu.active { left: 0; }
+    .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; }
+    .sidebar-header img { height: 50px; }
+    .close-icon { font-size: 2rem; cursor: pointer; color: var(--gold); }
+    .sidebar-nav ul { list-style: none; }
+    .sidebar-nav li { margin: 1.2rem 0; }
+    .sidebar-nav a { display: flex; align-items: center; gap: 15px; font-size: 1.1rem; color: #ddd; transition: 0.2s; }
+    .sidebar-nav a:hover { color: var(--gold); transform: translateX(5px); }
+    .sidebar-social { margin-top: auto; display: flex; gap: 1.5rem; justify-content: center; padding: 2rem 0; }
+    .sidebar-social a { font-size: 1.5rem; color: #aaa; }
+    .sidebar-social a:hover { color: var(--gold); }
+
+    #overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+      display: none; z-index: 1001; cursor: pointer;
+    }
+    #overlay.active { display: block; }
+
+    /* desktop navigation */
+    .desktop-nav { display: none; }
+    @media (min-width: 900px) {
+      .desktop-nav { display: flex; gap: 2.5rem; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; }
+      .desktop-nav a { color: #fff; border-bottom: 2px solid transparent; padding-bottom: 4px; }
+      .desktop-nav a:hover { border-bottom-color: var(--gold); }
+    }
+
+    /* ----- CONTACT PAGE STYLES ----- */
+    .contact-header {
+      text-align: center;
+      padding: 60px 20px 20px;
+    }
+    .contact-header h2 {
+      font-size: 3.2rem;
+      color: #fff;
+      font-family: var(--font-heading);
+      margin-bottom: 10px;
+    }
+    .contact-header .gold-label {
+      color: var(--gold);
+      font-size: 1.1rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 50px;
+      margin: 50px auto;
+      max-width: 1000px;
+      padding: 0 20px;
+    }
+
+    @media (max-width: 768px) {
+      .contact-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+    }
+
+    .contact-info {
+      background: var(--bg-soft);
+      border: 1px solid #2a2a2a;
+      border-radius: 28px;
+      padding: 40px;
+    }
+
+    .info-item {
+      margin-bottom: 30px;
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+    }
+
+    .info-icon {
+      width: 50px;
+      height: 50px;
+      background: rgba(179,135,40,0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: var(--gold);
+    }
+
+    .info-content h4 {
+      color: var(--gold);
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      margin-bottom: 5px;
+    }
+
+    .info-content p, .info-content a {
+      color: #ccc;
+      transition: color 0.3s;
+    }
+
+    .info-content a:hover {
+      color: var(--gold);
+    }
+
+    .social-links {
+      margin-top: 40px;
+      border-top: 1px solid #2a2a2a;
+      padding-top: 30px;
+    }
+
+    .social-links h4 {
+      color: var(--gold);
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+    }
+
+    .social-icons {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .social-icon {
+      width: 50px;
+      height: 50px;
+      background: #2a241f;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: #aaa;
+      transition: all 0.3s;
+      border: 1px solid transparent;
+    }
+
+    .social-icon:hover {
+      background: var(--gold);
+      color: #000;
+      transform: translateY(-5px);
+    }
+
+    /* WhatsApp specific style */
+    .social-icon.whatsapp:hover {
+      background: #25D366;
+      color: #fff;
+    }
+
+    /* Placeholder styles for future social icons */
+    .social-icon.placeholder {
+      opacity: 0.5;
+      border: 1px dashed #3a3a3a;
+    }
+
+    .contact-form {
+      background: var(--bg-soft);
+      border: 1px solid #2a2a2a;
+      border-radius: 28px;
+      padding: 40px;
+    }
+
+    .contact-form h3 {
+      color: var(--gold);
+      font-family: var(--font-heading);
+      font-size: 1.8rem;
+      margin-bottom: 25px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 15px 20px;
+      background: #2a241f;
+      border: 1px solid #3a3a3a;
+      border-radius: 50px;
+      color: #fff;
+      font-size: 1rem;
+      transition: 0.3s;
+      font-family: var(--font-body);
+    }
+
+    .form-group textarea {
+      border-radius: 25px;
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 2px rgba(179,135,40,0.2);
+    }
+
+    .submit-btn {
+      background: var(--gold-gradient);
+      color: #000;
+      border: none;
+      padding: 16px 40px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: 0.3s;
+      width: 100%;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(179,135,40,0.3);
+    }
+
+    .map-section {
+      max-width: 1000px;
+      margin: 60px auto;
+      padding: 0 20px;
+    }
+
+    .map-container {
+      background: var(--bg-soft);
+      border: 1px solid #2a2a2a;
+      border-radius: 28px;
+      overflow: hidden;
+      height: 350px;
+    }
+
+    .map-placeholder {
+      width: 100%;
+      height: 100%;
+      background: #2a241f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #aaa;
+      font-size: 1.1rem;
+    }
+
+    .footer {
+      background: #0c0a08;
+      border-top: 1px solid #2a2a2a;
+      padding: 50px 5% 20px;
+      margin-top: 60px;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+      gap: 3rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .footer-col h4 {
+      color: var(--gold);
+      margin-bottom: 1rem;
+      font-family: var(--font-heading);
+    }
+    .footer-col ul {
+      list-style: none;
+    }
+    .footer-col li {
+      margin: 0.7rem 0;
+    }
+    .footer-col a {
+      color: #aaa;
+      transition: color 0.3s;
+    }
+    .footer-col a:hover {
+      color: var(--gold);
+    }
+    .footer-bottom {
+      text-align: center;
+      padding-top: 30px;
+      margin-top: 30px;
+      border-top: 1px solid #2a2a2a;
+      color: #666;
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  </style>
+</head>
+<body>
+  <!-- top bar -->
+  <div id="top-bar">
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <button id="menu-toggle"><i class="ri-menu-line"></i></button>
+      <div class="brand-logo"><a href="{{ url_for('home') }}"><img src="{{ url_for('static', filename='kikkyhairs.jpeg') }}" alt="KikkyHair"></a></div>
+    </div>
+    <div class="header-actions">
+      <div class="cart-icon" id="cartIcon"><i class="ri-shopping-cart-line"></i><span id="cartCount">0</span></div>
+    </div>
+    <nav class="desktop-nav">
+      <a href="{{ url_for('home') }}">Home</a>
+      <a href="{{ url_for('collection') }}">Collection</a>
+      <a href="{{ url_for('shop') }}">Shop</a>
+      <a href="{{ url_for('contact') }}">Contact</a>
+    </nav>
+  </div>
+
+  <!-- side menu -->
+  <div id="side-menu">
+    <div class="sidebar-header">
+      <img src="{{ url_for('static', filename='kikkyhairs.jpeg') }}" alt="KikkyHair" style="height: 45px;">
+      <i class="ri-close-line close-icon" id="closeSidebar"></i>
+    </div>
+    <nav class="sidebar-nav">
+      <ul>
+        <li><a href="{{ url_for('home') }}"><i class="ri-home-4-line"></i> Home</a></li>
+        <li><a href="{{ url_for('shop') }}"><i class="ri-store-line"></i> Shop</a></li>
+        <li><a href="{{ url_for('collection') }}?cat=bone"><i class="ri-folder-line"></i> Bone straight</a></li>
+        <li><a href="{{ url_for('collection') }}?cat=bounce"><i class="ri-folder-line"></i> Bounce curls</a></li>
+        <li><a href="{{ url_for('collection') }}?cat=colored"><i class="ri-folder-line"></i> Colored units</a></li>
+        <li><a href="{{ url_for('collection') }}?cat=wave"><i class="ri-folder-line"></i> Deep wave</a></li>
+        <li><a href="{{ url_for('collection') }}?cat=frontal"><i class="ri-folder-line"></i> Frontal wigs</a></li>
+        <li><a href="{{ url_for('contact') }}"><i class="ri-customer-service-line"></i> Contact</a></li>
+      </ul>
+    </nav>
+    <div class="sidebar-social">
+      <a href="tel:+2348147014346" title="Call"><i class="ri-phone-fill"></i></a>
+      <a href="https://wa.me/2348147014346" target="_blank" title="WhatsApp"><i class="ri-whatsapp-line"></i></a>
+      <a href="#" target="_blank" title="TikTok"><i class="fab fa-tiktok"></i></a>
+      <a href="#" title="Instagram"><i class="ri-instagram-line"></i></a>
+    </div>
+  </div>
+  <div id="overlay"></div>
+
+  <!-- CONTACT HEADER -->
+  <div class="contact-header">
+    <h2>get in touch</h2>
+    <div class="gold-label">we'd love to hear from you</div>
+  </div>
+
+  <!-- CONTENT -->
+  <main>
+    <div class="contact-grid">
+      <!-- LEFT: CONTACT INFO -->
+      <div class="contact-info">
+        <div class="info-item">
+          <div class="info-icon"><i class="ri-phone-line"></i></div>
+          <div class="info-content">
+            <h4>Call Us</h4>
+            <p><a href="tel:+2348147014346">+234 814 701 4346</a></p>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <div class="info-icon"><i class="ri-whatsapp-line"></i></div>
+          <div class="info-content">
+            <h4>WhatsApp</h4>
+            <p><a href="https://wa.me/2348147014346" target="_blank">+234 814 701 4346</a></p>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <div class="info-icon"><i class="ri-mail-line"></i></div>
+          <div class="info-content">
+            <h4>Email</h4>
+            <p><a href="mailto:hello@kikkyhairs.ng">hello@kikkyhairs.ng</a></p>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <div class="info-icon"><i class="ri-map-pin-line"></i></div>
+          <div class="info-content">
+            <h4>Visit Us</h4>
+            <p>Lagos, Nigeria</p>
+          </div>
+        </div>
+
+        <!-- SOCIAL LINKS (with placeholders) -->
+        <div class="social-links">
+          <h4>Connect With Us</h4>
+          <div class="social-icons">
+            <!-- WhatsApp (active) -->
+            <a href="https://wa.me/2348147014346" target="_blank" class="social-icon whatsapp" title="WhatsApp">
+              <i class="ri-whatsapp-line"></i>
+            </a>
+            
+            <!-- TikTok (placeholder) -->
+            <a href="#" class="social-icon placeholder" title="TikTok (coming soon)">
+              <i class="fab fa-tiktok"></i>
+            </a>
+            
+            <!-- Instagram (placeholder) -->
+            <a href="#" class="social-icon placeholder" title="Instagram (coming soon)">
+              <i class="ri-instagram-line"></i>
+            </a>
+            
+            <!-- Facebook (placeholder - you can add later) -->
+            <a href="#" class="social-icon placeholder" title="Facebook (coming soon)">
+              <i class="ri-facebook-line"></i>
+            </a>
+            
+            <!-- Twitter/X (placeholder) -->
+            <a href="#" class="social-icon placeholder" title="X (coming soon)">
+              <i class="ri-twitter-x-line"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: CONTACT FORM -->
+      <div class="contact-form">
+        <h3>send a message</h3>
+        <form>
+          <div class="form-group">
+            <input type="text" placeholder="Your Name" required>
+          </div>
+          <div class="form-group">
+            <input type="email" placeholder="Your Email" required>
+          </div>
+          <div class="form-group">
+            <input type="text" placeholder="Subject">
+          </div>
+          <div class="form-group">
+            <textarea placeholder="Your Message" required></textarea>
+          </div>
+          <button type="submit" class="submit-btn">Send Message</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- MAP SECTION (optional placeholder) -->
+    <div class="map-section">
+      <div class="map-container">
+        <div class="map-placeholder">
+          <i class="ri-map-pin-line" style="margin-right: 10px;"></i> Lagos, Nigeria – visit our studio
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h4>KikkyHair</h4>
+        <p>gold-standard human hair, curated for the bold.</p>
+      </div>
+      <div class="footer-col">
+        <h4>quick</h4>
+        <ul>
+          <li><a href="{{ url_for('home') }}">Home</a></li>
+          <li><a href="{{ url_for('collection') }}">Collection</a></li>
+          <li><a href="{{ url_for('shop') }}">Shop all</a></li>
+          <li><a href="{{ url_for('contact') }}">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>connect</h4>
+        <ul>
+          <li><a href="tel:+2348147014346"><i class="ri-phone-line"></i> +234 814 701 4346</a></li>
+          <li><a href="https://wa.me/2348147014346" target="_blank"><i class="ri-whatsapp-line"></i> WhatsApp</a></li>
+          <li><a href="#"><i class="ri-instagram-line"></i> @kikkyhair</a></li>
+          <li><a href="#"><i class="fab fa-tiktok"></i> @kikkyhair</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © 2026 KikkyHair — gold & brown elegance
+    </div>
+  </footer>
+
+  <!-- SCRIPTS (menu, cart, etc.) -->
+  <script>
+    (function() {
+      // ----- LEFT MENU -----
+      const menuToggle = document.getElementById('menu-toggle');
+      const sideMenu = document.getElementById('side-menu');
+      const overlay = document.getElementById('overlay');
+      const closeSidebar = document.getElementById('closeSidebar');
+
+      function openMenu() { sideMenu.classList.add('active'); overlay.classList.add('active'); }
+      function closeMenu() { sideMenu.classList.remove('active'); overlay.classList.remove('active'); }
+
+      menuToggle.addEventListener('click', openMenu);
+      closeSidebar.addEventListener('click', closeMenu);
+      overlay.addEventListener('click', closeMenu);
+      document.querySelectorAll('.sidebar-nav a').forEach(link => link.addEventListener('click', closeMenu));
+
+      // ----- CART (from localStorage) -----
+      const cartIcon = document.getElementById('cartIcon');
+      const cartPanel = document.getElementById('cartPanel');
+      const closeCart = document.getElementById('closeCart');
+
+      if (cartIcon) {
+        cartIcon.addEventListener('click', () => {
+          if (cartPanel) cartPanel.classList.toggle('open');
+        });
+      }
+      if (closeCart) {
+        closeCart.addEventListener('click', () => {
+          if (cartPanel) cartPanel.classList.remove('open');
+        });
+      }
+
+      let cart = JSON.parse(localStorage.getItem('kikkyCart')) || [];
+      function updateCartCount() {
+        const countEl = document.getElementById('cartCount');
+        if (countEl) {
+          countEl.innerText = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+        }
+      }
+      updateCartCount();
+
+      // Basic form handling (just prevent default for now)
+      document.querySelector('form')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        alert('Message sent! (demo)');
+      });
+    })();
+  </script>
+</body>
+</html>
