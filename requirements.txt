@@ -1,9 +1,9 @@
-flask
+Flask
+Flask-CORS
 pymongo
 python-dotenv
 bcrypt
-pyjwt
+PyJWT
 requests
 certifi
 gunicorn
-pip freeze
