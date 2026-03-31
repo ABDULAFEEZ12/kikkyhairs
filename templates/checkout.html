@@ -300,9 +300,9 @@
           }))
         };
 
-        // Initialize Paystack
+        // Initialize Paystack with the hardcoded public key
         const handler = PaystackPop.setup({
-          key: '{{ public_key }}',  // passed from Flask
+          key: 'pk_test_bd9a82ce60b2dd6deb1cb8fbe694bc38897d3993',  // Your public key
           email: email,
           amount: total * 100,       // Paystack expects amount in kobo
           currency: 'NGN',
