@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KikkyHair · gold & brown</title>
+  <title>KikkyHair · Full Collection | Gold Standard Wigs</title>
   <!-- Google Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
@@ -135,7 +135,7 @@
     /* shop layout with sidebar */
     .shop-layout { display: flex; gap: 40px; align-items: flex-start; margin-top: 20px; }
     .shop-sidebar {
-      width: 270px; flex-shrink: 0; background: var(--bg-soft); border: 1px solid #2a2a2a;
+      width: 280px; flex-shrink: 0; background: var(--bg-soft); border: 1px solid #2a2a2a;
       border-radius: 24px; padding: 24px 20px; position: sticky; top: 90px;
     }
     .filter-group h3 { font-size: 1.2rem; margin-bottom: 18px; color: var(--gold); border-bottom: 1px dashed var(--gold); padding-bottom: 8px; }
@@ -318,21 +318,24 @@
   <section class="product-grid-section">
     <div class="container">
       <div class="shop-layout">
-        <!-- sidebar categories (simplified) -->
+        <!-- sidebar categories (FULLY UPDATED with all requested collections) -->
         <aside class="shop-sidebar">
           <div class="filter-group">
             <h3><i class="ri-filter-3-line"></i> Categories</h3>
             <ul class="category-list" id="categoryList">
               <li><a data-cat="all" class="active"><span>All</span><i class="ri-check-line"></i></a></li>
-              <li><a data-cat="bone"><span>Black bone straight</span><i class="ri-check-line"></i></a></li>
-              <li><a data-cat="bounce"><span>Bounce curls</span><i class="ri-check-line"></i></a></li>
-              <li><a data-cat="colored"><span>Colored units</span><i class="ri-check-line"></i></a></li>
-              <li><a data-cat="wave"><span>Deep wave</span><i class="ri-check-line"></i></a></li>
-              <li><a data-cat="frontal"><span>Frontal bob wigs</span><i class="ri-check-line"></i></a></li>
+              <li><a data-cat="frontals-ponytail"><span>Frontals & ponytail collections</span><i class="ri-check-line"></i></a></li>
+              <li><a data-cat="black-bone-straight"><span>Black bone straight</span><i class="ri-check-line"></i></a></li>
+              <li><a data-cat="colored-bone-straight"><span>Colored bone straight</span><i class="ri-check-line"></i></a></li>
+              <li><a data-cat="bounce-curls-wavy"><span>Bounce curls / wavy units</span><i class="ri-check-line"></i></a></li>
+              <li><a data-cat="deepwave"><span>Deepwave units</span><i class="ri-check-line"></i></a></li>
+              <li><a data-cat="pixie-curls"><span>Pixie curls units</span><i class="ri-check-line"></i></a></li>
+              <li><a data-cat="closure-bobs-frontal"><span>Closure bobs / frontal bobs units</span><i class="ri-check-line"></i></a></li>
+              <li><a data-cat="silky-straight"><span>Silky straight units</span><i class="ri-check-line"></i></a></li>
             </ul>
           </div>
           <div class="filter-note">
-            <i class="ri-gem-line" style="color: var(--gold);"></i> 24k gold standard · only premium
+            <i class="ri-gem-line" style="color: var(--gold);"></i> kikkyhairs · only premium
           </div>
         </aside>
 
@@ -408,9 +411,6 @@
         };
       });
 
-      // If there are no products, we could optionally keep a placeholder message,
-      // but the grid will just show empty and "Showing 0 of 0" – that's fine.
-
       let currentCategory = 'all';
       let currentPage = 1;
       const itemsPerPage = 6;
@@ -469,7 +469,7 @@
         document.getElementById('pagination').innerHTML = html;
       }
 
-      // category click
+      // category click (using new categories)
       document.querySelectorAll('.category-list a').forEach(link => {
         link.addEventListener('click', function(e) {
           e.preventDefault();
@@ -493,16 +493,56 @@
         }
       });
 
-      // add to cart (simple)
+      // ----- ENHANCED CART (with local storage) -----
+      let cart = JSON.parse(localStorage.getItem('kikkyCart')) || [];
+
+      function updateCartCount() {
+        document.getElementById('cartCount').innerText = cart.reduce((sum, item) => sum + item.quantity, 0);
+      }
+
+      function renderCartItems() {
+        const cartItemsEl = document.getElementById('cartItems');
+        const cartTotalEl = document.getElementById('cartTotal');
+        if (cart.length === 0) {
+          cartItemsEl.innerHTML = '<div class="empty-cart">your cart glows empty ✨</div>';
+          cartTotalEl.innerText = '₦0';
+          return;
+        }
+        let html = '';
+        let total = 0;
+        cart.forEach(item => {
+          total += item.price * item.quantity;
+          html += `<p>${item.name} x${item.quantity} – ₦${(item.price * item.quantity).toLocaleString()}</p>`;
+        });
+        cartItemsEl.innerHTML = html;
+        cartTotalEl.innerText = '₦' + total.toLocaleString();
+      }
+
+      function addToCart(productId, productName, productPrice) {
+        const existing = cart.find(item => item.id === productId);
+        if (existing) {
+          existing.quantity += 1;
+        } else {
+          cart.push({ id: productId, name: productName, price: productPrice, quantity: 1 });
+        }
+        localStorage.setItem('kikkyCart', JSON.stringify(cart));
+        updateCartCount();
+        renderCartItems();
+        showModal('success', '✨ added', `${productName} now in your cart`, null);
+      }
+
       document.addEventListener('click', function(e) {
         const btn = e.target.closest('.add-to-cart-btn');
         if (!btn) return;
         e.preventDefault();
+        const id = btn.dataset.id;
         const name = btn.dataset.name;
-        let count = parseInt(document.getElementById('cartCount').innerText);
-        count++;
-        document.getElementById('cartCount').innerText = count;
-        showModal('success', '✨ added', `${name} now in your cart`, null);
+        const price = parseInt(btn.dataset.price);
+        addToCart(id, name, price);
+      });
+
+      document.getElementById('checkoutBtn')?.addEventListener('click', () => {
+        showModal('success', 'Coming soon', 'Checkout will be integrated with payment gateway.', null);
       });
 
       // modal functions
@@ -563,6 +603,8 @@
 
       // Initial render
       renderProducts();
+      updateCartCount();
+      renderCartItems();
     })();
   </script>
 </body>
