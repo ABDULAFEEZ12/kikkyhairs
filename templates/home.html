@@ -2,480 +2,1114 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <title>Kikky Hairs · affordable and luxury</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>Kikky Hairs · Timeless Luxury Wigs</title>
 
-  <!-- premium fonts & icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <!-- Premium Fonts (Code A luxury vibe) -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Icons -->
   <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
-    /* ----- GLOBAL LUXURY VARIABLES (Kikky Hairs) ----- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* ---------- GOLD LUXURY PALETTE (CODE A) ---------- */
     :root {
       --gold: #b38728;
+      --gold-light: #d4af37;
       --gold-gradient: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
-      --deep-brown: #2c2420;        /* soft, warm dark brown */
-      --bg-dark: #120e0c;            /* deep brown-black */
-      --bg-soft: #1e1814;            /* card background */
+      --deep-brown: #2c2420;
+      --bg-dark: #0c0a08;
+      --bg-soft: #1e1814;
       --white-off: #f4f4f4;
       --cream: #fefaf7;
       --font-heading: 'Playfair Display', serif;
       --font-body: 'Montserrat', sans-serif;
-      --soft-shadow: 0 20px 35px -15px rgba(0,0,0,0.5), 0 5px 15px rgba(0,0,0,0.3);
-      --card-hover-shadow: 0 25px 35px -20px rgba(179,135,40,0.3), 0 0 0 1px rgba(179,135,40,0.3);
+      --soft-shadow: 0 20px 35px -15px rgba(0,0,0,0.6), 0 5px 15px rgba(0,0,0,0.4);
+      --card-hover-shadow: 0 25px 35px -20px rgba(179,135,40,0.35), 0 0 0 1px rgba(179,135,40,0.3);
+      --transition-ease: cubic-bezier(0.23, 1, 0.32, 1);
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: var(--font-body);
       background: linear-gradient(to bottom, #0c0c0c, #111111);
       color: var(--white-off);
-      line-height: 1.7;
+      line-height: 1.6;
       overflow-x: hidden;
     }
-    h1, h2, h3, .heading-font { font-family: var(--font-heading); font-weight: 500; letter-spacing: 0.02em; }
-    a { text-decoration: none; color: inherit; }
-    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
 
-    /* ----- LEFT SLIDE‑IN MENU (kikky) ----- */
+    h1, h2, h3, .heading-font {
+      font-family: var(--font-heading);
+      font-weight: 500;
+      letter-spacing: 0.01em;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ---------- SCROLL PROGRESS ---------- */
+    #scrollProgress {
+      position: fixed;
+      top: 70px;
+      left: 0;
+      height: 3px;
+      background: var(--gold-gradient);
+      z-index: 1002;
+      width: 0%;
+      transition: width 0.08s linear;
+      box-shadow: 0 0 6px rgba(179,135,40,0.6);
+    }
+
+    /* ---------- TOP BAR (LUXURY DARK) ---------- */
     #top-bar {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       height: 70px;
-      background: rgba(18,14,12,0.85);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background: rgba(12, 10, 8, 0.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 0 5%;
       z-index: 1002;
-      border-bottom: 1px solid rgba(179,135,40,0.2);
+      border-bottom: 1px solid rgba(179, 135, 40, 0.25);
+      transition: box-shadow 0.3s;
     }
-    .brand-logo img { height: 48px; width: auto; }
+    #top-bar.scrolled {
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
+    }
+    .brand-logo img {
+      height: 50px;
+      width: auto;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    }
     #menu-toggle {
-      width: 44px; height: 44px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.8rem; color: var(--white-off);
-      background: transparent; border: none; cursor: pointer;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      color: var(--white-off);
+      background: transparent;
+      border: none;
+      cursor: pointer;
       transition: background 0.2s;
     }
-    #menu-toggle:hover { background: rgba(179,135,40,0.15); }
-    .header-actions { display: flex; gap: 1rem; align-items: center; }
-    .cart-icon { font-size: 1.5rem; position: relative; cursor: pointer; }
-    #cartCount { 
-      position: absolute; top: -8px; right: -10px; 
-      background: var(--gold); color: #000; font-size: 0.7rem; 
-      border-radius: 50%; width: 18px; height: 18px; display: flex;
-      align-items: center; justify-content: center; font-weight: 600;
+    #menu-toggle:hover {
+      background: rgba(179, 135, 40, 0.2);
+    }
+    .desktop-nav {
+      display: none;
+      gap: 2.2rem;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: 500;
+    }
+    @media (min-width: 900px) {
+      .desktop-nav {
+        display: flex;
+      }
+      .desktop-nav a {
+        color: #eee;
+        border-bottom: 2px solid transparent;
+        padding-bottom: 6px;
+        transition: 0.2s;
+      }
+      .desktop-nav a:hover {
+        border-bottom-color: var(--gold);
+        color: var(--gold-light);
+      }
+    }
+    .header-actions {
+      display: flex;
+      gap: 1.2rem;
+      align-items: center;
+    }
+    .cart-icon {
+      font-size: 1.6rem;
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .cart-icon:hover {
+      transform: scale(1.05);
+      color: var(--gold);
+    }
+    #cartCount {
+      position: absolute;
+      top: -8px;
+      right: -12px;
+      background: var(--gold);
+      color: #000;
+      font-size: 0.7rem;
+      font-weight: 800;
+      border-radius: 50%;
+      width: 19px;
+      height: 19px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    /* side menu panel */
+    /* ---------- LEFT SLIDE MENU (ENHANCED) ---------- */
+    #overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(6px);
+      display: none;
+      z-index: 1001;
+      cursor: pointer;
+    }
+    #overlay.active {
+      display: block;
+    }
     #side-menu {
       position: fixed;
       top: 0;
-      left: -320px;
-      width: min(300px, 80vw);
+      left: -340px;
+      width: min(320px, 85vw);
       height: 100vh;
-      background: rgba(18,14,12,0.97);
+      background: rgba(18, 14, 12, 0.98);
       backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-right: 1px solid rgba(179,135,40,0.3);
-      transition: left 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+      border-right: 1px solid rgba(179, 135, 40, 0.4);
+      transition: left 0.45s var(--transition-ease);
       z-index: 1003;
       overflow-y: auto;
-      padding: 2rem 1.5rem;
+      padding: 2rem 1.8rem;
       display: flex;
       flex-direction: column;
     }
-    #side-menu.active { left: 0; }
-    .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; }
-    .sidebar-header img { height: 50px; }
-    .close-icon { font-size: 2rem; cursor: pointer; color: var(--gold); }
-    .sidebar-nav ul { list-style: none; }
-    .sidebar-nav li { margin: 1.2rem 0; }
-    .sidebar-nav a { 
-      display: flex; align-items: center; gap: 15px; 
-      font-size: 1.1rem; color: #ddd; transition: 0.2s;
+    #side-menu.active {
+      left: 0;
     }
-    .sidebar-nav a:hover { color: var(--gold); transform: translateX(5px); }
-    .sidebar-social { margin-top: auto; display: flex; gap: 1.5rem; justify-content: center; padding: 2rem 0; }
-    .sidebar-social a { font-size: 1.5rem; color: #aaa; }
-    .sidebar-social a:hover { color: var(--gold); }
-
-    #overlay {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
-      display: none; z-index: 1001; cursor: pointer;
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2.2rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid rgba(179, 135, 40, 0.3);
     }
-    #overlay.active { display: block; }
-
-    /* desktop navigation */
-    .desktop-nav { display: none; }
-    @media (min-width: 900px) {
-      .desktop-nav { display: flex; gap: 2.5rem; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; }
-      .desktop-nav a { color: #fff; border-bottom: 2px solid transparent; padding-bottom: 4px; }
-      .desktop-nav a:hover { border-bottom-color: var(--gold); }
+    .sidebar-header img {
+      height: 48px;
     }
-
-    /* ----- KIKKY HAIRS PREMIUM HERO (kh- prefix) ----- */
-    .kh-hero-section {
-      background: #0c0c0c;
-      background-image: radial-gradient(circle at 80% 20%, #1e1a16 0%, #0a0806 90%);
-      min-height: 90vh;
+    .close-icon {
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: var(--gold);
+      transition: transform 0.2s;
+    }
+    .close-icon:hover {
+      transform: rotate(90deg);
+    }
+    .sidebar-nav ul {
+      list-style: none;
+    }
+    .sidebar-nav li {
+      margin: 1.2rem 0;
+    }
+    .sidebar-nav a {
       display: flex;
       align-items: center;
-      padding: 80px 0;
-      margin-top: 70px;
+      gap: 14px;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #ddd;
+      transition: 0.25s;
     }
-    .kh-container {
-      max-width: 1200px; width: 90%; margin: 0 auto;
-      display: grid; grid-template-columns: 1.1fr 0.9fr; align-items: center; gap: 4rem;
+    .sidebar-nav a:hover {
+      color: var(--gold);
+      transform: translateX(6px);
     }
-    .kh-tagline { font-family: var(--font-body); color: var(--gold); text-transform: uppercase; letter-spacing: 3px; font-size: 0.85rem; font-weight: 600; margin-bottom: 1rem; }
-    .kh-headline { font-family: var(--font-heading); color: var(--white-off); font-size: 3.8rem; line-height: 1.1; margin-bottom: 1.5rem; font-weight: 700; }
-    .text-gold-metallic { background: var(--gold-gradient); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .kh-desc { color: #ccc; font-size: 1.1rem; line-height: 1.7; margin-bottom: 2.5rem; max-width: 90%; }
-    .kh-features { display: flex; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 3rem; }
-    .kh-feature-pill { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.2); padding: 10px 20px; border-radius: 50px; color: #fff; font-size: 0.85rem; }
-    .kh-btn-gold { display: inline-flex; align-items: center; justify-content: center; padding: 18px 45px; background: var(--gold-gradient); color: #000; font-weight: 700; text-transform: uppercase; border-radius: 50px; box-shadow: 0 10px 30px rgba(179,135,40,0.2); transition: 0.4s; }
-    .kh-btn-gold:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(179,135,40,0.4); }
-    .kh-image-wrapper { position: relative; display: flex; justify-content: center; }
-    .kh-blob-bg { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 120%; height: 120%; background: radial-gradient(circle, rgba(184,134,11,0.2) 0%, transparent 70%); filter: blur(40px); }
-    .kh-img-main { width: 100%; max-width: 500px; border-radius: 200px 200px 50px 50px; border: 2px solid rgba(212,175,55,0.4); box-shadow: 0 25px 60px -10px #000; }
-    .kh-float-badge { position: absolute; bottom: 40px; right: -20px; background: rgba(18,14,12,0.95); border: 1px solid var(--gold); padding: 15px 25px; backdrop-filter: blur(5px); border-radius: 50px; }
-    .badge-head { font-family: var(--font-heading); color: var(--gold); font-style: italic; }
+    .sidebar-categories {
+      margin: 2rem 0;
+    }
+    .sidebar-cat-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--gold);
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+    .sidebar-cat-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .cat-chip {
+      background: rgba(179, 135, 40, 0.12);
+      border: 1px solid rgba(179, 135, 40, 0.35);
+      padding: 8px 16px;
+      border-radius: 40px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      transition: 0.2s;
+      color: #eee;
+    }
+    .cat-chip:hover {
+      background: var(--gold);
+      color: #000;
+      border-color: var(--gold);
+    }
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 1.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      border-top: 1px solid rgba(179, 135, 40, 0.25);
+    }
+    .sidebar-footer a {
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #bbb;
+      transition: 0.2s;
+    }
+    .sidebar-footer a:hover {
+      color: var(--gold);
+    }
 
-    /* ----- PRODUCT GRID (soft radius) ----- */
-    .product-grid-section { padding: 60px 5px; background: transparent; }
-    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
-    .section-header h2 { font-size: 2rem; color: #fff; }
-    .link-muted { color: #aaa; display: flex; align-items: center; gap: 5px; }
+    /* ---------- HERO SPLIT (CODE B LAYOUT x DARK THEME) ---------- */
+    .hero-split {
+      margin-top: 70px;
+      min-height: 85vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      overflow: hidden;
+      background: #0c0a08;
+    }
+    .hero-left {
+      background: radial-gradient(ellipse at 20% 40%, #1e1814, #0a0705);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 4rem 6% 4rem 8%;
+      position: relative;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.7rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      width: 40px;
+      height: 1px;
+      background: var(--gold);
+    }
+    .hero-h1 {
+      font-family: var(--font-heading);
+      font-size: clamp(2.8rem, 5vw, 5rem);
+      font-weight: 600;
+      line-height: 1.08;
+      margin-bottom: 1.6rem;
+      color: var(--white-off);
+    }
+    .hero-h1 em {
+      font-style: italic;
+      background: var(--gold-gradient);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-desc {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: #ccc;
+      max-width: 420px;
+      margin-bottom: 2rem;
+    }
+    .hero-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 2.2rem;
+    }
+    .hero-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(179, 135, 40, 0.12);
+      border: 1px solid rgba(179, 135, 40, 0.3);
+      border-radius: 60px;
+      padding: 8px 18px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    .hero-pill i {
+      color: var(--gold);
+    }
+    .hero-cta-row {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--gold-gradient);
+      color: #000;
+      padding: 14px 34px;
+      border-radius: 50px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: 0.3s;
+      box-shadow: 0 8px 20px rgba(179, 135, 40, 0.3);
+    }
+    .btn-primary:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 14px 28px rgba(179, 135, 40, 0.5);
+    }
+    .hero-link-alt {
+      color: var(--gold);
+      border-bottom: 1px solid var(--gold);
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    .hero-right {
+      position: relative;
+      overflow: hidden;
+      background: #1e1612;
+    }
+    .hero-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s var(--transition-ease);
+    }
+    .hero-right:hover .hero-img {
+      transform: scale(1.02);
+    }
+    .hero-overlay-text {
+      position: absolute;
+      bottom: 2rem;
+      left: 2rem;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(12px);
+      padding: 1rem 1.8rem;
+      border-radius: 40px;
+      border-left: 3px solid var(--gold);
+    }
+    .hero-overlay-text strong {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      color: var(--gold);
+    }
+    @media (max-width: 860px) {
+      .hero-split {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 50vh;
+      }
+      .hero-left {
+        order: 2;
+        padding: 3rem 6%;
+      }
+      .hero-right {
+        order: 1;
+      }
+    }
+
+    /* ---------- MARQUEE (GOLD THEME) ---------- */
+    .marquee-strip {
+      background: var(--gold);
+      color: #0c0a08;
+      padding: 12px 0;
+      overflow: hidden;
+      white-space: nowrap;
+      font-weight: 600;
+    }
+    .marquee-inner {
+      display: inline-flex;
+      animation: marqueeAnim 32s linear infinite;
+    }
+    .marquee-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-right: 2.5rem;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    .marquee-dot {
+      width: 5px;
+      height: 5px;
+      background: #000;
+      border-radius: 50%;
+      opacity: 0.6;
+    }
+    @keyframes marqueeAnim {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ---------- PRODUCT SECTION ---------- */
+    .products-section {
+      padding: 5rem 5%;
+    }
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 0.7rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1rem;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(179, 135, 40, 0.35);
+    }
+    .section-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 3rem;
+      flex-wrap: wrap;
+    }
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 500;
+      color: var(--white-off);
+    }
+    .section-title em {
+      color: var(--gold);
+      font-style: italic;
+    }
+    .view-all-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      border-bottom: 1px solid var(--gold);
+      padding-bottom: 4px;
+      color: #ccc;
+    }
     .product-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 30px;
     }
     .product-card {
-      background: #1e1814; border-radius: 24px; overflow: hidden; border: 1px solid #2a2a2a;
-      transition: all 0.3s cubic-bezier(0.23,1,0.32,1); position: relative; display: flex; flex-direction: column;
+      background: #1e1814;
+      border-radius: 28px;
+      overflow: hidden;
+      border: 1px solid #2e2824;
+      transition: all 0.35s var(--transition-ease);
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
     }
-    .product-card:hover { transform: translateY(-8px); box-shadow: var(--card-hover-shadow); border-color: var(--gold); }
-    .card-image-wrapper {
-      position: relative; height: 260px; background: #2a241f; overflow: hidden;
+    .product-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--card-hover-shadow);
+      border-color: var(--gold);
+    }
+    .card-img-wrap {
+      position: relative;
+      height: 280px;
+      background: #2a241f;
+      overflow: hidden;
     }
     .product-image, .product-video {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;
-      transition: opacity 0.5s ease;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: opacity 0.4s ease, transform 0.5s ease;
     }
-    .product-video { opacity: 0; pointer-events: none; }
-    .product-card:hover .product-image { opacity: 0; }
-    .product-card:hover .product-video { opacity: 1; }
-
+    .product-video {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .product-card:hover .product-image {
+      opacity: 0;
+      transform: scale(1.05);
+    }
+    .product-card:hover .product-video {
+      opacity: 1;
+    }
+    .card-badge {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      background: var(--gold);
+      color: #000;
+      font-size: 0.65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 40px;
+      z-index: 3;
+      letter-spacing: 1px;
+    }
     .quick-add-btn {
-      position: absolute; bottom: 15px; right: 15px; width: 45px; height: 45px;
-      border-radius: 50%; background: #fff; border: none; color: #000; cursor: pointer;
-      display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
-      transition: 0.3s; opacity: 0; transform: translateY(20px); z-index: 2;
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #fff;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: #000;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: 0.25s;
+      z-index: 3;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
-    .product-card:hover .quick-add-btn { opacity: 1; transform: translateY(0); }
-    .quick-add-btn:hover { background: var(--gold); color: #fff; }
+    .product-card:hover .quick-add-btn {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .quick-add-btn:hover {
+      background: var(--gold);
+      color: #fff;
+    }
+    .card-body {
+      padding: 1.2rem 1.2rem 1.4rem;
+      flex: 1;
+    }
+    .card-category {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--gold);
+      margin-bottom: 6px;
+    }
+    .card-name {
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #fff;
+    }
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+      border-top: 1px solid rgba(179, 135, 40, 0.25);
+      padding-top: 12px;
+    }
+    .card-price {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--gold);
+    }
+    .card-view {
+      font-size: 0.7rem;
+      color: #aaa;
+    }
 
-    .card-details { padding: 20px; display: flex; flex-direction: column; flex-grow: 1; }
-    .category-tag { font-size: 0.75rem; text-transform: uppercase; color: var(--gold); font-weight: 600; margin-bottom: 8px; }
-    .product-title { font-size: 1rem; margin: 0 0 15px; font-weight: 500; color: #fff; line-height: 1.4; }
-    .price-row { margin-top: auto; display: flex; justify-content: space-between; align-items: center; padding-top: 15px; border-top: 1px solid #2a2a2a; }
-    .price { font-weight: 700; font-size: 1.2rem; color: var(--gold); }
-    .view-link { color: #aaa; font-size: 1.2rem; }
+    /* ---------- VALUE STRIP (CODE B x DARK) ---------- */
+    .value-strip {
+      background: #0a0806;
+      padding: 5rem 6%;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 3rem;
+      border-top: 1px solid rgba(179, 135, 40, 0.2);
+      border-bottom: 1px solid rgba(179, 135, 40, 0.2);
+    }
+    .value-item {
+      text-align: center;
+    }
+    .value-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      border: 1px solid rgba(179, 135, 40, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      font-size: 1.6rem;
+      color: var(--gold);
+      background: rgba(179, 135, 40, 0.08);
+    }
+    .value-title {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #fff;
+    }
+    .value-desc {
+      font-size: 0.8rem;
+      color: #aaa;
+    }
 
-    /* ----- CART PANEL (kikky) ----- */
+    /* ---------- CART PANEL (LUXURY DARK) ---------- */
     .cart-panel {
-      position: fixed; top: 0; right: -400px; width: 360px; height: 100vh;
-      background: #1a1512; border-left: 2px solid var(--gold); z-index: 2000;
-      transition: right 0.4s ease; display: flex; flex-direction: column;
-      box-shadow: -10px 0 30px rgba(0,0,0,0.5); padding: 20px;
+      position: fixed;
+      top: 0;
+      right: -420px;
+      width: 380px;
+      height: 100vh;
+      background: #17120f;
+      border-left: 2px solid var(--gold);
+      z-index: 2000;
+      transition: right 0.4s var(--transition-ease);
+      display: flex;
+      flex-direction: column;
+      box-shadow: -12px 0 30px rgba(0, 0, 0, 0.6);
     }
-    .cart-panel.open { right: 0; }
-    .cart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .close-cart { background: none; border: none; color: var(--gold); font-size: 2rem; cursor: pointer; }
-    .cart-items { flex: 1; overflow-y: auto; color: #ccc; }
-    .empty-cart { text-align: center; margin-top: 2rem; color: #666; }
-    .cart-footer { border-top: 1px solid #333; padding-top: 20px; }
-    .cart-total { display: flex; justify-content: space-between; margin-bottom: 15px; }
-    .cart-actions { display: flex; flex-direction: column; gap: 10px; }
-    .btn { background: var(--gold); color: #000; padding: 12px; text-align: center; border-radius: 50px; font-weight: 600; border: none; cursor: pointer; }
-    .btn-ghost { background: transparent; border: 1px solid var(--gold); color: var(--gold); }
+    .cart-panel.open {
+      right: 0;
+    }
+    .cart-header {
+      padding: 1.5rem 1.8rem;
+      border-bottom: 1px solid rgba(179, 135, 40, 0.3);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .cart-header h3 {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      color: var(--gold);
+    }
+    .close-cart {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #ccc;
+    }
+    .cart-items {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.2rem;
+    }
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #251e1a;
+      padding: 12px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+    }
+    .cart-item-info {
+      flex: 1;
+    }
+    .cart-item-name {
+      font-weight: 600;
+    }
+    .cart-item-price {
+      color: var(--gold);
+      font-weight: 700;
+    }
+    .remove-item {
+      background: rgba(255, 80, 80, 0.2);
+      border: none;
+      color: #ff9f9f;
+      border-radius: 30px;
+      padding: 4px 12px;
+      cursor: pointer;
+      font-size: 0.7rem;
+      transition: 0.2s;
+    }
+    .cart-footer {
+      padding: 1.2rem;
+      border-top: 1px solid rgba(179, 135, 40, 0.3);
+    }
+    .cart-total-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+    .cart-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .btn {
+      padding: 12px;
+      border-radius: 60px;
+      text-align: center;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-size: 0.75rem;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-fill {
+      background: var(--gold);
+      color: #000;
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+    }
 
-    /* ----- FOOTER (Kikky Hairs) ----- */
-    .footer { background: #0c0a08; border-top: 1px solid #2a2a2a; padding: 50px 5% 20px; }
-    .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 3rem; }
-    .footer-col h4 { color: var(--gold); margin-bottom: 1rem; }
-    .footer-col ul { list-style: none; }
-    .footer-col li { margin: 0.7rem 0; }
-    .footer-col a { color: #aaa; }
-    .footer-col a:hover { color: var(--gold); }
-    .footer-bottom { text-align: center; padding-top: 30px; color: #666; }
-
-    /* responsive */
-    @media (max-width: 968px) {
-      .kh-container { grid-template-columns: 1fr; text-align: center; }
-      .kh-headline { font-size: 2.5rem; }
-      .kh-features { justify-content: center; }
-      .kh-image-wrapper { order: -1; }
+    /* ---------- FOOTER (LUXURY DARK) ---------- */
+    footer {
+      background: #0a0806;
+      padding: 4rem 5% 2rem;
+      border-top: 1px solid rgba(179, 135, 40, 0.2);
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 3rem;
+      margin-bottom: 3rem;
+    }
+    .footer-col h4 {
+      color: var(--gold);
+      margin-bottom: 1rem;
+      font-family: var(--font-heading);
+    }
+    .footer-col p, .footer-col a {
+      color: #aaa;
+      font-size: 0.85rem;
+      line-height: 1.7;
+    }
+    .footer-col a:hover {
+      color: var(--gold);
+    }
+    .footer-bottom {
+      text-align: center;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(179, 135, 40, 0.2);
+      font-size: 0.75rem;
+      color: #777;
     }
     @media (max-width: 600px) {
-      .product-grid { grid-template-columns: repeat(2,1fr); gap: 15px; }
-      .card-image-wrapper { height: 160px; }
+      .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+      }
+      .card-img-wrap {
+        height: 180px;
+      }
+      .cart-panel {
+        width: 90vw;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- OVERLAY (for side menu) -->
-  <div id="overlay"></div>
+<div id="scrollProgress"></div>
+<div id="overlay"></div>
 
-  <!-- LEFT SLIDE‑IN MENU (Kikky Hairs) -->
-  <aside id="side-menu">
-    <div class="sidebar-header">
-      <img src="{{ url_for('static', filename='kikkyhairs.jpeg') }}" alt="Kikky Hairs" style="height: 45px;">
-      <i class="ri-close-line close-icon" id="closeSidebar"></i>
+<!-- LEFT SIDE MENU (Premium) -->
+<aside id="side-menu">
+  <div class="sidebar-header">
+    <img src="{{ url_for('static', filename='kikkyhairs.jpeg') }}" alt="Kikky Hairs">
+    <i class="ri-close-line close-icon" id="closeSidebar"></i>
+  </div>
+  <nav class="sidebar-nav">
+    <ul>
+      <li><a href="{{ url_for('home') }}"><i class="ri-home-4-line"></i> Home</a></li>
+      <li><a href="{{ url_for('collection') }}"><i class="ri-store-line"></i> Shop</a></li>
+      <li><a href="{{ url_for('about') }}"><i class="ri-information-line"></i> About</a></li>
+    </ul>
+  </nav>
+  <div class="sidebar-categories">
+    <div class="sidebar-cat-label">Collections</div>
+    <div class="sidebar-cat-chips">
+      <a href="{{ url_for('collection') }}?cat=bone" class="cat-chip">Bone straight</a>
+      <a href="{{ url_for('collection') }}?cat=bounce" class="cat-chip">Bounce curls</a>
+      <a href="{{ url_for('collection') }}?cat=colored" class="cat-chip">Colored units</a>
+      <a href="{{ url_for('collection') }}?cat=wave" class="cat-chip">Deep wave</a>
+      <a href="{{ url_for('collection') }}?cat=frontal" class="cat-chip">Frontal wigs</a>
     </div>
-    <nav class="sidebar-nav">
-      <ul>
-        <li><a href="{{ url_for('home') }}"><i class="ri-home-4-line"></i> Home</a></li>
-        <li><a href="{{ url_for('shop') }}"><i class="ri-store-line"></i> Shop</a></li>
-        <li><a href="{{ url_for('about') }}"><i class="ri-information-line"></i> About</a></li>
-        <li><a href="{{ url_for('collection') }}?cat=bone"><i class="ri-folder-line"></i> Bone straight</a></li>
-        <li><a href="{{ url_for('collection') }}?cat=bounce"><i class="ri-folder-line"></i> Bounce curls</a></li>
-        <li><a href="{{ url_for('collection') }}?cat=colored"><i class="ri-folder-line"></i> Colored units</a></li>
-        <li><a href="{{ url_for('collection') }}?cat=wave"><i class="ri-folder-line"></i> Deep wave</a></li>
-        <li><a href="{{ url_for('collection') }}?cat=frontal"><i class="ri-folder-line"></i> Frontal wigs</a></li>
-      </ul>
-    </nav>
-    <div class="sidebar-social">
-      <a href="tel:+2348123456789" title="Call"><i class="ri-phone-fill"></i></a>
-      <a href="#" target="_blank" title="TikTok"><i class="fab fa-tiktok"></i></a>
-      <a href="#" title="Instagram"><i class="ri-instagram-line"></i></a>
-    </div>
-  </aside>
+  </div>
+  <div class="sidebar-footer">
+    <a href="tel:+2348147014346"><i class="ri-phone-fill"></i> +234 814 701 4346</a>
+    <a href="mailto:hello@kikkyhairs.ng"><i class="ri-mail-fill"></i> hello@kikkyhairs.ng</a>
+    <a href="#" target="_blank"><i class="fab fa-instagram"></i> @kikkyhairs</a>
+    <a href="#" target="_blank"><i class="fab fa-tiktok"></i> @kikkyhairs</a>
+  </div>
+</aside>
 
-  <!-- TOP BAR -->
-  <header id="top-bar">
-    <button id="menu-toggle" aria-label="Menu">☰</button>
-    <div class="brand-logo">
-      <a href="{{ url_for('home') }}"><img src="{{ url_for('static', filename='kikkyhairs.jpeg') }}" alt="Kikky Hairs"></a>
+<!-- TOP BAR -->
+<header id="top-bar">
+  <button id="menu-toggle" aria-label="Menu">☰</button>
+  <div class="brand-logo">
+    <a href="{{ url_for('home') }}"><img src="{{ url_for('static', filename='kikkyhairs.jpeg') }}" alt="Kikky Hairs"></a>
+  </div>
+  <nav class="desktop-nav">
+    <a href="{{ url_for('home') }}">Home</a>
+    <a href="{{ url_for('collection') }}">Shop</a>
+    <a href="{{ url_for('about') }}">About</a>
+    <a href="{{ url_for('contact') }}">Contact</a>
+  </nav>
+  <div class="header-actions">
+    <div class="cart-icon" id="cartToggle">
+      <i class="ri-shopping-cart-line"></i>
+      <span id="cartCount">0</span>
     </div>
-    <nav class="desktop-nav">
-      <a href="{{ url_for('home') }}">Home</a>
-      <a href="{{ url_for('collection') }}">Shop</a>
-      <a href="{{ url_for('about') }}">About</a>
-      <a href="{{ url_for('contact') }}">Contact</a>
-    </nav>
-    <div class="header-actions">
-      <div class="cart-icon" id="cartToggle">
-        <i class="ri-shopping-cart-line open-cart"></i>
-        <span id="cartCount">0</span>
+  </div>
+</header>
+
+<main>
+  <!-- HERO SPLIT (DARK GOLD VIBE) -->
+  <section class="hero-split">
+    <div class="hero-left">
+      <span class="hero-eyebrow">Vietnam · China · Lagos</span>
+      <h1 class="hero-h1">Strands that <em>empower</em><br>your crown</h1>
+      <p class="hero-desc">100% human hair, ethically sourced. Wigs that move, breathe, and define luxury for the modern queen.</p>
+      <div class="hero-pills">
+        <div class="hero-pill"><i class="fa-regular fa-gem"></i> 100% Human Hair</div>
+        <div class="hero-pill"><i class="fa-solid fa-truck-fast"></i> Express Shipping</div>
+        <div class="hero-pill"><i class="fa-regular fa-circle-check"></i> Quality assured</div>
+      </div>
+      <div class="hero-cta-row">
+        <a href="{{ url_for('collection') }}" class="btn-primary">Shop Now <i class="ri-arrow-right-line"></i></a>
+        <a href="{{ url_for('about') }}" class="hero-link-alt">Our Legacy</a>
       </div>
     </div>
-  </header>
+    <div class="hero-right">
+      <img src="{{ url_for('static', filename='kikkyhairs.jpeg') }}" alt="Luxury wig" class="hero-img">
+      <div class="hero-overlay-text">
+        <strong>Affordable Luxury</strong><br>Premium wigs, fair prices
+      </div>
+    </div>
+  </section>
 
-  <!-- MAIN CONTENT -->
-  <main>
+  <!-- MARQUEE -->
+  <div class="marquee-strip" aria-hidden="true">
+    <div class="marquee-inner" id="marqueeInner"></div>
+  </div>
 
-    <!-- KIKKY HAIRS HERO -->
-    <section class="kh-hero-section">
-      <div class="kh-container">
-        <div class="kh-text-content">
-          <span class="kh-tagline">Confidence Starts With Kikky</span>
-          <h1 class="kh-headline">Timeless Strands For Luxury Queens <br><span class="text-gold-metallic">Kikky Hairs</span></h1>
-          <p class="kh-desc">100% human hair wigs specially crafted for effortless beauty directly from Vietnam, China</p>
-          <div class="kh-features">
-            <div class="kh-feature-pill"><i class="fa-solid fa-gem"></i> 100% Human Hair</div>
-            <div class="kh-feature-pill"><i class="fa-solid fa-truck-fast"></i> Fast Shipping</div>
-            <div class="kh-feature-pill"><i class="fa-solid fa-check-circle"></i> Quality Guaranteed</div>
-          </div>
-          <a href="{{ url_for('collection') }}" class="kh-btn-gold">Shop Collection</a>
+  <!-- FEATURED PRODUCTS -->
+  <section class="products-section">
+    <div class="section-label">Signature Edit</div>
+    <div class="section-header-row">
+      <h2 class="section-title">Featured <em>Collections</em></h2>
+      <a href="{{ url_for('collection') }}" class="view-all-link">View all <i class="ri-arrow-right-line"></i></a>
+    </div>
+    <div class="product-grid" id="productGrid"></div>
+  </section>
+
+  <!-- VALUE STRIP (CODE B INSPIRED) -->
+  <div class="value-strip">
+    <div class="value-item"><div class="value-icon"><i class="fa-regular fa-gem"></i></div><div class="value-title">100% Human Hair</div><div class="value-desc">Ethically sourced, never synthetic.</div></div>
+    <div class="value-item"><div class="value-icon"><i class="fa-solid fa-truck-fast"></i></div><div class="value-title">Fast Delivery</div><div class="value-desc">Lagos same-day dispatch available.</div></div>
+    <div class="value-item"><div class="value-icon"><i class="fa-regular fa-clock"></i></div><div class="value-title">Easy Returns</div><div class="value-desc">Hassle-free returns within 7 days.</div></div>
+    <div class="value-item"><div class="value-icon"><i class="fab fa-whatsapp"></i></div><div class="value-title">WhatsApp Support</div><div class="value-desc">Real humans, real answers.</div></div>
+  </div>
+
+  <!-- CART PANEL -->
+  <div id="cart-panel" class="cart-panel">
+    <div class="cart-header"><h3>Shopping Bag</h3><button id="closeCart" class="close-cart"><i class="ri-close-line"></i></button></div>
+    <div id="cart-items" class="cart-items"><div class="empty-cart" style="text-align:center; color:#aaa;">Your cart is empty</div></div>
+    <div class="cart-footer"><div class="cart-total-row"><span>Subtotal</span><strong id="cart-total">₦0</strong></div><div class="cart-actions"><a href="{{ url_for('cart') }}" class="btn btn-fill">View Cart</a><a href="{{ url_for('checkout') }}" class="btn btn-fill">Checkout</a><button id="clear-cart" class="btn btn-outline">Clear All</button></div></div>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-col"><h4>Kikky Hairs</h4><p>Luxury wig studio redefining confidence. Premium human hair, globally sourced.</p></div>
+    <div class="footer-col"><h4>Shop</h4><ul><li><a href="{{ url_for('collection') }}?cat=bone">Bone Straight</a></li><li><a href="{{ url_for('collection') }}?cat=bounce">Bounce Curls</a></li><li><a href="{{ url_for('collection') }}?cat=colored">Colored Units</a></li></ul></div>
+    <div class="footer-col"><h4>Support</h4><ul><li><a href="{{ url_for('contact') }}">Contact</a></li><li><a href="#">Shipping Policy</a></li><li><a href="#">Returns</a></li></ul></div>
+    <div class="footer-col"><h4>Connect</h4><ul><li><i class="ri-phone-line"></i> +234 814 701 4346</li><li><i class="ri-mail-line"></i> hello@kikkyhairs.ng</li></ul></div>
+  </div>
+  <div class="footer-bottom">© 2026 Kikky Hairs — Lagos, Nigeria. All rights reserved.</div>
+</footer>
+
+<script>
+(function(){
+  // ------ SCROLL PROGRESS + HEADER SHADOW ------
+  const progress = document.getElementById('scrollProgress');
+  const topBar = document.getElementById('top-bar');
+  window.addEventListener('scroll', () => {
+    const scrolled = (document.documentElement.scrollTop / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+    progress.style.width = scrolled + '%';
+    topBar.classList.toggle('scrolled', window.scrollY > 20);
+  });
+
+  // ------ MENU (LEFT SLIDE) ------
+  const menuToggle = document.getElementById('menu-toggle');
+  const sideMenu = document.getElementById('side-menu');
+  const overlay = document.getElementById('overlay');
+  const closeSide = document.getElementById('closeSidebar');
+  function openMenu() { sideMenu.classList.add('active'); overlay.classList.add('active'); }
+  function closeMenu() { sideMenu.classList.remove('active'); overlay.classList.remove('active'); }
+  menuToggle.addEventListener('click', openMenu);
+  closeSide.addEventListener('click', closeMenu);
+  overlay.addEventListener('click', closeMenu);
+  document.querySelectorAll('.sidebar-nav a, .cat-chip').forEach(link => link.addEventListener('click', closeMenu));
+
+  // ------ MARQUEE (DYNAMIC) ------
+  const marqueeItems = ['100% Human Hair', 'Bone Straight', 'Bounce Curls', 'Deep Wave', 'Lagos Luxury', 'Frontal Wigs', 'Fast Shipping'];
+  const marqueeInner = document.getElementById('marqueeInner');
+  const repeated = [...marqueeItems, ...marqueeItems].map(t => `<span class="marquee-item"><span class="marquee-dot"></span>${t}</span>`).join('');
+  marqueeInner.innerHTML = repeated + repeated;
+
+  // ------ PRODUCT DATA (FLASK) ------
+  const productsFromServer = {{ products | tojson }};
+  const products = productsFromServer.map(p => ({
+    id: p._id,
+    name: p.name || 'Signature wig',
+    cat: p.category || 'Luxury hair',
+    price: p.price || 0,
+    image: p.image || 'https://via.placeholder.com/400x500/2c241f/b38728?text=Kikky',
+    video: p.video || null
+  }));
+
+  // ------ CART LOGIC (with remove per item) ------
+  let cart = JSON.parse(localStorage.getItem('kikkyCart') || '[]');
+
+  function saveCart() { localStorage.setItem('kikkyCart', JSON.stringify(cart)); }
+  function updateCount() { document.getElementById('cartCount').innerText = cart.reduce((sum, i) => sum + i.quantity, 0); }
+  
+  function renderCart() {
+    const container = document.getElementById('cart-items');
+    const totalSpan = document.getElementById('cart-total');
+    if (!cart.length) {
+      container.innerHTML = '<div class="empty-cart" style="text-align:center; color:#aaa; padding:2rem;"><i class="ri-shopping-bag-line"></i><br>Your bag is empty</div>';
+      totalSpan.innerText = '₦0';
+      return;
+    }
+    let total = 0;
+    let html = '';
+    cart.forEach((item, idx) => {
+      total += item.price * item.quantity;
+      html += `<div class="cart-item">
+        <div class="cart-item-info">
+          <div class="cart-item-name">${escapeHtml(item.name)}</div>
+          <div>Qty: ${item.quantity} &nbsp; x₦${item.price.toLocaleString()}</div>
         </div>
-        <div class="kh-image-wrapper">
-          <div class="kh-blob-bg"></div>
-          <img src="{{ url_for('static', filename='kikkyhairs.jpeg') }}" alt="Kikky Hairs luxury wig" class="kh-img-main">
-          <div class="kh-float-badge"><span class="badge-head">Affordable</span><span class="badge-sub"> · luxury</span></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- PRODUCT GRID (dynamic) -->
-    <section class="product-grid-section container">
-      <header class="section-header">
-        <h2>Featured Products</h2>
-        <a href="{{ url_for('collection') }}" class="link-muted">View all <i class="ri-arrow-right-line"></i></a>
-      </header>
-      <div class="product-grid" id="productGrid"></div>
-    </section>
-
-    <!-- CART PANEL -->
-    <div id="cart-panel" class="cart-panel">
-      <div class="cart-header">
-        <h3>Your Cart</h3>
-        <button id="closeCart" class="close-cart"><i class="ri-close-line"></i></button>
-      </div>
-      <div id="cart-items" class="cart-items"><p class="empty-cart">Your cart is empty</p></div>
-      <div class="cart-footer">
-        <div class="cart-total"><small>Subtotal</small> <strong id="cart-total">₦0</strong></div>
-        <div class="cart-actions">
-          <a href="{{ url_for('cart') }}" class="btn">View Cart</a>
-          <a href="{{ url_for('checkout') }}" class="btn">Checkout</a>
-          <button id="clear-cart" class="btn btn-ghost">Clear</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- FOOTER -->
-    <footer class="footer">
-      <div class="footer-grid">
-        <div class="footer-col"><h4>About Kikky Hairs</h4><p>Kikky Hairs is a luxury wig studio specializing in premium 100% human hair units.</p></div>
-        <div class="footer-col"><h4>Quick Links</h4><ul><li><a href="{{ url_for('home') }}">Home</a></li><li><a href="{{ url_for('collection') }}">Shop</a></li><li><a href="{{ url_for('contact') }}">Contact</a></li></ul></div>
-        <div class="footer-col"><h4>Contact</h4><ul><li><i class="ri-phone-fill"></i> +234 814 701 4346</li><li><i class="ri-mail-fill"></i> hello@kikkyhairs.ng</li></ul></div>
-      </div>
-      <div class="footer-bottom">© 2026 Kikky Hairs — Lagos, Nigeria</div>
-    </footer>
-  </main>
-
-  <script>
-    (function() {
-      // ----- LEFT MENU (unchanged) -----
-      const menuToggle = document.getElementById('menu-toggle');
-      const sideMenu = document.getElementById('side-menu');
-      const overlay = document.getElementById('overlay');
-      const closeSidebar = document.getElementById('closeSidebar');
-
-      function openMenu() { sideMenu.classList.add('active'); overlay.classList.add('active'); }
-      function closeMenu() { sideMenu.classList.remove('active'); overlay.classList.remove('active'); }
-
-      menuToggle.addEventListener('click', openMenu);
-      closeSidebar.addEventListener('click', closeMenu);
-      overlay.addEventListener('click', closeMenu);
-      document.querySelectorAll('.sidebar-nav a').forEach(link => link.addEventListener('click', closeMenu));
-
-      // ----- GET PRODUCTS FROM FLASK -----
-      const productsFromServer = {{ products | tojson }};
-      const products = productsFromServer.map(p => ({
-        id: p._id,
-        name: p.name || 'Unnamed product',
-        cat: p.category || 'uncategorized',
-        price: p.price || 0,
-        length: p.length || 16,
-        image: p.image || 'https://via.placeholder.com/400x500/1e1814/b38728?text=No+Image',
-        video: p.image || 'https://via.placeholder.com/400x500/b38728/1e1814?text=Video'
-      }));
-
-      // ----- RENDER FEATURED PRODUCTS (first 4) -----
-      function renderFeaturedProducts() {
-        const grid = document.getElementById('productGrid');
-        const featured = products.slice(0, 4);
-        grid.innerHTML = featured.map(p => `
-          <div class="product-card" data-product-id="${p.id}">
-            <div class="card-image-wrapper">
-              <img class="product-image" src="${p.image}" alt="${p.name}">
-              <video class="product-video" muted loop><source src="" type="video/mp4"></video>
-              <button class="quick-add-btn add-to-cart-btn" data-id="${p.id}" data-name="${p.name}" data-price="${p.price}"><i class="ri-shopping-cart-2-line"></i></button>
-            </div>
-            <div class="card-details">
-              <span class="category-tag">${p.cat}</span>
-              <h3 class="product-title"><a href="#">${p.name}</a></h3>
-              <div class="price-row"><span class="price">₦${p.price.toLocaleString()}</span><a href="#" class="view-link"><i class="ri-arrow-right-line"></i></a></div>
-            </div>
-          </div>
-        `).join('');
-      }
-
-      // ----- CART FUNCTIONALITY (enhanced) -----
-      let cart = JSON.parse(localStorage.getItem('kikkyCart')) || [];
-
-      function updateCartCount() {
-        document.getElementById('cartCount').innerText = cart.reduce((sum, item) => sum + item.quantity, 0);
-      }
-
-      function renderCartItems() {
-        const cartItemsEl = document.getElementById('cart-items');
-        const cartTotalEl = document.getElementById('cart-total');
-        if (cart.length === 0) {
-          cartItemsEl.innerHTML = '<p class="empty-cart">Your cart is empty</p>';
-          cartTotalEl.innerText = '₦0';
-          return;
-        }
-        let html = '';
-        let total = 0;
-        cart.forEach(item => {
-          total += item.price * item.quantity;
-          html += `<p>${item.name} x${item.quantity} – ₦${(item.price * item.quantity).toLocaleString()}</p>`;
-        });
-        cartItemsEl.innerHTML = html;
-        cartTotalEl.innerText = '₦' + total.toLocaleString();
-      }
-
-      function addToCart(productId, productName, productPrice) {
-        const existing = cart.find(item => item.id === productId);
-        if (existing) {
-          existing.quantity += 1;
-        } else {
-          cart.push({ id: productId, name: productName, price: productPrice, quantity: 1 });
-        }
-        localStorage.setItem('kikkyCart', JSON.stringify(cart));
-        updateCartCount();
-        renderCartItems();
-      }
-
-      document.addEventListener('click', function(e) {
-        const btn = e.target.closest('.add-to-cart-btn');
-        if (!btn) return;
-        e.preventDefault();
-        const id = btn.dataset.id;
-        const name = btn.dataset.name;
-        const price = parseInt(btn.dataset.price);
-        addToCart(id, name, price);
+        <div class="cart-item-price">₦${(item.price * item.quantity).toLocaleString()}</div>
+        <button class="remove-item" data-index="${idx}">Remove</button>
+      </div>`;
+    });
+    container.innerHTML = html;
+    totalSpan.innerText = '₦' + total.toLocaleString();
+    document.querySelectorAll('.remove-item').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const idx = parseInt(btn.dataset.index);
+        cart.splice(idx, 1);
+        saveCart(); updateCount(); renderCart();
       });
+    });
+  }
 
-      document.getElementById('clear-cart')?.addEventListener('click', () => {
-        cart = [];
-        localStorage.removeItem('kikkyCart');
-        updateCartCount();
-        renderCartItems();
-      });
+  function addToCart(id, name, price) {
+    const existing = cart.find(i => i.id === id);
+    if (existing) existing.quantity++;
+    else cart.push({ id, name, price, quantity: 1 });
+    saveCart(); updateCount(); renderCart();
+    document.getElementById('cart-panel').classList.add('open');
+  }
 
-      // ----- CART PANEL TOGGLE -----
-      const cartPanel = document.getElementById('cart-panel');
-      const cartToggle = document.getElementById('cartToggle');
-      const closeCart = document.getElementById('closeCart');
-      cartToggle.addEventListener('click', () => cartPanel.classList.toggle('open'));
-      closeCart.addEventListener('click', () => cartPanel.classList.remove('open'));
+  function escapeHtml(str) { return str.replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
 
-      // ----- VIDEO HOVER (unchanged) -----
-      document.querySelectorAll('.product-card').forEach(card => {
-        const video = card.querySelector('.product-video');
-        if (!video) return;
-        card.addEventListener('mouseenter', () => { video.play().catch(()=>{}); });
+  // clear cart button
+  document.getElementById('clear-cart').addEventListener('click', () => { cart = []; saveCart(); updateCount(); renderCart(); });
+
+  // ------ RENDER PRODUCT GRID ------
+  const grid = document.getElementById('productGrid');
+  function renderProducts() {
+    const featured = products.slice(0,4);
+    grid.innerHTML = featured.map(p => `
+      <div class="product-card" data-id="${p.id}">
+        <div class="card-img-wrap">
+          <span class="card-badge">Luxury</span>
+          <img class="product-image" src="${p.image}" alt="${p.name}" loading="lazy">
+          <video class="product-video" muted loop playsinline ${p.video ? `src="${p.video}"` : ''}></video>
+          <button class="quick-add-btn add-to-cart" data-id="${p.id}" data-name="${escapeHtml(p.name)}" data-price="${p.price}"><i class="ri-shopping-bag-line"></i></button>
+        </div>
+        <div class="card-body">
+          <span class="card-category">${escapeHtml(p.cat)}</span>
+          <h3 class="card-name">${escapeHtml(p.name)}</h3>
+          <div class="card-footer">
+            <span class="card-price">₦${p.price.toLocaleString()}</span>
+            <a href="#" class="card-view">View <i class="ri-arrow-right-line"></i></a>
+          </div>
+        </div>
+      </div>
+    `).join('');
+    attachProductEvents();
+  }
+
+  function attachProductEvents() {
+    document.querySelectorAll('.add-to-cart').forEach(btn => {
+      btn.removeEventListener('click', addHandler);
+      btn.addEventListener('click', addHandler);
+    });
+    function addHandler(e) {
+      e.stopPropagation();
+      const id = this.dataset.id, name = this.dataset.name, price = parseInt(this.dataset.price);
+      addToCart(id, name, price);
+    }
+    // video hover effect
+    document.querySelectorAll('.product-card').forEach(card => {
+      const video = card.querySelector('.product-video');
+      if(video && video.src) {
+        card.addEventListener('mouseenter', () => video.play().catch(()=>{}));
         card.addEventListener('mouseleave', () => { video.pause(); video.currentTime = 0; });
-      });
+      }
+    });
+  }
 
-      // scroll progress bar (unchanged)
-      const scrollProgress = document.createElement('div'); 
-      scrollProgress.id = 'scrollProgress'; 
-      scrollProgress.style = 'position:fixed; top:70px; left:0; height:2px; background:#b38728; z-index:1002; width:0%;';
-      document.body.appendChild(scrollProgress);
-      window.addEventListener('scroll', () => {
-        const winScroll = document.documentElement.scrollTop;
-        const height = document.documentElement.scrollHeight - window.innerHeight;
-        const scrolled = (winScroll / height) * 100;
-        scrollProgress.style.width = scrolled + '%';
-      });
+  // cart panel toggles
+  const cartPanel = document.getElementById('cart-panel');
+  document.getElementById('cartToggle').addEventListener('click', () => cartPanel.classList.toggle('open'));
+  document.getElementById('closeCart').addEventListener('click', () => cartPanel.classList.remove('open'));
 
-      // Initialise
-      renderFeaturedProducts();
-      updateCartCount();
-      renderCartItems();
-    })();
-  </script>
+  // initialisation
+  renderProducts();
+  updateCount();
+  renderCart();
+})();
+</script>
 </body>
 </html>
