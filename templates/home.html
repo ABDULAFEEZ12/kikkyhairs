@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
-  <title>Kikky Hairs · Timeless Luxury Wigs</title>
+  <title>Kikky Hairs · Affordable Luxury Wigs</title>
 
-  <!-- Premium Fonts (Code A luxury vibe) -->
+  <!-- Premium Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <!-- Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
@@ -18,7 +18,7 @@
       box-sizing: border-box;
     }
 
-    /* ---------- GOLD LUXURY PALETTE (CODE A) ---------- */
+    /* GOLD LUXURY PALETTE */
     :root {
       --gold: #b38728;
       --gold-light: #d4af37;
@@ -30,8 +30,7 @@
       --cream: #fefaf7;
       --font-heading: 'Playfair Display', serif;
       --font-body: 'Montserrat', sans-serif;
-      --soft-shadow: 0 20px 35px -15px rgba(0,0,0,0.6), 0 5px 15px rgba(0,0,0,0.4);
-      --card-hover-shadow: 0 25px 35px -20px rgba(179,135,40,0.35), 0 0 0 1px rgba(179,135,40,0.3);
+      --soft-shadow: 0 20px 35px -15px rgba(0,0,0,0.6);
       --transition-ease: cubic-bezier(0.23, 1, 0.32, 1);
     }
 
@@ -57,10 +56,10 @@
     .container {
       max-width: 1280px;
       margin: 0 auto;
-      padding: 0 24px;
+      padding: 0 20px;
     }
 
-    /* ---------- SCROLL PROGRESS ---------- */
+    /* SCROLL PROGRESS */
     #scrollProgress {
       position: fixed;
       top: 70px;
@@ -70,17 +69,16 @@
       z-index: 1002;
       width: 0%;
       transition: width 0.08s linear;
-      box-shadow: 0 0 6px rgba(179,135,40,0.6);
     }
 
-    /* ---------- TOP BAR (LUXURY DARK) ---------- */
+    /* TOP BAR */
     #top-bar {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       height: 70px;
-      background: rgba(12, 10, 8, 0.92);
+      background: rgba(12, 10, 8, 0.95);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       display: flex;
@@ -89,16 +87,13 @@
       padding: 0 5%;
       z-index: 1002;
       border-bottom: 1px solid rgba(179, 135, 40, 0.25);
-      transition: box-shadow 0.3s;
     }
-    #top-bar.scrolled {
-      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
-    }
+
     .brand-logo img {
-      height: 50px;
+      height: 45px;
       width: auto;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
     }
+
     #menu-toggle {
       width: 44px;
       height: 44px;
@@ -113,20 +108,23 @@
       cursor: pointer;
       transition: background 0.2s;
     }
+
     #menu-toggle:hover {
       background: rgba(179, 135, 40, 0.2);
     }
+
     .desktop-nav {
       display: none;
-      gap: 2.2rem;
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      font-weight: 500;
     }
+
     @media (min-width: 900px) {
       .desktop-nav {
         display: flex;
+        gap: 2rem;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        font-weight: 500;
       }
       .desktop-nav a {
         color: #eee;
@@ -139,21 +137,19 @@
         color: var(--gold-light);
       }
     }
+
     .header-actions {
       display: flex;
-      gap: 1.2rem;
+      gap: 1rem;
       align-items: center;
     }
+
     .cart-icon {
-      font-size: 1.6rem;
+      font-size: 1.5rem;
       position: relative;
       cursor: pointer;
-      transition: transform 0.2s;
     }
-    .cart-icon:hover {
-      transform: scale(1.05);
-      color: var(--gold);
-    }
+
     #cartCount {
       position: absolute;
       top: -8px;
@@ -170,22 +166,24 @@
       justify-content: center;
     }
 
-    /* ---------- LEFT SLIDE MENU (ENHANCED) ---------- */
+    /* LEFT SIDE MENU */
     #overlay {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.65);
+      background: rgba(0, 0, 0, 0.7);
       backdrop-filter: blur(6px);
       display: none;
       z-index: 1001;
       cursor: pointer;
     }
+
     #overlay.active {
       display: block;
     }
+
     #side-menu {
       position: fixed;
       top: 0;
@@ -198,55 +196,60 @@
       transition: left 0.45s var(--transition-ease);
       z-index: 1003;
       overflow-y: auto;
-      padding: 2rem 1.8rem;
+      padding: 2rem 1.5rem;
       display: flex;
       flex-direction: column;
     }
+
     #side-menu.active {
       left: 0;
     }
+
     .sidebar-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 2.2rem;
-      padding-bottom: 0.8rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
       border-bottom: 1px solid rgba(179, 135, 40, 0.3);
     }
+
     .sidebar-header img {
-      height: 48px;
+      height: 45px;
     }
+
     .close-icon {
       font-size: 1.8rem;
       cursor: pointer;
       color: var(--gold);
-      transition: transform 0.2s;
     }
-    .close-icon:hover {
-      transform: rotate(90deg);
-    }
+
     .sidebar-nav ul {
       list-style: none;
     }
+
     .sidebar-nav li {
       margin: 1.2rem 0;
     }
+
     .sidebar-nav a {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
       font-size: 1rem;
-      font-weight: 500;
       color: #ddd;
       transition: 0.25s;
     }
+
     .sidebar-nav a:hover {
       color: var(--gold);
-      transform: translateX(6px);
+      transform: translateX(5px);
     }
+
     .sidebar-categories {
       margin: 2rem 0;
     }
+
     .sidebar-cat-label {
       font-size: 0.7rem;
       text-transform: uppercase;
@@ -255,11 +258,13 @@
       margin-bottom: 1rem;
       font-weight: 600;
     }
+
     .sidebar-cat-chips {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
     }
+
     .cat-chip {
       background: rgba(179, 135, 40, 0.12);
       border: 1px solid rgba(179, 135, 40, 0.35);
@@ -270,32 +275,34 @@
       transition: 0.2s;
       color: #eee;
     }
+
     .cat-chip:hover {
       background: var(--gold);
       color: #000;
-      border-color: var(--gold);
     }
+
     .sidebar-footer {
       margin-top: auto;
-      padding-top: 1.8rem;
+      padding-top: 1.5rem;
       display: flex;
       flex-direction: column;
       gap: 1rem;
       border-top: 1px solid rgba(179, 135, 40, 0.25);
     }
+
     .sidebar-footer a {
       font-size: 0.85rem;
       display: flex;
       align-items: center;
       gap: 10px;
       color: #bbb;
-      transition: 0.2s;
     }
+
     .sidebar-footer a:hover {
       color: var(--gold);
     }
 
-    /* ---------- HERO SPLIT (CODE B LAYOUT x DARK THEME) ---------- */
+    /* ========== HERO SECTION - FIXED MOBILE OVERLAY ========== */
     .hero-split {
       margin-top: 70px;
       min-height: 85vh;
@@ -304,14 +311,17 @@
       overflow: hidden;
       background: #0c0a08;
     }
+
     .hero-left {
-      background: radial-gradient(ellipse at 20% 40%, #1e1814, #0a0705);
+      background: radial-gradient(ellipse at 30% 40%, #1e1814, #0a0705);
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding: 4rem 6% 4rem 8%;
+      padding: 3rem 5% 3rem 8%;
       position: relative;
+      z-index: 2;
     }
+
     .hero-eyebrow {
       display: inline-flex;
       align-items: center;
@@ -321,22 +331,25 @@
       text-transform: uppercase;
       color: var(--gold);
       font-weight: 600;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.2rem;
     }
+
     .hero-eyebrow::before {
       content: '';
       width: 40px;
       height: 1px;
       background: var(--gold);
     }
+
     .hero-h1 {
       font-family: var(--font-heading);
-      font-size: clamp(2.8rem, 5vw, 5rem);
-      font-weight: 600;
-      line-height: 1.08;
-      margin-bottom: 1.6rem;
+      font-size: clamp(2.2rem, 6vw, 5rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 1.2rem;
       color: var(--white-off);
     }
+
     .hero-h1 em {
       font-style: italic;
       background: var(--gold-gradient);
@@ -344,19 +357,22 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
+
     .hero-desc {
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       line-height: 1.7;
       color: #ccc;
       max-width: 420px;
-      margin-bottom: 2rem;
+      margin-bottom: 1.8rem;
     }
+
     .hero-pills {
       display: flex;
       flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 2.2rem;
+      gap: 10px;
+      margin-bottom: 2rem;
     }
+
     .hero-pill {
       display: flex;
       align-items: center;
@@ -364,177 +380,272 @@
       background: rgba(179, 135, 40, 0.12);
       border: 1px solid rgba(179, 135, 40, 0.3);
       border-radius: 60px;
-      padding: 8px 18px;
-      font-size: 0.75rem;
+      padding: 6px 16px;
+      font-size: 0.7rem;
       font-weight: 500;
     }
+
     .hero-pill i {
       color: var(--gold);
     }
+
     .hero-cta-row {
       display: flex;
       align-items: center;
-      gap: 2rem;
+      gap: 1.5rem;
       flex-wrap: wrap;
     }
+
     .btn-primary {
       display: inline-flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       background: var(--gold-gradient);
       color: #000;
-      padding: 14px 34px;
+      padding: 12px 28px;
       border-radius: 50px;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 1px;
       transition: 0.3s;
       box-shadow: 0 8px 20px rgba(179, 135, 40, 0.3);
+      font-size: 0.85rem;
     }
+
     .btn-primary:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 14px 28px rgba(179, 135, 40, 0.5);
+      transform: translateY(-3px);
     }
+
     .hero-link-alt {
       color: var(--gold);
       border-bottom: 1px solid var(--gold);
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: 500;
     }
+
+    /* HERO RIGHT - FIXED: IMAGE STAYS BELOW TEXT ON MOBILE */
     .hero-right {
       position: relative;
       overflow: hidden;
       background: #1e1612;
+      min-height: 300px;
     }
+
     .hero-img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
-      transition: transform 0.6s var(--transition-ease);
+      transition: transform 0.5s ease;
     }
+
     .hero-right:hover .hero-img {
       transform: scale(1.02);
     }
+
     .hero-overlay-text {
       position: absolute;
-      bottom: 2rem;
-      left: 2rem;
-      background: rgba(0, 0, 0, 0.65);
+      bottom: 1.5rem;
+      left: 1.5rem;
+      right: 1.5rem;
+      background: rgba(0, 0, 0, 0.7);
       backdrop-filter: blur(12px);
-      padding: 1rem 1.8rem;
-      border-radius: 40px;
+      padding: 0.8rem 1.2rem;
+      border-radius: 30px;
       border-left: 3px solid var(--gold);
     }
+
     .hero-overlay-text strong {
       font-family: var(--font-heading);
-      font-size: 1.3rem;
+      font-size: 1rem;
       color: var(--gold);
+      display: block;
     }
+
+    .hero-overlay-text span {
+      font-size: 0.7rem;
+      color: #ddd;
+    }
+
+    /* MOBILE: STACK VERTICALLY WITH NO TEXT OVERLAP */
     @media (max-width: 860px) {
       .hero-split {
         grid-template-columns: 1fr;
-        grid-template-rows: auto 50vh;
+        grid-template-rows: auto auto;
+        min-height: auto;
       }
+      
       .hero-left {
         order: 2;
-        padding: 3rem 6%;
+        padding: 2.5rem 6%;
+        text-align: center;
       }
+      
       .hero-right {
         order: 1;
+        min-height: 45vh;
+        max-height: 50vh;
+      }
+      
+      .hero-eyebrow {
+        justify-content: center;
+      }
+      
+      .hero-eyebrow::before {
+        width: 30px;
+      }
+      
+      .hero-desc {
+        max-width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      
+      .hero-pills {
+        justify-content: center;
+      }
+      
+      .hero-cta-row {
+        justify-content: center;
+      }
+      
+      .hero-overlay-text {
+        bottom: 1rem;
+        left: 1rem;
+        right: 1rem;
+        padding: 0.6rem 1rem;
+      }
+      
+      .hero-overlay-text strong {
+        font-size: 0.9rem;
       }
     }
 
-    /* ---------- MARQUEE (GOLD THEME) ---------- */
+    @media (max-width: 480px) {
+      .hero-left {
+        padding: 2rem 5%;
+      }
+      
+      .hero-h1 {
+        font-size: 1.8rem;
+      }
+      
+      .hero-desc {
+        font-size: 0.85rem;
+      }
+      
+      .btn-primary {
+        padding: 10px 22px;
+        font-size: 0.75rem;
+      }
+      
+      .hero-right {
+        min-height: 38vh;
+      }
+    }
+
+    /* MARQUEE */
     .marquee-strip {
       background: var(--gold);
       color: #0c0a08;
-      padding: 12px 0;
+      padding: 10px 0;
       overflow: hidden;
       white-space: nowrap;
       font-weight: 600;
     }
+
     .marquee-inner {
       display: inline-flex;
-      animation: marqueeAnim 32s linear infinite;
+      animation: marqueeAnim 28s linear infinite;
     }
+
     .marquee-item {
       display: inline-flex;
       align-items: center;
-      gap: 12px;
-      margin-right: 2.5rem;
-      font-size: 0.75rem;
+      gap: 10px;
+      margin-right: 2rem;
+      font-size: 0.7rem;
       text-transform: uppercase;
       letter-spacing: 2px;
     }
+
     .marquee-dot {
-      width: 5px;
-      height: 5px;
+      width: 4px;
+      height: 4px;
       background: #000;
       border-radius: 50%;
-      opacity: 0.6;
     }
+
     @keyframes marqueeAnim {
       0% { transform: translateX(0); }
       100% { transform: translateX(-50%); }
     }
 
-    /* ---------- PRODUCT SECTION ---------- */
+    /* PRODUCT SECTION */
     .products-section {
-      padding: 5rem 5%;
+      padding: 4rem 5%;
     }
+
     .section-label {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
       font-size: 0.7rem;
       letter-spacing: 4px;
       text-transform: uppercase;
       color: var(--gold);
       margin-bottom: 1rem;
     }
+
     .section-label::after {
       content: '';
       flex: 1;
       height: 1px;
       background: rgba(179, 135, 40, 0.35);
     }
+
     .section-header-row {
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-      margin-bottom: 3rem;
+      margin-bottom: 2rem;
       flex-wrap: wrap;
+      gap: 1rem;
     }
+
     .section-title {
       font-family: var(--font-heading);
-      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-size: clamp(1.6rem, 5vw, 2.8rem);
       font-weight: 500;
       color: var(--white-off);
     }
+
     .section-title em {
       color: var(--gold);
       font-style: italic;
     }
+
     .view-all-link {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       text-transform: uppercase;
       letter-spacing: 2px;
       border-bottom: 1px solid var(--gold);
       padding-bottom: 4px;
       color: #ccc;
     }
+
     .product-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 30px;
+      gap: 25px;
     }
+
     .product-card {
       background: #1e1814;
-      border-radius: 28px;
+      border-radius: 24px;
       overflow: hidden;
       border: 1px solid #2e2824;
       transition: all 0.35s var(--transition-ease);
@@ -542,57 +653,51 @@
       flex-direction: column;
       cursor: pointer;
     }
+
     .product-card:hover {
-      transform: translateY(-8px);
-      box-shadow: var(--card-hover-shadow);
+      transform: translateY(-6px);
+      box-shadow: 0 20px 30px -15px rgba(179, 135, 40, 0.2);
       border-color: var(--gold);
     }
+
     .card-img-wrap {
       position: relative;
-      height: 280px;
+      height: 260px;
       background: #2a241f;
       overflow: hidden;
     }
-    .product-image, .product-video {
-      position: absolute;
-      top: 0;
-      left: 0;
+
+    .product-image {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: opacity 0.4s ease, transform 0.5s ease;
+      transition: transform 0.4s ease;
     }
-    .product-video {
-      opacity: 0;
-      pointer-events: none;
-    }
+
     .product-card:hover .product-image {
-      opacity: 0;
       transform: scale(1.05);
     }
-    .product-card:hover .product-video {
-      opacity: 1;
-    }
+
     .card-badge {
       position: absolute;
-      top: 14px;
-      left: 14px;
+      top: 12px;
+      left: 12px;
       background: var(--gold);
       color: #000;
-      font-size: 0.65rem;
+      font-size: 0.6rem;
       font-weight: 800;
       text-transform: uppercase;
-      padding: 4px 12px;
-      border-radius: 40px;
-      z-index: 3;
-      letter-spacing: 1px;
+      padding: 4px 10px;
+      border-radius: 30px;
+      z-index: 2;
     }
+
     .quick-add-btn {
       position: absolute;
-      bottom: 16px;
-      right: 16px;
-      width: 44px;
-      height: 44px;
+      bottom: 12px;
+      right: 12px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
       background: #fff;
       border: none;
@@ -600,101 +705,107 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       color: #000;
       opacity: 0;
-      transform: translateY(12px);
+      transform: translateY(10px);
       transition: 0.25s;
-      z-index: 3;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      z-index: 2;
     }
+
     .product-card:hover .quick-add-btn {
       opacity: 1;
       transform: translateY(0);
     }
+
     .quick-add-btn:hover {
       background: var(--gold);
       color: #fff;
     }
+
     .card-body {
-      padding: 1.2rem 1.2rem 1.4rem;
+      padding: 1rem;
       flex: 1;
     }
+
     .card-category {
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       text-transform: uppercase;
       letter-spacing: 2px;
       color: var(--gold);
       margin-bottom: 6px;
     }
+
     .card-name {
       font-family: var(--font-heading);
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 600;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       color: #fff;
+      line-height: 1.4;
     }
+
     .card-footer {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top: 12px;
+      margin-top: 10px;
       border-top: 1px solid rgba(179, 135, 40, 0.25);
-      padding-top: 12px;
+      padding-top: 10px;
     }
+
     .card-price {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       font-weight: 700;
       color: var(--gold);
     }
-    .card-view {
-      font-size: 0.7rem;
-      color: #aaa;
-    }
 
-    /* ---------- VALUE STRIP (CODE B x DARK) ---------- */
+    /* VALUE STRIP */
     .value-strip {
       background: #0a0806;
-      padding: 5rem 6%;
+      padding: 3rem 5%;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-      gap: 3rem;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 2rem;
       border-top: 1px solid rgba(179, 135, 40, 0.2);
       border-bottom: 1px solid rgba(179, 135, 40, 0.2);
     }
+
     .value-item {
       text-align: center;
     }
+
     .value-icon {
-      width: 64px;
-      height: 64px;
+      width: 55px;
+      height: 55px;
       border-radius: 50%;
       border: 1px solid rgba(179, 135, 40, 0.4);
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 1rem;
-      font-size: 1.6rem;
+      margin: 0 auto 0.8rem;
+      font-size: 1.4rem;
       color: var(--gold);
-      background: rgba(179, 135, 40, 0.08);
     }
+
     .value-title {
       font-family: var(--font-heading);
-      font-size: 1.2rem;
-      margin-bottom: 0.5rem;
+      font-size: 1rem;
+      margin-bottom: 0.4rem;
       color: #fff;
     }
+
     .value-desc {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       color: #aaa;
     }
 
-    /* ---------- CART PANEL (LUXURY DARK) ---------- */
+    /* CART PANEL */
     .cart-panel {
       position: fixed;
       top: 0;
-      right: -420px;
-      width: 380px;
+      right: -400px;
+      width: 360px;
       height: 100vh;
       background: #17120f;
       border-left: 2px solid var(--gold);
@@ -702,139 +813,153 @@
       transition: right 0.4s var(--transition-ease);
       display: flex;
       flex-direction: column;
-      box-shadow: -12px 0 30px rgba(0, 0, 0, 0.6);
+      box-shadow: -10px 0 30px rgba(0, 0, 0, 0.6);
     }
+
     .cart-panel.open {
       right: 0;
     }
+
     .cart-header {
-      padding: 1.5rem 1.8rem;
+      padding: 1.2rem 1.5rem;
       border-bottom: 1px solid rgba(179, 135, 40, 0.3);
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
+
     .cart-header h3 {
       font-family: var(--font-heading);
-      font-size: 1.3rem;
+      font-size: 1.2rem;
       color: var(--gold);
     }
+
     .close-cart {
       background: none;
       border: none;
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       cursor: pointer;
       color: #ccc;
     }
+
     .cart-items {
       flex: 1;
       overflow-y: auto;
-      padding: 1.2rem;
+      padding: 1rem;
     }
+
     .cart-item {
+      background: #251e1a;
+      padding: 10px;
+      border-radius: 16px;
+      margin-bottom: 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: #251e1a;
-      padding: 12px;
-      border-radius: 20px;
-      margin-bottom: 12px;
     }
-    .cart-item-info {
-      flex: 1;
-    }
+
     .cart-item-name {
       font-weight: 600;
+      font-size: 0.85rem;
     }
+
     .cart-item-price {
       color: var(--gold);
       font-weight: 700;
+      font-size: 0.85rem;
     }
-    .remove-item {
-      background: rgba(255, 80, 80, 0.2);
-      border: none;
-      color: #ff9f9f;
-      border-radius: 30px;
-      padding: 4px 12px;
-      cursor: pointer;
-      font-size: 0.7rem;
-      transition: 0.2s;
-    }
+
     .cart-footer {
-      padding: 1.2rem;
+      padding: 1rem;
       border-top: 1px solid rgba(179, 135, 40, 0.3);
     }
+
     .cart-total-row {
       display: flex;
       justify-content: space-between;
-      font-size: 1rem;
       margin-bottom: 1rem;
     }
+
     .cart-actions {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
     }
+
     .btn {
-      padding: 12px;
-      border-radius: 60px;
+      padding: 10px;
+      border-radius: 50px;
       text-align: center;
       font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
       font-size: 0.75rem;
+      text-transform: uppercase;
       border: none;
       cursor: pointer;
     }
+
     .btn-fill {
       background: var(--gold);
       color: #000;
     }
+
     .btn-outline {
       background: transparent;
       border: 1px solid var(--gold);
       color: var(--gold);
     }
 
-    /* ---------- FOOTER (LUXURY DARK) ---------- */
+    /* FOOTER */
     footer {
       background: #0a0806;
-      padding: 4rem 5% 2rem;
+      padding: 3rem 5% 1.5rem;
       border-top: 1px solid rgba(179, 135, 40, 0.2);
     }
+
     .footer-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 3rem;
-      margin-bottom: 3rem;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
     }
+
     .footer-col h4 {
       color: var(--gold);
       margin-bottom: 1rem;
       font-family: var(--font-heading);
+      font-size: 1rem;
     }
+
     .footer-col p, .footer-col a {
       color: #aaa;
-      font-size: 0.85rem;
-      line-height: 1.7;
+      font-size: 0.8rem;
+      line-height: 1.6;
     }
+
     .footer-col a:hover {
       color: var(--gold);
     }
+
     .footer-bottom {
       text-align: center;
-      padding-top: 2rem;
+      padding-top: 1.5rem;
       border-top: 1px solid rgba(179, 135, 40, 0.2);
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       color: #777;
     }
+
     @media (max-width: 600px) {
       .product-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 14px;
+        gap: 12px;
       }
       .card-img-wrap {
-        height: 180px;
+        height: 160px;
+      }
+      .card-name {
+        font-size: 0.8rem;
+      }
+      .card-price {
+        font-size: 0.9rem;
       }
       .cart-panel {
         width: 90vw;
@@ -847,7 +972,7 @@
 <div id="scrollProgress"></div>
 <div id="overlay"></div>
 
-<!-- LEFT SIDE MENU (Premium) -->
+<!-- LEFT SIDE MENU -->
 <aside id="side-menu">
   <div class="sidebar-header">
     <img src="{{ url_for('static', filename='kikkyhairs.jpeg') }}" alt="Kikky Hairs">
@@ -899,32 +1024,33 @@
 </header>
 
 <main>
-  <!-- HERO SPLIT (DARK GOLD VIBE) -->
+  <!-- HERO - FIXED MOBILE: IMAGE BELOW TEXT, NO OVERLAP -->
   <section class="hero-split">
     <div class="hero-left">
-      <span class="hero-eyebrow">Vietnam · China · Lagos</span>
-      <h1 class="hero-h1">Strands that <em>empower</em><br>your crown</h1>
-      <p class="hero-desc">100% human hair, ethically sourced. Wigs that move, breathe, and define luxury for the modern queen.</p>
+      <span class="hero-eyebrow">Affordable Luxury</span>
+      <h1 class="hero-h1">Strands that <em>empower</em><br>your style</h1>
+      <p class="hero-desc">Premium wigs, fair prices — 100% human hair, ethically sourced. Confidence starts with Kikky.</p>
       <div class="hero-pills">
         <div class="hero-pill"><i class="fa-regular fa-gem"></i> 100% Human Hair</div>
-        <div class="hero-pill"><i class="fa-solid fa-truck-fast"></i> Express Shipping</div>
-        <div class="hero-pill"><i class="fa-regular fa-circle-check"></i> Quality assured</div>
+        <div class="hero-pill"><i class="fa-solid fa-truck-fast"></i> Fast Shipping</div>
+        <div class="hero-pill"><i class="fa-regular fa-circle-check"></i> Quality Guaranteed</div>
       </div>
       <div class="hero-cta-row">
         <a href="{{ url_for('collection') }}" class="btn-primary">Shop Now <i class="ri-arrow-right-line"></i></a>
-        <a href="{{ url_for('about') }}" class="hero-link-alt">Our Legacy</a>
+        <a href="{{ url_for('about') }}" class="hero-link-alt">Our Story</a>
       </div>
     </div>
     <div class="hero-right">
       <img src="{{ url_for('static', filename='kikkyhairs.jpeg') }}" alt="Luxury wig" class="hero-img">
       <div class="hero-overlay-text">
-        <strong>Affordable Luxury</strong><br>Premium wigs, fair prices
+        <strong>Affordable Luxury</strong>
+        <span>Premium wigs, fair prices</span>
       </div>
     </div>
   </section>
 
   <!-- MARQUEE -->
-  <div class="marquee-strip" aria-hidden="true">
+  <div class="marquee-strip">
     <div class="marquee-inner" id="marqueeInner"></div>
   </div>
 
@@ -938,44 +1064,41 @@
     <div class="product-grid" id="productGrid"></div>
   </section>
 
-  <!-- VALUE STRIP (CODE B INSPIRED) -->
+  <!-- VALUE STRIP -->
   <div class="value-strip">
-    <div class="value-item"><div class="value-icon"><i class="fa-regular fa-gem"></i></div><div class="value-title">100% Human Hair</div><div class="value-desc">Ethically sourced, never synthetic.</div></div>
-    <div class="value-item"><div class="value-icon"><i class="fa-solid fa-truck-fast"></i></div><div class="value-title">Fast Delivery</div><div class="value-desc">Lagos same-day dispatch available.</div></div>
-    <div class="value-item"><div class="value-icon"><i class="fa-regular fa-clock"></i></div><div class="value-title">Easy Returns</div><div class="value-desc">Hassle-free returns within 7 days.</div></div>
-    <div class="value-item"><div class="value-icon"><i class="fab fa-whatsapp"></i></div><div class="value-title">WhatsApp Support</div><div class="value-desc">Real humans, real answers.</div></div>
+    <div class="value-item"><div class="value-icon"><i class="fa-regular fa-gem"></i></div><div class="value-title">100% Human Hair</div><div class="value-desc">Ethically sourced</div></div>
+    <div class="value-item"><div class="value-icon"><i class="fa-solid fa-truck-fast"></i></div><div class="value-title">Fast Delivery</div><div class="value-desc">Lagos same-day dispatch</div></div>
+    <div class="value-item"><div class="value-icon"><i class="fa-regular fa-clock"></i></div><div class="value-title">Easy Returns</div><div class="value-desc">7 days hassle-free</div></div>
+    <div class="value-item"><div class="value-icon"><i class="fab fa-whatsapp"></i></div><div class="value-title">WhatsApp Support</div><div class="value-desc">Real humans, real help</div></div>
   </div>
 
   <!-- CART PANEL -->
   <div id="cart-panel" class="cart-panel">
-    <div class="cart-header"><h3>Shopping Bag</h3><button id="closeCart" class="close-cart"><i class="ri-close-line"></i></button></div>
-    <div id="cart-items" class="cart-items"><div class="empty-cart" style="text-align:center; color:#aaa;">Your cart is empty</div></div>
-    <div class="cart-footer"><div class="cart-total-row"><span>Subtotal</span><strong id="cart-total">₦0</strong></div><div class="cart-actions"><a href="{{ url_for('cart') }}" class="btn btn-fill">View Cart</a><a href="{{ url_for('checkout') }}" class="btn btn-fill">Checkout</a><button id="clear-cart" class="btn btn-outline">Clear All</button></div></div>
+    <div class="cart-header"><h3>Your Bag</h3><button id="closeCart" class="close-cart"><i class="ri-close-line"></i></button></div>
+    <div id="cart-items" class="cart-items"><div style="text-align:center; color:#aaa; padding:2rem;">Your cart is empty</div></div>
+    <div class="cart-footer"><div class="cart-total-row"><span>Subtotal</span><strong id="cart-total">₦0</strong></div><div class="cart-actions"><a href="{{ url_for('cart') }}" class="btn btn-fill">View Cart</a><a href="{{ url_for('checkout') }}" class="btn btn-fill">Checkout</a><button id="clear-cart" class="btn btn-outline">Clear</button></div></div>
   </div>
 </main>
 
 <footer>
   <div class="footer-grid">
-    <div class="footer-col"><h4>Kikky Hairs</h4><p>Luxury wig studio redefining confidence. Premium human hair, globally sourced.</p></div>
+    <div class="footer-col"><h4>Kikky Hairs</h4><p>Luxury wig studio, Lagos Nigeria.</p></div>
     <div class="footer-col"><h4>Shop</h4><ul><li><a href="{{ url_for('collection') }}?cat=bone">Bone Straight</a></li><li><a href="{{ url_for('collection') }}?cat=bounce">Bounce Curls</a></li><li><a href="{{ url_for('collection') }}?cat=colored">Colored Units</a></li></ul></div>
-    <div class="footer-col"><h4>Support</h4><ul><li><a href="{{ url_for('contact') }}">Contact</a></li><li><a href="#">Shipping Policy</a></li><li><a href="#">Returns</a></li></ul></div>
-    <div class="footer-col"><h4>Connect</h4><ul><li><i class="ri-phone-line"></i> +234 814 701 4346</li><li><i class="ri-mail-line"></i> hello@kikkyhairs.ng</li></ul></div>
+    <div class="footer-col"><h4>Contact</h4><ul><li><i class="ri-phone-line"></i> +234 814 701 4346</li><li><i class="ri-mail-line"></i> hello@kikkyhairs.ng</li></ul></div>
   </div>
-  <div class="footer-bottom">© 2026 Kikky Hairs — Lagos, Nigeria. All rights reserved.</div>
+  <div class="footer-bottom">© 2026 Kikky Hairs — All rights reserved.</div>
 </footer>
 
 <script>
-(function(){
-  // ------ SCROLL PROGRESS + HEADER SHADOW ------
+(function() {
+  // Scroll progress
   const progress = document.getElementById('scrollProgress');
-  const topBar = document.getElementById('top-bar');
   window.addEventListener('scroll', () => {
     const scrolled = (document.documentElement.scrollTop / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
     progress.style.width = scrolled + '%';
-    topBar.classList.toggle('scrolled', window.scrollY > 20);
   });
 
-  // ------ MENU (LEFT SLIDE) ------
+  // Menu
   const menuToggle = document.getElementById('menu-toggle');
   const sideMenu = document.getElementById('side-menu');
   const overlay = document.getElementById('overlay');
@@ -985,63 +1108,39 @@
   menuToggle.addEventListener('click', openMenu);
   closeSide.addEventListener('click', closeMenu);
   overlay.addEventListener('click', closeMenu);
-  document.querySelectorAll('.sidebar-nav a, .cat-chip').forEach(link => link.addEventListener('click', closeMenu));
+  document.querySelectorAll('.sidebar-nav a, .cat-chip').forEach(l => l.addEventListener('click', closeMenu));
 
-  // ------ MARQUEE (DYNAMIC) ------
-  const marqueeItems = ['100% Human Hair', 'Bone Straight', 'Bounce Curls', 'Deep Wave', 'Lagos Luxury', 'Frontal Wigs', 'Fast Shipping'];
+  // Marquee
+  const items = ['100% Human Hair', 'Bone Straight', 'Bounce Curls', 'Deep Wave', 'Frontal Wigs', 'Luxury Quality', 'Fast Shipping'];
   const marqueeInner = document.getElementById('marqueeInner');
-  const repeated = [...marqueeItems, ...marqueeItems].map(t => `<span class="marquee-item"><span class="marquee-dot"></span>${t}</span>`).join('');
-  marqueeInner.innerHTML = repeated + repeated;
+  marqueeInner.innerHTML = [...items, ...items].map(t => `<span class="marquee-item"><span class="marquee-dot"></span>${t}</span>`).join('') + [...items, ...items].map(t => `<span class="marquee-item"><span class="marquee-dot"></span>${t}</span>`).join('');
 
-  // ------ PRODUCT DATA (FLASK) ------
+  // Products from Flask
   const productsFromServer = {{ products | tojson }};
   const products = productsFromServer.map(p => ({
-    id: p._id,
-    name: p.name || 'Signature wig',
-    cat: p.category || 'Luxury hair',
-    price: p.price || 0,
-    image: p.image || 'https://via.placeholder.com/400x500/2c241f/b38728?text=Kikky',
-    video: p.video || null
+    id: p._id, name: p.name || 'Luxury wig', cat: p.category || 'Signature', price: p.price || 0, image: p.image || 'https://via.placeholder.com/400x500/2a241f/b38728?text=Kikky'
   }));
 
-  // ------ CART LOGIC (with remove per item) ------
+  // Cart logic
   let cart = JSON.parse(localStorage.getItem('kikkyCart') || '[]');
-
   function saveCart() { localStorage.setItem('kikkyCart', JSON.stringify(cart)); }
-  function updateCount() { document.getElementById('cartCount').innerText = cart.reduce((sum, i) => sum + i.quantity, 0); }
-  
+  function updateCount() { document.getElementById('cartCount').innerText = cart.reduce((s,i) => s + i.quantity, 0); }
   function renderCart() {
     const container = document.getElementById('cart-items');
     const totalSpan = document.getElementById('cart-total');
-    if (!cart.length) {
-      container.innerHTML = '<div class="empty-cart" style="text-align:center; color:#aaa; padding:2rem;"><i class="ri-shopping-bag-line"></i><br>Your bag is empty</div>';
-      totalSpan.innerText = '₦0';
-      return;
-    }
+    if (!cart.length) { container.innerHTML = '<div style="text-align:center; color:#aaa; padding:2rem;">Your cart is empty</div>'; totalSpan.innerText = '₦0'; return; }
     let total = 0;
     let html = '';
     cart.forEach((item, idx) => {
       total += item.price * item.quantity;
-      html += `<div class="cart-item">
-        <div class="cart-item-info">
-          <div class="cart-item-name">${escapeHtml(item.name)}</div>
-          <div>Qty: ${item.quantity} &nbsp; x₦${item.price.toLocaleString()}</div>
-        </div>
-        <div class="cart-item-price">₦${(item.price * item.quantity).toLocaleString()}</div>
-        <button class="remove-item" data-index="${idx}">Remove</button>
-      </div>`;
+      html += `<div class="cart-item"><div><div class="cart-item-name">${item.name}</div><div>Qty: ${item.quantity}</div></div><div class="cart-item-price">₦${(item.price * item.quantity).toLocaleString()}</div><button class="remove-item" data-index="${idx}" style="background:#3a2a2a; border:none; color:#ff9f9f; border-radius:20px; padding:4px 8px; margin-left:8px; cursor:pointer;">✕</button></div>`;
     });
     container.innerHTML = html;
     totalSpan.innerText = '₦' + total.toLocaleString();
     document.querySelectorAll('.remove-item').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const idx = parseInt(btn.dataset.index);
-        cart.splice(idx, 1);
-        saveCart(); updateCount(); renderCart();
-      });
+      btn.addEventListener('click', (e) => { const idx = parseInt(btn.dataset.index); cart.splice(idx,1); saveCart(); updateCount(); renderCart(); });
     });
   }
-
   function addToCart(id, name, price) {
     const existing = cart.find(i => i.id === id);
     if (existing) existing.quantity++;
@@ -1049,64 +1148,25 @@
     saveCart(); updateCount(); renderCart();
     document.getElementById('cart-panel').classList.add('open');
   }
-
-  function escapeHtml(str) { return str.replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
-
-  // clear cart button
-  document.getElementById('clear-cart').addEventListener('click', () => { cart = []; saveCart(); updateCount(); renderCart(); });
-
-  // ------ RENDER PRODUCT GRID ------
+  document.getElementById('clear-cart')?.addEventListener('click', () => { cart = []; saveCart(); updateCount(); renderCart(); });
+  
+  // Render products
   const grid = document.getElementById('productGrid');
-  function renderProducts() {
-    const featured = products.slice(0,4);
-    grid.innerHTML = featured.map(p => `
-      <div class="product-card" data-id="${p.id}">
-        <div class="card-img-wrap">
-          <span class="card-badge">Luxury</span>
-          <img class="product-image" src="${p.image}" alt="${p.name}" loading="lazy">
-          <video class="product-video" muted loop playsinline ${p.video ? `src="${p.video}"` : ''}></video>
-          <button class="quick-add-btn add-to-cart" data-id="${p.id}" data-name="${escapeHtml(p.name)}" data-price="${p.price}"><i class="ri-shopping-bag-line"></i></button>
-        </div>
-        <div class="card-body">
-          <span class="card-category">${escapeHtml(p.cat)}</span>
-          <h3 class="card-name">${escapeHtml(p.name)}</h3>
-          <div class="card-footer">
-            <span class="card-price">₦${p.price.toLocaleString()}</span>
-            <a href="#" class="card-view">View <i class="ri-arrow-right-line"></i></a>
-          </div>
-        </div>
-      </div>
-    `).join('');
-    attachProductEvents();
-  }
-
-  function attachProductEvents() {
-    document.querySelectorAll('.add-to-cart').forEach(btn => {
-      btn.removeEventListener('click', addHandler);
-      btn.addEventListener('click', addHandler);
-    });
-    function addHandler(e) {
-      e.stopPropagation();
-      const id = this.dataset.id, name = this.dataset.name, price = parseInt(this.dataset.price);
-      addToCart(id, name, price);
-    }
-    // video hover effect
-    document.querySelectorAll('.product-card').forEach(card => {
-      const video = card.querySelector('.product-video');
-      if(video && video.src) {
-        card.addEventListener('mouseenter', () => video.play().catch(()=>{}));
-        card.addEventListener('mouseleave', () => { video.pause(); video.currentTime = 0; });
-      }
-    });
-  }
-
-  // cart panel toggles
-  const cartPanel = document.getElementById('cart-panel');
-  document.getElementById('cartToggle').addEventListener('click', () => cartPanel.classList.toggle('open'));
-  document.getElementById('closeCart').addEventListener('click', () => cartPanel.classList.remove('open'));
-
-  // initialisation
-  renderProducts();
+  grid.innerHTML = products.slice(0,4).map(p => `
+    <div class="product-card">
+      <div class="card-img-wrap"><span class="card-badge">Luxury</span><img class="product-image" src="${p.image}" alt="${p.name}"><button class="quick-add-btn add-to-cart" data-id="${p.id}" data-name="${p.name.replace(/[&<>]/g, '')}" data-price="${p.price}"><i class="ri-shopping-bag-line"></i></button></div>
+      <div class="card-body"><span class="card-category">${p.cat}</span><h3 class="card-name">${p.name}</h3><div class="card-footer"><span class="card-price">₦${p.price.toLocaleString()}</span><a href="#" class="card-view">View <i class="ri-arrow-right-line"></i></a></div></div>
+    </div>
+  `).join('');
+  
+  document.querySelectorAll('.add-to-cart').forEach(btn => {
+    btn.addEventListener('click', (e) => { e.stopPropagation(); addToCart(btn.dataset.id, btn.dataset.name, parseInt(btn.dataset.price)); });
+  });
+  
+  // Cart panel toggle
+  document.getElementById('cartToggle').addEventListener('click', () => document.getElementById('cart-panel').classList.toggle('open'));
+  document.getElementById('closeCart').addEventListener('click', () => document.getElementById('cart-panel').classList.remove('open'));
+  
   updateCount();
   renderCart();
 })();
