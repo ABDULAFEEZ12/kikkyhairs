@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KikkyHair · gold & brown</title>
+  <title>KikkyHair · gold & brown | Full Collection</title>
   <!-- Google Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
@@ -135,7 +135,7 @@
     /* shop layout with sidebar */
     .shop-layout { display: flex; gap: 40px; align-items: flex-start; margin-top: 20px; }
     .shop-sidebar {
-      width: 270px; flex-shrink: 0; background: var(--bg-soft); border: 1px solid #2a2a2a;
+      width: 280px; flex-shrink: 0; background: var(--bg-soft); border: 1px solid #2a2a2a;
       border-radius: 24px; padding: 24px 20px; position: sticky; top: 90px;
     }
     .filter-group h3 { font-size: 1.2rem; margin-bottom: 18px; color: var(--gold); border-bottom: 1px dashed var(--gold); padding-bottom: 8px; }
@@ -307,21 +307,30 @@
   <section class="product-grid-section">
     <div class="container">
       <div class="shop-layout">
-        <!-- sidebar categories (simplified) -->
+        <!-- sidebar categories - FIXED: using exact category strings from admin -->
         <aside class="shop-sidebar">
           <div class="filter-group">
             <h3><i class="ri-filter-3-line"></i> Categories</h3>
             <ul class="category-list" id="categoryList">
               <li><a data-cat="all" class="active"><span>All</span><i class="ri-check-line"></i></a></li>
-              <li><a data-cat="bone"><span>Black bone straight</span><i class="ri-check-line"></i></a></li>
-              <li><a data-cat="bounce"><span>Bounce curls</span><i class="ri-check-line"></i></a></li>
-              <li><a data-cat="colored"><span>Colored units</span><i class="ri-check-line"></i></a></li>
-              <li><a data-cat="wave"><span>Deep wave</span><i class="ri-check-line"></i></a></li>
-              <li><a data-cat="frontal"><span>Frontal bob wigs</span><i class="ri-check-line"></i></a></li>
+              <li><a data-cat="Frontals & ponytail collections"><span>Frontals & ponytail collections</span><i class="ri-check-line"></i></a></li>
+              <li><a data-cat="Black bone straight"><span>Black bone straight</span><i class="ri-check-line"></i></a></li>
+              <li><a data-cat="Colored bone straight"><span>Colored bone straight</span><i class="ri-check-line"></i></a></li>
+              <li><a data-cat="Bounce curls/wavy units"><span>Bounce curls / wavy units</span><i class="ri-check-line"></i></a></li>
+              <li><a data-cat="Deepwave units"><span>Deepwave units</span><i class="ri-check-line"></i></a></li>
+              <li><a data-cat="Pixie curls units"><span>Pixie curls units</span><i class="ri-check-line"></i></a></li>
+              <li><a data-cat="Closure bobs/frontal bobs units"><span>Closure bobs / frontal bobs units</span><i class="ri-check-line"></i></a></li>
+              <li><a data-cat="Silky straight units"><span>Silky straight units</span><i class="ri-check-line"></i></a></li>
+              <!-- legacy categories for backward compatibility -->
+              <li><a data-cat="bone"><span>Bone straight (legacy)</span><i class="ri-check-line"></i></a></li>
+              <li><a data-cat="bounce"><span>Bounce curls (legacy)</span><i class="ri-check-line"></i></a></li>
+              <li><a data-cat="colored"><span>Colored units (legacy)</span><i class="ri-check-line"></i></a></li>
+              <li><a data-cat="wave"><span>Deep wave (legacy)</span><i class="ri-check-line"></i></a></li>
+              <li><a data-cat="frontal"><span>Frontal wigs (legacy)</span><i class="ri-check-line"></i></a></li>
             </ul>
           </div>
           <div class="filter-note">
-            <i class="ri-gem-line" style="color: var(--gold);"></i> 24k gold standard · only premium
+            <i class="ri-gem-line" style="color: var(--gold);"></i> kikkyhairs · only premium
           </div>
         </aside>
 
@@ -395,6 +404,7 @@
 
       function filterProducts() {
         if (currentCategory === 'all') return products;
+        // Exact string match (case-sensitive) because admin stores exact category strings
         return products.filter(p => p.cat === currentCategory);
       }
 
@@ -447,7 +457,7 @@
         document.getElementById('pagination').innerHTML = html;
       }
 
-      // category click
+      // category click - using exact category strings from data-cat attribute
       document.querySelectorAll('.category-list a').forEach(link => {
         link.addEventListener('click', function(e) {
           e.preventDefault();
@@ -533,7 +543,7 @@
       cartIcon.addEventListener('click', () => cartPanel.classList.toggle('open'));
       closeCart.addEventListener('click', () => cartPanel.classList.remove('open'));
 
-      // ----- MODAL FUNCTIONS (unchanged) -----
+      // ----- MODAL FUNCTIONS -----
       window.showModal = function(type, title, msg, cb) {
         const cont = document.getElementById('modalContainer');
         const icons = {success:'ri-checkbox-circle-fill', error:'ri-error-warning-fill'};
