@@ -98,6 +98,7 @@ def shop():
 @app.route("/cart")
 def cart():
     return render_template("cart.html")
+    
 
 @app.route("/contact")
 def contact():
@@ -229,6 +230,29 @@ def admin_register(current_admin):
 
     return render_template("admin_register.html")
 
+@app.route("/admin/edit-product/<product_id>", methods=["GET","POST"])
+def edit_product(product_id):
+
+    product = products_collection.find_one({"_id": ObjectId(product_id)})
+
+    if request.method == "POST":
+
+        products_collection.update_one(
+            {"_id": ObjectId(product_id)},
+            {"$set":{
+                "name": request.form["name"],
+                "price": float(request.form["price"]),
+                "category": request.form["category"],
+                "length": int(request.form["length"]),
+                "stock": int(request.form["stock"]),
+                "description": request.form["description"]
+            }}
+        )
+
+        flash("Product updated successfully")
+        return redirect(url_for("admin_dashboard"))
+
+    return render_template("edit_product.html", product=product)
 # ==========================
 # ADMIN PRODUCT MANAGEMENT (with file upload and category/length)
 # ==========================
