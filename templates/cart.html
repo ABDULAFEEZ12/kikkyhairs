@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kikky Hairs · Cart</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+font-family:'Montserrat',sans-serif;
+background:#111;
+color:#fff;
+display:flex;
+justify-content:center;
+padding:40px;
+}
+
+.cart-container{
+width:700px;
+background:#1e1814;
+padding:30px;
+border-radius:20px;
+}
+
+h1{
+font-family:'Playfair Display',serif;
+margin-bottom:20px;
+}
+
+.cart-item{
+display:flex;
+justify-content:space-between;
+padding:15px 0;
+border-bottom:1px solid #333;
+}
+
+.total{
+margin-top:20px;
+font-size:20px;
+font-weight:700;
+display:flex;
+justify-content:space-between;
+}
+
+button{
+margin-top:20px;
+padding:15px;
+width:100%;
+border:none;
+border-radius:30px;
+background:#b38728;
+font-weight:700;
+cursor:pointer;
+}
+
+.empty{
+text-align:center;
+padding:40px;
+color:#aaa;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="cart-container">
+
+<h1>Your Cart</h1>
+
+<div id="cartItems"></div>
+
+<div class="total">
+<span>Total</span>
+<span id="totalPrice">₦0</span>
+</div>
+
+<button onclick="goCheckout()">Proceed to Checkout</button>
+
+</div>
+
+<script>
+
+function getCart(){
+return JSON.parse(localStorage.getItem("kikkyCart")) || [];
+}
+
+function renderCart(){
+
+const cart=getCart();
+const container=document.getElementById("cartItems");
+
+let html="";
+let total=0;
+
+if(cart.length===0){
+container.innerHTML='<div class="empty">Your cart is empty</div>';
+return;
+}
+
+cart.forEach(item=>{
+
+const price=item.price;
+const qty=item.quantity || 1;
+const subtotal=price*qty;
+
+total+=subtotal;
+
+html+=`
+<div class="cart-item">
+<span>${item.name} (x${qty})</span>
+<span>₦${subtotal.toLocaleString()}</span>
+</div>
+`;
+
+});
+
+container.innerHTML=html;
+
+document.getElementById("totalPrice").innerText="₦"+total.toLocaleString();
+
+}
+
+function goCheckout(){
+
+const cart=getCart();
+
+if(cart.length===0){
+alert("Your cart is empty");
+return;
+}
+
+window.location.href="/checkout";
+
+}
+
+renderCart();
+
+</script>
+
+</body>
+</html>
