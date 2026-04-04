@@ -988,21 +988,21 @@
   <div class="sidebar-categories">
     <div class="sidebar-cat-label">Collections</div>
     <div class="sidebar-cat-chips">
-      <!-- NEW: All requested collections added -->
-      <a href="{{ url_for('collection') }}?cat=frontals-ponytail" class="cat-chip">Frontals & ponytail</a>
-      <a href="{{ url_for('collection') }}?cat=black-bone-straight" class="cat-chip">Black bone straight</a>
-      <a href="{{ url_for('collection') }}?cat=colored-bone-straight" class="cat-chip">Colored bone straight</a>
-      <a href="{{ url_for('collection') }}?cat=bounce-curls-wavy" class="cat-chip">Bounce curls / wavy</a>
-      <a href="{{ url_for('collection') }}?cat=deepwave" class="cat-chip">Deepwave units</a>
-      <a href="{{ url_for('collection') }}?cat=pixie-curls" class="cat-chip">Pixie curls units</a>
-      <a href="{{ url_for('collection') }}?cat=closure-bobs-frontal" class="cat-chip">Closure bobs / frontal bobs</a>
-      <a href="{{ url_for('collection') }}?cat=silky-straight" class="cat-chip">Silky straight units</a>
-      <!-- Keep existing ones for legacy support -->
-      <a href="{{ url_for('collection') }}?cat=bone" class="cat-chip">Bone straight</a>
-      <a href="{{ url_for('collection') }}?cat=bounce" class="cat-chip">Bounce curls</a>
-      <a href="{{ url_for('collection') }}?cat=colored" class="cat-chip">Colored units</a>
-      <a href="{{ url_for('collection') }}?cat=wave" class="cat-chip">Deep wave</a>
-      <a href="{{ url_for('collection') }}?cat=frontal" class="cat-chip">Frontal wigs</a>
+      <!-- EXACT category names from database (primary) -->
+      <a href="{{ url_for('collection') }}?category=Frontals and ponytail collections" class="cat-chip">Frontals & ponytail</a>
+      <a href="{{ url_for('collection') }}?category=Black bone straight" class="cat-chip">Black bone straight</a>
+      <a href="{{ url_for('collection') }}?category=Colored bone straight" class="cat-chip">Colored bone straight</a>
+      <a href="{{ url_for('collection') }}?category=Bounce curls / wavy units" class="cat-chip">Bounce curls / wavy</a>
+      <a href="{{ url_for('collection') }}?category=Deepwave units" class="cat-chip">Deepwave units</a>
+      <a href="{{ url_for('collection') }}?category=Pixie curls units" class="cat-chip">Pixie curls units</a>
+      <a href="{{ url_for('collection') }}?category=Closure bobs / frontal bobs units" class="cat-chip">Closure bobs / frontal bobs</a>
+      <a href="{{ url_for('collection') }}?category=Silky straight units" class="cat-chip">Silky straight units</a>
+      <!-- Legacy categories (exact DB names as per requirement) -->
+      <a href="{{ url_for('collection') }}?category=Bone straight" class="cat-chip">Bone straight</a>
+      <a href="{{ url_for('collection') }}?category=Bounce curls" class="cat-chip">Bounce curls</a>
+      <a href="{{ url_for('collection') }}?category=Colored units" class="cat-chip">Colored units</a>
+      <a href="{{ url_for('collection') }}?category=Deep wave" class="cat-chip">Deep wave</a>
+      <a href="{{ url_for('collection') }}?category=Frontal wigs" class="cat-chip">Frontal wigs</a>
     </div>
   </div>
   <div class="sidebar-footer">
@@ -1093,7 +1093,13 @@
 <footer>
   <div class="footer-grid">
     <div class="footer-col"><h4>Kikky Hairs</h4><p>Luxury wig studio, Lagos Nigeria.</p></div>
-    <div class="footer-col"><h4>Shop</h4><ul><li><a href="{{ url_for('collection') }}?cat=bone">Bone Straight</a></li><li><a href="{{ url_for('collection') }}?cat=bounce">Bounce Curls</a></li><li><a href="{{ url_for('collection') }}?cat=colored">Colored Units</a></li><li><a href="{{ url_for('collection') }}?cat=deepwave">Deepwave</a></li><li><a href="{{ url_for('collection') }}?cat=silky-straight">Silky Straight</a></li></ul></div>
+    <div class="footer-col"><h4>Shop</h4><ul>
+      <li><a href="{{ url_for('collection') }}?category=Bone straight">Bone Straight</a></li>
+      <li><a href="{{ url_for('collection') }}?category=Bounce curls">Bounce Curls</a></li>
+      <li><a href="{{ url_for('collection') }}?category=Colored units">Colored Units</a></li>
+      <li><a href="{{ url_for('collection') }}?category=Deep wave">Deepwave</a></li>
+      <li><a href="{{ url_for('collection') }}?category=Silky straight units">Silky Straight</a></li>
+    </ul></div>
     <div class="footer-col"><h4>Contact</h4><ul><li><i class="ri-phone-line"></i> +234 814 701 4346</li><li><i class="ri-mail-line"></i> hello@kikkyhairs.ng</li></ul></div>
   </div>
   <div class="footer-bottom">© 2026 Kikky Hairs — All rights reserved.</div>
@@ -1121,7 +1127,7 @@
   document.querySelectorAll('.sidebar-nav a, .cat-chip').forEach(l => l.addEventListener('click', closeMenu));
 
   // Marquee - updated with new collection names
-  const items = ['Frontals & Ponytail', 'Black Bone Straight', 'Colored Bone Straight', 'Bounce Curls / Wavy', 'Deepwave Units', 'Pixie Curls', 'Closure Bobs', 'Silky Straight', '100% Human Hair', 'Fast Shipping'];
+  const items = ['Frontals and ponytail collections', 'Black bone straight', 'Colored bone straight', 'Bounce curls / wavy units', 'Deepwave units', 'Pixie curls units', 'Closure bobs / frontal bobs units', 'Silky straight units', '100% Human Hair', 'Fast Shipping'];
   const marqueeInner = document.getElementById('marqueeInner');
   marqueeInner.innerHTML = [...items, ...items].map(t => `<span class="marquee-item"><span class="marquee-dot"></span>${t}</span>`).join('') + [...items, ...items].map(t => `<span class="marquee-item"><span class="marquee-dot"></span>${t}</span>`).join('');
 
