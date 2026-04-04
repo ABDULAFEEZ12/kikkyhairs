@@ -365,13 +365,13 @@
 
   <section class="product-grid-section">
     <div class="container">
-      <!-- mobile horizontal categories (pill slider) -->
+      <!-- mobile horizontal categories (pill slider) will be injected here via JS, but we create container -->
       <div class="mobile-categories-wrapper" id="mobileCategoriesWrapper">
         <div class="category-slider" id="mobileCategorySlider"></div>
       </div>
 
       <div class="shop-layout">
-        <!-- desktop sidebar - dynamically populated with exact categories -->
+        <!-- desktop sidebar - will be populated dynamically with exact categories -->
         <aside class="shop-sidebar">
           <div class="filter-group">
             <h3><i class="ri-filter-3-line"></i> Categories</h3>
@@ -405,11 +405,11 @@
   <!-- footer -->
   <footer class="footer">
     <div class="footer-grid">
-      <div class="footer-col"><h4>KikkyHair</h4><p>gold-standard human hair, curated for the bold.</p></div>
+      <div class="footer-col"><h4>KikkyHair</h4><p>Beautiful-standard human hair, curated for the bold.</p></div>
       <div class="footer-col"><h4>quick</h4><ul><li><a href="{{ url_for('home') }}">Home</a></li><li><a href="{{ url_for('shop') }}">Shop</a></li></ul></div>
-      <div class="footer-col"><h4>connect</h4><ul><li><a href="#"><i class="ri-instagram-line"></i> @kikkyhair</a></li><li><a href="#"><i class="ri-whatsapp-line"></i> +234 800 000</a></li></ul></div>
+      <div class="footer-col"><h4>connect</h4><ul><li><a href="#"><i class="ri-instagram-line"></i> @kikkyhairs</a></li><li><a href="#"><i class="ri-whatsapp-line"></i> +234 814 701 4346</a></li></ul></div>
     </div>
-    <div class="footer-bottom">© 2026 KikkyHair — gold & brown elegance</div>
+    <div class="footer-bottom">© 2026 KikkyHair</div>
   </footer>
 
   <script>
@@ -442,7 +442,7 @@
         };
       });
 
-      // ---------- EXACT CATEGORY NAMES (as stored in DB) ----------
+      // ---------- EXACT CATEGORY NAMES (as stored in DB & required) ----------
       const EXACT_CATEGORIES = [
         "Frontals and ponytail collections",
         "Black bone straight",
@@ -474,28 +474,24 @@
         const pageItems = filtered.slice(start, end);
         const grid = document.getElementById('productGrid');
         if (!grid) return;
-        if (pageItems.length === 0) {
-          grid.innerHTML = '<div style="text-align:center; padding: 40px;">No products found in this category ✨</div>';
-        } else {
-          grid.innerHTML = pageItems.map(p => {
-            const lengthDisplay = `${p.length}${p.length}`;
-            return `
-              <div class="product-card">
-                <div class="card-image-wrapper">
-                  <img class="product-image" src="${p.image}" alt="${p.name}">
-                  <img class="product-video" src="${p.video}" alt="${p.name} video">
-                  <button class="quick-add-btn add-to-cart-btn" data-id="${p.id}" data-name="${escapeHtml(p.name)}" data-price="${p.price}"><i class="ri-shopping-cart-2-line"></i></button>
-                </div>
-                <div class="card-details">
-                  <div class="product-length">${lengthDisplay}</div>
-                  <span class="category-tag">${escapeHtml(p.cat)}</span>
-                  <h3 class="product-title">${escapeHtml(p.name)}</h3>
-                  <div class="price-row"><span class="price">₦${p.price.toLocaleString()}</span><a href="#" class="view-link"><i class="ri-arrow-right-line"></i></a></div>
-                </div>
+        grid.innerHTML = pageItems.map(p => {
+          const lengthDisplay = `${p.length}${p.length}`;
+          return `
+            <div class="product-card">
+              <div class="card-image-wrapper">
+                <img class="product-image" src="${p.image}" alt="${p.name}">
+                <img class="product-video" src="${p.video}" alt="${p.name} video">
+                <button class="quick-add-btn add-to-cart-btn" data-id="${p.id}" data-name="${escapeHtml(p.name)}" data-price="${p.price}"><i class="ri-shopping-cart-2-line"></i></button>
               </div>
-            `;
-          }).join('');
-        }
+              <div class="card-details">
+                <div class="product-length">${lengthDisplay}</div>
+                <span class="category-tag">${escapeHtml(p.cat)}</span>
+                <h3 class="product-title">${escapeHtml(p.name)}</h3>
+                <div class="price-row"><span class="price">₦${p.price.toLocaleString()}</span><a href="#" class="view-link"><i class="ri-arrow-right-line"></i></a></div>
+              </div>
+            </div>
+          `;
+        }).join('');
         document.getElementById('shown').innerText = pageItems.length;
         document.getElementById('total').innerText = totalItems;
         renderPagination(totalItems);
@@ -526,13 +522,15 @@
         const mobileSlider = document.getElementById('mobileCategorySlider');
         if (!desktopList || !mobileSlider) return;
         
+        // Clear existing
         desktopList.innerHTML = '';
         mobileSlider.innerHTML = '';
         
+        // Add "All" option first
         const categoriesToShow = ['all', ...EXACT_CATEGORIES];
         
         categoriesToShow.forEach(cat => {
-          // desktop link
+          // For desktop
           const li = document.createElement('li');
           const a = document.createElement('a');
           a.href = '#';
@@ -546,7 +544,7 @@
           li.appendChild(a);
           desktopList.appendChild(li);
           
-          // mobile pill
+          // For mobile pills (skip 'all' label as 'All' pill)
           const pill = document.createElement('div');
           pill.className = 'category-pill';
           if (cat === currentCategory) pill.classList.add('active');
@@ -560,17 +558,17 @@
         });
       }
       
+      // central function to change category and update UI both desktop & mobile
       function setActiveCategory(cat) {
         if (currentCategory === cat) return;
         currentCategory = cat;
         currentPage = 1;
-        // update desktop links
+        // update active classes: desktop links & mobile pills
         document.querySelectorAll('#categoryList a').forEach(link => {
           const linkCat = link.getAttribute('data-cat');
           if (linkCat === cat) link.classList.add('active');
           else link.classList.remove('active');
         });
-        // update mobile pills
         document.querySelectorAll('#mobileCategorySlider .category-pill').forEach(pill => {
           const pillCat = pill.getAttribute('data-cat');
           if (pillCat === cat) pill.classList.add('active');
@@ -591,7 +589,7 @@
         }
       });
       
-      // ----- CART LOGIC (preserved) -----
+      // ----- CART LOGIC (unchanged but robust) -----
       let cart = JSON.parse(localStorage.getItem('kikkyCart')) || [];
       function updateCartCount() {
         const countEl = document.getElementById('cartCount');
@@ -661,7 +659,7 @@
         if (cont) cont.innerHTML = '';
       };
       
-      // Initialize: build categories, render products, cart
+      // Initialize everything: build categories, render products, cart init
       buildCategoryUI();
       renderProducts();
       updateCartCount();
