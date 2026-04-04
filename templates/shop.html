@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>KikkyHair · Affordable Luxury | Full Collection</title>
+  <title>KikkyHair · Gold & Brown Luxury | Full Collection</title>
   <!-- Google Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
@@ -70,7 +70,7 @@
       align-items: center; justify-content: center; font-weight: 600;
     }
 
-    /* side menu (same as before) */
+    /* side menu */
     #side-menu {
       position: fixed;
       top: 0;
@@ -114,7 +114,7 @@
       .desktop-nav a:hover { border-bottom-color: var(--gold); }
     }
 
-    /* ----- MAIN SHOP SECTION (start here) ----- */
+    /* ----- COLLECTION HEADER ----- */
     .collection-header {
       text-align: center;
       padding: 40px 20px 10px;
@@ -300,10 +300,10 @@
     .footer-col a:hover { color: var(--gold); }
     .footer-bottom { text-align: center; padding-top: 30px; color: #666; }
 
-    /* ----- RESPONSIVE: MOBILE BEHAVIOR (hide sidebar, show horizontal slider) ----- */
+    /* ----- RESPONSIVE: hide sidebar, show horizontal slider on mobile ----- */
     @media (max-width: 968px) {
       .shop-layout { flex-direction: column; }
-      .shop-sidebar { display: none; }  /* Hide the vertical sidebar on mobile */
+      .shop-sidebar { display: none; }  /* Hide vertical sidebar on mobile */
       .mobile-categories-wrapper { display: block; } /* Show category slider */
       .collection-header h2 { font-size: 2rem; }
       .product-grid { grid-template-columns: repeat(2,1fr); gap: 15px; }
@@ -357,7 +357,7 @@
   </div>
   <div id="overlay"></div>
 
-  <!-- START HERE: explore collection -->
+  <!-- EXPLORE COLLECTION SECTION -->
   <div class="collection-header">
     <h2>explore collection</h2>
     <div class="gold-label">Affordable & Luxury</div>
@@ -365,13 +365,13 @@
 
   <section class="product-grid-section">
     <div class="container">
-      <!-- mobile horizontal categories (pill slider) will be injected here via JS, but we create container -->
+      <!-- mobile horizontal categories (pill slider) -->
       <div class="mobile-categories-wrapper" id="mobileCategoriesWrapper">
         <div class="category-slider" id="mobileCategorySlider"></div>
       </div>
 
       <div class="shop-layout">
-        <!-- desktop sidebar - will be populated dynamically with exact categories -->
+        <!-- desktop sidebar - dynamic categories -->
         <aside class="shop-sidebar">
           <div class="filter-group">
             <h3><i class="ri-filter-3-line"></i> Categories</h3>
@@ -405,16 +405,16 @@
   <!-- footer -->
   <footer class="footer">
     <div class="footer-grid">
-      <div class="footer-col"><h4>KikkyHair</h4><p>Beautiful-standard human hair, curated for the bold.</p></div>
+      <div class="footer-col"><h4>KikkyHair</h4><p>gold-standard human hair, curated for the bold.</p></div>
       <div class="footer-col"><h4>quick</h4><ul><li><a href="{{ url_for('home') }}">Home</a></li><li><a href="{{ url_for('shop') }}">Shop</a></li></ul></div>
       <div class="footer-col"><h4>connect</h4><ul><li><a href="#"><i class="ri-instagram-line"></i> @kikkyhairs</a></li><li><a href="#"><i class="ri-whatsapp-line"></i> +234 814 701 4346</a></li></ul></div>
     </div>
-    <div class="footer-bottom">© 2026 KikkyHair</div>
+    <div class="footer-bottom">© 2026 KikkyHair — gold & brown elegance</div>
   </footer>
 
   <script>
     (function() {
-      // ---------- SIDE MENU TOGGLE ----------
+      // ----- SIDE MENU TOGGLE -----
       const menuToggle = document.getElementById('menu-toggle');
       const sideMenu = document.getElementById('side-menu');
       const overlay = document.getElementById('overlay');
@@ -442,7 +442,7 @@
         };
       });
 
-      // ---------- EXACT CATEGORY NAMES (as stored in DB & required) ----------
+      // ---------- EXACT CATEGORY NAMES (matching DB structure) ----------
       const EXACT_CATEGORIES = [
         "Frontals and ponytail collections",
         "Black bone straight",
@@ -463,6 +463,11 @@
       function filterProducts() {
         if (currentCategory === 'all') return products;
         return products.filter(p => p.cat === currentCategory);
+      }
+
+      // Escape HTML
+      function escapeHtml(str) { 
+        return String(str).replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); 
       }
 
       // Render product grid & pagination
@@ -497,8 +502,6 @@
         renderPagination(totalItems);
       }
 
-      function escapeHtml(str) { return String(str).replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
-
       function renderPagination(total) {
         const totalPages = Math.ceil(total / itemsPerPage);
         let html = '';
@@ -515,22 +518,20 @@
         }
         document.getElementById('pagination').innerHTML = html;
       }
-
+      
       // ----- Category UI Generation (Desktop Sidebar + Mobile Pills) -----
       function buildCategoryUI() {
         const desktopList = document.getElementById('categoryList');
         const mobileSlider = document.getElementById('mobileCategorySlider');
         if (!desktopList || !mobileSlider) return;
         
-        // Clear existing
         desktopList.innerHTML = '';
         mobileSlider.innerHTML = '';
         
-        // Add "All" option first
         const categoriesToShow = ['all', ...EXACT_CATEGORIES];
         
         categoriesToShow.forEach(cat => {
-          // For desktop
+          // Desktop link
           const li = document.createElement('li');
           const a = document.createElement('a');
           a.href = '#';
@@ -544,7 +545,7 @@
           li.appendChild(a);
           desktopList.appendChild(li);
           
-          // For mobile pills (skip 'all' label as 'All' pill)
+          // Mobile pill
           const pill = document.createElement('div');
           pill.className = 'category-pill';
           if (cat === currentCategory) pill.classList.add('active');
@@ -563,12 +564,13 @@
         if (currentCategory === cat) return;
         currentCategory = cat;
         currentPage = 1;
-        // update active classes: desktop links & mobile pills
+        // update desktop active class
         document.querySelectorAll('#categoryList a').forEach(link => {
           const linkCat = link.getAttribute('data-cat');
           if (linkCat === cat) link.classList.add('active');
           else link.classList.remove('active');
         });
+        // update mobile pills active class
         document.querySelectorAll('#mobileCategorySlider .category-pill').forEach(pill => {
           const pillCat = pill.getAttribute('data-cat');
           if (pillCat === cat) pill.classList.add('active');
@@ -589,7 +591,7 @@
         }
       });
       
-      // ----- CART LOGIC (unchanged but robust) -----
+      // ----- CART LOGIC -----
       let cart = JSON.parse(localStorage.getItem('kikkyCart')) || [];
       function updateCartCount() {
         const countEl = document.getElementById('cartCount');
@@ -608,7 +610,7 @@
         let total = 0;
         cart.forEach(item => {
           total += item.price * item.quantity;
-          html += `<p>${escapeHtml(item.name)} x${item.quantity} – ₦${(item.price * item.quantity).toLocaleString()}</p>`;
+          html += `<p style="margin-bottom: 8px;">${escapeHtml(item.name)} x${item.quantity} – ₦${(item.price * item.quantity).toLocaleString()}</p>`;
         });
         cartItemsEl.innerHTML = html;
         if (cartTotalEl) cartTotalEl.innerText = '₦' + total.toLocaleString();
@@ -639,7 +641,7 @@
       if (cartIcon && cartPanel) cartIcon.addEventListener('click', () => cartPanel.classList.toggle('open'));
       if (closeCart) closeCart.addEventListener('click', () => cartPanel.classList.remove('open'));
       
-      // Modal
+      // Modal functions
       window.showModal = function(type, title, msg, cb) {
         const cont = document.getElementById('modalContainer');
         if (!cont) return;
