@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>KikkyHair · gold & brown | Full Collection</title>
   <!-- Google Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -132,22 +132,73 @@
       margin-top: 8px;
     }
 
-    /* shop layout with sidebar */
+    /* MOBILE CATEGORY SLIDER (horizontal pills) - hidden on desktop */
+    .mobile-categories-wrapper {
+      display: none;
+      width: 100%;
+      margin: 20px 0 20px 0;
+      padding: 0 16px;
+    }
+    .category-slider {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--gold) #2a241f;
+      padding-bottom: 8px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .category-slider::-webkit-scrollbar {
+      height: 4px;
+    }
+    .category-slider::-webkit-scrollbar-track {
+      background: #2a241f;
+      border-radius: 10px;
+    }
+    .category-slider::-webkit-scrollbar-thumb {
+      background: var(--gold);
+      border-radius: 10px;
+    }
+    .category-pill {
+      flex-shrink: 0;
+      background: #2a241f;
+      color: #e0d6cc;
+      padding: 8px 22px;
+      border-radius: 60px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      font-family: var(--font-body);
+      letter-spacing: 0.3px;
+      transition: all 0.2s ease;
+      border: 1px solid rgba(179,135,40,0.3);
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    .category-pill.active {
+      background: var(--gold);
+      color: #000;
+      border-color: var(--gold);
+      box-shadow: 0 4px 10px rgba(179,135,40,0.4);
+    }
+    .category-pill:active { transform: scale(0.96); }
+
+    /* shop layout with sidebar (desktop) */
     .shop-layout { display: flex; gap: 40px; align-items: flex-start; margin-top: 20px; }
     .shop-sidebar {
       width: 280px; flex-shrink: 0; background: var(--bg-soft); border: 1px solid #2a2a2a;
       border-radius: 24px; padding: 24px 20px; position: sticky; top: 90px;
     }
     .filter-group h3 { font-size: 1.2rem; margin-bottom: 18px; color: var(--gold); border-bottom: 1px dashed var(--gold); padding-bottom: 8px; }
-    .category-list { margin-bottom: 30px; }
-    .category-list li { margin-bottom: 10px; list-style: none; }
+    .category-list { margin-bottom: 30px; display: flex; flex-direction: column; gap: 8px; }
+    .category-list li { list-style: none; margin-bottom: 0; }
     .category-list a {
       display: flex; align-items: center; justify-content: space-between; padding: 10px 16px;
       background: #2a241f; border-radius: 50px; color: #ccc; transition: 0.2s;
       border: 1px solid transparent; cursor: pointer;
+      font-size: 0.9rem;
     }
-    .category-list a i { color: var(--gold); opacity: 0; }
-    .category-list a:hover, .category-list a.active { background: var(--gold); color: #000; transform: translateX(5px); }
+    .category-list a i { color: var(--gold); opacity: 0; transition: 0.2s; }
+    .category-list a:hover, .category-list a.active { background: var(--gold); color: #000; transform: translateX(5px); border-color: var(--gold);}
     .category-list a:hover i, .category-list a.active i { opacity: 1; color: #000; }
 
     .filter-note {
@@ -249,12 +300,20 @@
     .footer-col a:hover { color: var(--gold); }
     .footer-bottom { text-align: center; padding-top: 30px; color: #666; }
 
+    /* ----- RESPONSIVE: MOBILE BEHAVIOR (hide sidebar, show horizontal slider) ----- */
     @media (max-width: 968px) {
       .shop-layout { flex-direction: column; }
-      .shop-sidebar { width: 100%; position: static; }
-    }
-    @media (max-width: 600px) {
+      .shop-sidebar { display: none; }  /* Hide the vertical sidebar on mobile */
+      .mobile-categories-wrapper { display: block; } /* Show category slider */
+      .collection-header h2 { font-size: 2rem; }
       .product-grid { grid-template-columns: repeat(2,1fr); gap: 15px; }
+      .card-image-wrapper { height: 180px; }
+    }
+    @media (min-width: 969px) {
+      .mobile-categories-wrapper { display: none !important; }
+      .shop-sidebar { display: block; }
+    }
+    @media (max-width: 480px) {
       .card-image-wrapper { height: 160px; }
     }
   </style>
@@ -306,28 +365,17 @@
 
   <section class="product-grid-section">
     <div class="container">
+      <!-- mobile horizontal categories (pill slider) -->
+      <div class="mobile-categories-wrapper" id="mobileCategoriesWrapper">
+        <div class="category-slider" id="mobileCategorySlider"></div>
+      </div>
+
       <div class="shop-layout">
-        <!-- sidebar categories - FIXED: using exact category strings from admin -->
+        <!-- desktop sidebar - dynamically populated with exact categories -->
         <aside class="shop-sidebar">
           <div class="filter-group">
             <h3><i class="ri-filter-3-line"></i> Categories</h3>
-            <ul class="category-list" id="categoryList">
-              <li><a data-cat="all" class="active"><span>All</span><i class="ri-check-line"></i></a></li>
-              <li><a data-cat="Frontals & ponytail collections"><span>Frontals & ponytail collections</span><i class="ri-check-line"></i></a></li>
-              <li><a data-cat="Black bone straight"><span>Black bone straight</span><i class="ri-check-line"></i></a></li>
-              <li><a data-cat="Colored bone straight"><span>Colored bone straight</span><i class="ri-check-line"></i></a></li>
-              <li><a data-cat="Bounce curls/wavy units"><span>Bounce curls / wavy units</span><i class="ri-check-line"></i></a></li>
-              <li><a data-cat="Deepwave units"><span>Deepwave units</span><i class="ri-check-line"></i></a></li>
-              <li><a data-cat="Pixie curls units"><span>Pixie curls units</span><i class="ri-check-line"></i></a></li>
-              <li><a data-cat="Closure bobs/frontal bobs units"><span>Closure bobs / frontal bobs units</span><i class="ri-check-line"></i></a></li>
-              <li><a data-cat="Silky straight units"><span>Silky straight units</span><i class="ri-check-line"></i></a></li>
-              <!-- legacy categories for backward compatibility -->
-              <li><a data-cat="bone"><span>Bone straight (legacy)</span><i class="ri-check-line"></i></a></li>
-              <li><a data-cat="bounce"><span>Bounce curls (legacy)</span><i class="ri-check-line"></i></a></li>
-              <li><a data-cat="colored"><span>Colored units (legacy)</span><i class="ri-check-line"></i></a></li>
-              <li><a data-cat="wave"><span>Deep wave (legacy)</span><i class="ri-check-line"></i></a></li>
-              <li><a data-cat="frontal"><span>Frontal wigs (legacy)</span><i class="ri-check-line"></i></a></li>
-            </ul>
+            <ul class="category-list" id="categoryList"></ul>
           </div>
           <div class="filter-note">
             <i class="ri-gem-line" style="color: var(--gold);"></i> kikkyhairs · only premium
@@ -366,24 +414,20 @@
 
   <script>
     (function() {
-      // ----- LEFT MENU -----
+      // ---------- SIDE MENU TOGGLE ----------
       const menuToggle = document.getElementById('menu-toggle');
       const sideMenu = document.getElementById('side-menu');
       const overlay = document.getElementById('overlay');
       const closeSidebar = document.getElementById('closeSidebar');
-
       function openMenu() { sideMenu.classList.add('active'); overlay.classList.add('active'); }
       function closeMenu() { sideMenu.classList.remove('active'); overlay.classList.remove('active'); }
-
       menuToggle.addEventListener('click', openMenu);
       closeSidebar.addEventListener('click', closeMenu);
       overlay.addEventListener('click', closeMenu);
       document.querySelectorAll('.sidebar-nav a').forEach(link => link.addEventListener('click', closeMenu));
-
-      // ----- GET PRODUCTS FROM FLASK -----
+      
+      // ---------- PRODUCTS FROM FLASK (exact DB data) ----------
       const productsFromServer = {{ products | tojson }};
-
-      // Transform to the format expected by the existing JavaScript
       const products = productsFromServer.map(p => {
         let id = p._id;
         if (id && id.$oid) id = id.$oid;
@@ -398,47 +442,66 @@
         };
       });
 
+      // ---------- EXACT CATEGORY NAMES (as stored in DB) ----------
+      const EXACT_CATEGORIES = [
+        "Frontals and ponytail collections",
+        "Black bone straight",
+        "Colored bone straight",
+        "Bounce curls / wavy units",
+        "Deepwave units",
+        "Pixie curls units",
+        "Closure bobs / frontal bobs units",
+        "Silky straight units"
+      ];
+      
+      // State
       let currentCategory = 'all';
       let currentPage = 1;
       const itemsPerPage = 6;
 
+      // Helper: filter products based on exact category string
       function filterProducts() {
         if (currentCategory === 'all') return products;
-        // Exact string match (case-sensitive) because admin stores exact category strings
         return products.filter(p => p.cat === currentCategory);
       }
 
+      // Render product grid & pagination
       function renderProducts() {
         const filtered = filterProducts();
         const totalItems = filtered.length;
         const start = (currentPage - 1) * itemsPerPage;
         const end = start + itemsPerPage;
         const pageItems = filtered.slice(start, end);
-
         const grid = document.getElementById('productGrid');
-        grid.innerHTML = pageItems.map(p => {
-          const lengthDouble = `${p.length}${p.length}`;
-          return `
-            <div class="product-card reveal-item">
-              <div class="card-image-wrapper">
-                <img class="product-image" src="${p.image}" alt="${p.name}">
-                <img class="product-video" src="${p.video}" alt="${p.name} video">
-                <button class="quick-add-btn add-to-cart-btn" data-id="${p.id}" data-name="${p.name}" data-price="${p.price}"><i class="ri-shopping-cart-2-line"></i></button>
+        if (!grid) return;
+        if (pageItems.length === 0) {
+          grid.innerHTML = '<div style="text-align:center; padding: 40px;">No products found in this category ✨</div>';
+        } else {
+          grid.innerHTML = pageItems.map(p => {
+            const lengthDisplay = `${p.length}${p.length}`;
+            return `
+              <div class="product-card">
+                <div class="card-image-wrapper">
+                  <img class="product-image" src="${p.image}" alt="${p.name}">
+                  <img class="product-video" src="${p.video}" alt="${p.name} video">
+                  <button class="quick-add-btn add-to-cart-btn" data-id="${p.id}" data-name="${escapeHtml(p.name)}" data-price="${p.price}"><i class="ri-shopping-cart-2-line"></i></button>
+                </div>
+                <div class="card-details">
+                  <div class="product-length">${lengthDisplay}</div>
+                  <span class="category-tag">${escapeHtml(p.cat)}</span>
+                  <h3 class="product-title">${escapeHtml(p.name)}</h3>
+                  <div class="price-row"><span class="price">₦${p.price.toLocaleString()}</span><a href="#" class="view-link"><i class="ri-arrow-right-line"></i></a></div>
+                </div>
               </div>
-              <div class="card-details">
-                <div class="product-length">${lengthDouble}</div>
-                <span class="category-tag">${p.cat}</span>
-                <h3 class="product-title">${p.name}</h3>
-                <div class="price-row"><span class="price">₦${p.price.toLocaleString()}</span><a href="#" class="view-link"><i class="ri-arrow-right-line"></i></a></div>
-              </div>
-            </div>
-          `;
-        }).join('');
-
+            `;
+          }).join('');
+        }
         document.getElementById('shown').innerText = pageItems.length;
         document.getElementById('total').innerText = totalItems;
         renderPagination(totalItems);
       }
+
+      function escapeHtml(str) { return String(str).replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
 
       function renderPagination(total) {
         const totalPages = Math.ceil(total / itemsPerPage);
@@ -457,19 +520,66 @@
         document.getElementById('pagination').innerHTML = html;
       }
 
-      // category click - using exact category strings from data-cat attribute
-      document.querySelectorAll('.category-list a').forEach(link => {
-        link.addEventListener('click', function(e) {
-          e.preventDefault();
-          document.querySelectorAll('.category-list a').forEach(l => l.classList.remove('active'));
-          this.classList.add('active');
-          currentCategory = this.dataset.cat;
-          currentPage = 1;
-          renderProducts();
+      // ----- Category UI Generation (Desktop Sidebar + Mobile Pills) -----
+      function buildCategoryUI() {
+        const desktopList = document.getElementById('categoryList');
+        const mobileSlider = document.getElementById('mobileCategorySlider');
+        if (!desktopList || !mobileSlider) return;
+        
+        desktopList.innerHTML = '';
+        mobileSlider.innerHTML = '';
+        
+        const categoriesToShow = ['all', ...EXACT_CATEGORIES];
+        
+        categoriesToShow.forEach(cat => {
+          // desktop link
+          const li = document.createElement('li');
+          const a = document.createElement('a');
+          a.href = '#';
+          a.setAttribute('data-cat', cat);
+          a.innerHTML = `<span>${cat === 'all' ? 'All' : cat}</span><i class="ri-check-line"></i>`;
+          if (cat === currentCategory) a.classList.add('active');
+          a.addEventListener('click', (e) => {
+            e.preventDefault();
+            setActiveCategory(cat);
+          });
+          li.appendChild(a);
+          desktopList.appendChild(li);
+          
+          // mobile pill
+          const pill = document.createElement('div');
+          pill.className = 'category-pill';
+          if (cat === currentCategory) pill.classList.add('active');
+          pill.setAttribute('data-cat', cat);
+          pill.innerText = cat === 'all' ? 'All' : cat;
+          pill.addEventListener('click', (e) => {
+            e.preventDefault();
+            setActiveCategory(cat);
+          });
+          mobileSlider.appendChild(pill);
         });
-      });
-
-      // pagination click
+      }
+      
+      function setActiveCategory(cat) {
+        if (currentCategory === cat) return;
+        currentCategory = cat;
+        currentPage = 1;
+        // update desktop links
+        document.querySelectorAll('#categoryList a').forEach(link => {
+          const linkCat = link.getAttribute('data-cat');
+          if (linkCat === cat) link.classList.add('active');
+          else link.classList.remove('active');
+        });
+        // update mobile pills
+        document.querySelectorAll('#mobileCategorySlider .category-pill').forEach(pill => {
+          const pillCat = pill.getAttribute('data-cat');
+          if (pillCat === cat) pill.classList.add('active');
+          else pill.classList.remove('active');
+        });
+        renderProducts();
+      }
+      
+      // pagination event delegation
       document.addEventListener('click', function(e) {
         const target = e.target.closest('.page-link');
         if (!target) return;
@@ -480,45 +590,40 @@
           renderProducts();
         }
       });
-
-      // ----- ENHANCED CART -----
+      
+      // ----- CART LOGIC (preserved) -----
       let cart = JSON.parse(localStorage.getItem('kikkyCart')) || [];
-
       function updateCartCount() {
-        document.getElementById('cartCount').innerText = cart.reduce((sum, item) => sum + item.quantity, 0);
+        const countEl = document.getElementById('cartCount');
+        if (countEl) countEl.innerText = cart.reduce((sum, item) => sum + item.quantity, 0);
       }
-
       function renderCartItems() {
         const cartItemsEl = document.getElementById('cartItems');
         const cartTotalEl = document.getElementById('cartTotal');
+        if (!cartItemsEl) return;
         if (cart.length === 0) {
           cartItemsEl.innerHTML = '<div class="empty-cart">your cart glows empty ✨</div>';
-          cartTotalEl.innerText = '₦0';
+          if (cartTotalEl) cartTotalEl.innerText = '₦0';
           return;
         }
         let html = '';
         let total = 0;
         cart.forEach(item => {
           total += item.price * item.quantity;
-          html += `<p>${item.name} x${item.quantity} – ₦${(item.price * item.quantity).toLocaleString()}</p>`;
+          html += `<p>${escapeHtml(item.name)} x${item.quantity} – ₦${(item.price * item.quantity).toLocaleString()}</p>`;
         });
         cartItemsEl.innerHTML = html;
-        cartTotalEl.innerText = '₦' + total.toLocaleString();
+        if (cartTotalEl) cartTotalEl.innerText = '₦' + total.toLocaleString();
       }
-
       function addToCart(productId, productName, productPrice) {
         const existing = cart.find(item => item.id === productId);
-        if (existing) {
-          existing.quantity += 1;
-        } else {
-          cart.push({ id: productId, name: productName, price: productPrice, quantity: 1 });
-        }
+        if (existing) existing.quantity += 1;
+        else cart.push({ id: productId, name: productName, price: productPrice, quantity: 1 });
         localStorage.setItem('kikkyCart', JSON.stringify(cart));
         updateCartCount();
         renderCartItems();
         showModal('success', '✨ added', `${productName} now in your cart`, null);
       }
-
       document.addEventListener('click', function(e) {
         const btn = e.target.closest('.add-to-cart-btn');
         if (!btn) return;
@@ -526,26 +631,20 @@
         const id = btn.dataset.id;
         const name = btn.dataset.name;
         const price = parseInt(btn.dataset.price);
-        addToCart(id, name, price);
+        if (id && name && !isNaN(price)) addToCart(id, name, price);
       });
-
-      document.getElementById('clear-cart')?.addEventListener('click', () => {
-        cart = [];
-        localStorage.removeItem('kikkyCart');
-        updateCartCount();
-        renderCartItems();
-      });
-
-      // ----- CART PANEL TOGGLE -----
+      
+      // Cart panel toggle
       const cartPanel = document.getElementById('cartPanel');
       const cartIcon = document.getElementById('cartIcon');
       const closeCart = document.getElementById('closeCart');
-      cartIcon.addEventListener('click', () => cartPanel.classList.toggle('open'));
-      closeCart.addEventListener('click', () => cartPanel.classList.remove('open'));
-
-      // ----- MODAL FUNCTIONS -----
+      if (cartIcon && cartPanel) cartIcon.addEventListener('click', () => cartPanel.classList.toggle('open'));
+      if (closeCart) closeCart.addEventListener('click', () => cartPanel.classList.remove('open'));
+      
+      // Modal
       window.showModal = function(type, title, msg, cb) {
         const cont = document.getElementById('modalContainer');
+        if (!cont) return;
         const icons = {success:'ri-checkbox-circle-fill', error:'ri-error-warning-fill'};
         cont.innerHTML = `
           <div class="modal-overlay active">
@@ -556,12 +655,14 @@
             </div>
           </div>
         `;
-      }
+      };
       window.closeModal = function() {
-        document.getElementById('modalContainer').innerHTML = '';
-      }
-
-      // Initial render
+        const cont = document.getElementById('modalContainer');
+        if (cont) cont.innerHTML = '';
+      };
+      
+      // Initialize: build categories, render products, cart
+      buildCategoryUI();
       renderProducts();
       updateCartCount();
       renderCartItems();
