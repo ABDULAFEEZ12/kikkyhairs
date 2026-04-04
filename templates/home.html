@@ -1172,12 +1172,12 @@
   }
   document.getElementById('clear-cart')?.addEventListener('click', () => { cart = []; saveCart(); updateCount(); renderCart(); });
   
-  // Render products
+  // Render products (only first 4, with proper product detail link)
   const grid = document.getElementById('productGrid');
   grid.innerHTML = products.slice(0,4).map(p => `
     <div class="product-card">
       <div class="card-img-wrap"><span class="card-badge">Luxury</span><img class="product-image" src="${p.image}" alt="${p.name}"><button class="quick-add-btn add-to-cart" data-id="${p.id}" data-name="${p.name.replace(/[&<>]/g, '')}" data-price="${p.price}"><i class="ri-shopping-bag-line"></i></button></div>
-      <div class="card-body"><span class="card-category">${p.cat}</span><h3 class="card-name">${p.name}</h3><div class="card-footer"><span class="card-price">₦${p.price.toLocaleString()}</span><a href="#" class="card-view">View <i class="ri-arrow-right-line"></i></a></div></div>
+      <div class="card-body"><span class="card-category">${p.cat}</span><h3 class="card-name">${p.name}</h3><div class="card-footer"><span class="card-price">₦${p.price.toLocaleString()}</span><a href="/product/${p.id}" class="card-view">View <i class="ri-arrow-right-line"></i></a></div></div>
     </div>
   `).join('');
   
