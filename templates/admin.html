@@ -96,6 +96,8 @@ margin-right:10px;
 
 <option value="Frontals and ponytail collections">Frontals and ponytail collections</option>
 
+<!-- NEW CATEGORY: Wigtools.ng by Kikkyhairs added here like Frontals -->
+
 <option value="Black bone straight">Black bone straight</option>
 
 <option value="Colored bone straight">Colored bone straight</option>
@@ -109,6 +111,8 @@ margin-right:10px;
 <option value="Closure bobs / frontal bobs units">Closure bobs / frontal bobs units</option>
 
 <option value="Silky straight units">Silky straight units</option>
+
+<option value="Wigtools.ng by Kikkyhairs">Wigtools.ng by Kikkyhairs</option>
 
 </select>
 
@@ -162,11 +166,8 @@ margin-right:10px;
 <td>{{ product.stock }}</td>
 
 <td>
-
 <a href="{{ url_for('edit_product', product_id=product._id) }}">Edit</a>
-
 <a href="{{ url_for('delete_product', product_id=product._id) }}">Delete</a>
-
 </td>
 
 </tr>
@@ -176,7 +177,6 @@ margin-right:10px;
 </table>
 
 </div>
-
 
 
 <div class="section">
@@ -206,22 +206,15 @@ margin-right:10px;
 <td>{{ order.status }}</td>
 
 <td>
-
 <form method="POST" action="{{ url_for('update_order', reference=order.paymentReference) }}">
-
 <select name="status">
-
 <option value="Pending">Pending</option>
 <option value="Paid">Paid</option>
 <option value="Shipped">Shipped</option>
 <option value="Delivered">Delivered</option>
-
 </select>
-
 <button type="submit">Update</button>
-
 </form>
-
 </td>
 
 </tr>
