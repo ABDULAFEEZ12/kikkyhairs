@@ -373,18 +373,51 @@ def edit_product(current_admin, product_id):
             flash(error_msg)
             return redirect(url_for("edit_product", product_id=product_id))
 
-        # Additional: prevent negative stock during edit already handled by validator
+        # Prepare update data
+        update_data = {
+            "name": name,
+            "price": float(price),
+            "category": category,
+            "length": int(length),
+            "stock": int(stock),
+            "description": description
+        }
+
+        # Check if new image was uploaded
+        if 'image' in request.files and request.files['image'].filename != '':
+            file = request.files['image']
+            
+            if not allowed_file(file.filename):
+                flash("Invalid file type. Allowed: png, jpg, jpeg, gif, webp.")
+                return redirect(url_for("edit_product", product_id=product_id))
+            
+            # Delete old image file if it exists
+            old_image = product.get("image", "")
+            if old_image and old_image.startswith('/static/uploads/'):
+                old_filename = old_image.split('/')[-1]
+                old_path = os.path.join(app.config['UPLOAD_FOLDER'], old_filename)
+                if os.path.exists(old_path):
+                    try:
+                        os.remove(old_path)
+                    except Exception as e:
+                        print(f"Error deleting old image: {e}")
+            
+            # Save new image with unique filename
+            original_filename = secure_filename(file.filename)
+            unique_filename = f"{uuid.uuid4().hex}_{original_filename}"
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
+            file.save(file_path)
+            image_url = url_for('static', filename='uploads/' + unique_filename)
+            
+            # Add new image to update data
+            update_data["image"] = image_url
+
+        # Update product in database
         products_collection.update_one(
             {"_id": obj_id},
-            {"$set": {
-                "name": name,
-                "price": float(price),
-                "category": category,
-                "length": int(length),
-                "stock": int(stock),
-                "description": description
-            }}
+            {"$set": update_data}
         )
+        
         flash("Product updated successfully.")
         return redirect(url_for("admin_dashboard"))
 
