@@ -1,29 +1,162 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Edit Product</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edit Product - KikkyHairs Admin</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+background:#120e0c;
+color:#f4f4f4;
+font-family:Montserrat;
+padding:40px;
+}
+
+h1{
+font-family:Playfair Display;
+color:#b38728;
+}
+
+.section{
+background:#1e1814;
+padding:25px;
+border-radius:15px;
+margin-bottom:30px;
+}
+
+input, select{
+width:100%;
+padding:12px;
+margin-bottom:15px;
+background:#2a241f;
+border:1px solid #3a3a3a;
+border-radius:8px;
+color:white;
+}
+
+button{
+background:#b38728;
+color:black;
+padding:12px 25px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-weight:600;
+margin-right:10px;
+}
+
+.current-image{
+width:200px;
+height:200px;
+object-fit:cover;
+border-radius:8px;
+margin-bottom:15px;
+border: 2px solid #b38728;
+}
+
+.image-preview{
+display:none;
+width:200px;
+height:200px;
+object-fit:cover;
+border-radius:8px;
+margin-bottom:15px;
+border: 2px solid #4CAF50;
+}
+
+.back-btn{
+background:#555;
+}
+
+label{
+display:block;
+margin-bottom:8px;
+color:#b38728;
+font-weight:600;
+}
+
+.image-section{
+background:#2a241f;
+padding:20px;
+border-radius:8px;
+margin-bottom:20px;
+}
+
+</style>
 </head>
-<body style="background:#120e0c;color:white;font-family:Montserrat;padding:40px;">
 
-<h2>Edit Product</h2>
+<body>
 
-<form method="POST">
+<h1>Edit Product</h1>
 
-<input type="text" name="name" value="{{ product.name }}" required><br><br>
+<div class="section">
 
-<input type="number" name="price" value="{{ product.price }}" required><br><br>
+<form method="POST" enctype="multipart/form-data">
 
-<input type="text" name="category" value="{{ product.category }}"><br><br>
+<div class="image-section">
+<label>Current Image:</label>
+<img src="{{ product.image }}" class="current-image" id="currentImage">
 
-<input type="number" name="length" value="{{ product.length }}"><br><br>
+<label>Change Image (optional - leave empty to keep current):</label>
+<input type="file" name="image" id="imageInput" accept="image/png,image/jpg,image/jpeg,image/gif,image/webp">
+<img id="imagePreview" class="image-preview">
+</div>
 
-<input type="number" name="stock" value="{{ product.stock }}"><br><br>
+<label>Product Name:</label>
+<input type="text" name="name" value="{{ product.name }}" required>
 
-<input type="text" name="description" value="{{ product.description }}"><br><br>
+<label>Price (₦):</label>
+<input type="number" name="price" value="{{ product.price }}" required>
+
+<label>Category:</label>
+<select name="category" required>
+<option value="">Select Wig Category</option>
+<option value="Frontals and ponytail collections" {% if product.category == "Frontals and ponytail collections" %}selected{% endif %}>Frontals and ponytail collections</option>
+<option value="Black bone straight" {% if product.category == "Black bone straight" %}selected{% endif %}>Black bone straight</option>
+<option value="Colored bone straight" {% if product.category == "Colored bone straight" %}selected{% endif %}>Colored bone straight</option>
+<option value="Bounce curls / wavy units" {% if product.category == "Bounce curls / wavy units" %}selected{% endif %}>Bounce curls / wavy units</option>
+<option value="Deepwave units" {% if product.category == "Deepwave units" %}selected{% endif %}>Deepwave units</option>
+<option value="Pixie curls units" {% if product.category == "Pixie curls units" %}selected{% endif %}>Pixie curls units</option>
+<option value="Closure bobs / frontal bobs units" {% if product.category == "Closure bobs / frontal bobs units" %}selected{% endif %}>Closure bobs / frontal bobs units</option>
+<option value="Silky straight units" {% if product.category == "Silky straight units" %}selected{% endif %}>Silky straight units</option>
+<option value="Wigtools.ng by Kikkyhairs" {% if product.category == "Wigtools.ng by Kikkyhairs" %}selected{% endif %}>Wigtools.ng by Kikkyhairs</option>
+</select>
+
+<label>Length (inches):</label>
+<input type="number" name="length" value="{{ product.length }}">
+
+<label>Stock:</label>
+<input type="number" name="stock" value="{{ product.stock }}">
+
+<label>Description:</label>
+<input type="text" name="description" value="{{ product.description }}">
 
 <button type="submit">Update Product</button>
+<button type="button" class="back-btn" onclick="window.location.href='{{ url_for('admin_dashboard') }}'">Cancel</button>
 
 </form>
+
+</div>
+
+<script>
+// Preview image before upload
+document.getElementById('imageInput').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('imagePreview').src = e.target.result;
+            document.getElementById('imagePreview').style.display = 'block';
+            document.getElementById('currentImage').style.opacity = '0.3';
+        }
+        reader.readAsDataURL(file);
+    }
+});
+</script>
 
 </body>
 </html>
