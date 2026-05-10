@@ -7,3 +7,4 @@ PyJWT
 requests
 certifi
 gunicorn
+cloudinary
