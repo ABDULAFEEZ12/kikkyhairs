@@ -4,15 +4,15 @@ import jwt
 import datetime
 import requests
 import certifi
-import uuid
 from functools import wraps
-from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, send_from_directory, abort
+from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, abort
 from flask_cors import CORS
-from werkzeug.utils import secure_filename
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from bson.objectid import ObjectId
 from bson.errors import InvalidId
+import cloudinary
+import cloudinary.uploader
 
 load_dotenv()
 
@@ -30,18 +30,29 @@ PAYSTACK_SECRET = os.getenv("PAYSTACK_SECRET")
 PAYSTACK_PUBLIC_KEY = os.getenv("PAYSTACK_PUBLIC_KEY")
 
 # ==========================
+# CLOUDINARY CONFIGURATION
+# ==========================
+cloudinary.config(
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
+    secure=True
+)
+
+# ==========================
 # FILE UPLOAD CONFIGURATION
 # ==========================
-UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB
-
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 def allowed_file(filename):
     """Check if the uploaded file has an allowed extension."""
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def upload_to_cloudinary(file):
+    """Upload a file to Cloudinary and return the secure URL."""
+    result = cloudinary.uploader.upload(file, folder="kikkyhairs")
+    return result["secure_url"]
 
 # ==========================
 # DATABASE
@@ -391,26 +402,13 @@ def edit_product(current_admin, product_id):
                 flash("Invalid file type. Allowed: png, jpg, jpeg, gif, webp.")
                 return redirect(url_for("edit_product", product_id=product_id))
             
-            # Delete old image file if it exists
-            old_image = product.get("image", "")
-            if old_image and old_image.startswith('/static/uploads/'):
-                old_filename = old_image.split('/')[-1]
-                old_path = os.path.join(app.config['UPLOAD_FOLDER'], old_filename)
-                if os.path.exists(old_path):
-                    try:
-                        os.remove(old_path)
-                    except Exception as e:
-                        print(f"Error deleting old image: {e}")
-            
-            # Save new image with unique filename
-            original_filename = secure_filename(file.filename)
-            unique_filename = f"{uuid.uuid4().hex}_{original_filename}"
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
-            file.save(file_path)
-            image_url = url_for('static', filename='uploads/' + unique_filename)
-            
-            # Add new image to update data
-            update_data["image"] = image_url
+            # Upload new image to Cloudinary
+            try:
+                image_url = upload_to_cloudinary(file)
+                update_data["image"] = image_url
+            except Exception as e:
+                flash(f"Image upload failed: {str(e)}")
+                return redirect(url_for("edit_product", product_id=product_id))
 
         # Update product in database
         products_collection.update_one(
@@ -454,12 +452,12 @@ def add_product(current_admin):
         flash("Invalid file type. Allowed: png, jpg, jpeg, gif, webp.")
         return redirect(url_for("admin_dashboard"))
 
-    # Secure filename with UUID to prevent collisions
-    original_filename = secure_filename(file.filename)
-    unique_filename = f"{uuid.uuid4().hex}_{original_filename}"
-    file_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
-    file.save(file_path)
-    image_url = url_for('static', filename='uploads/' + unique_filename)
+    # Upload to Cloudinary
+    try:
+        image_url = upload_to_cloudinary(file)
+    except Exception as e:
+        flash(f"Image upload failed: {str(e)}")
+        return redirect(url_for("admin_dashboard"))
 
     # Insert product
     product_data = {
@@ -475,6 +473,29 @@ def add_product(current_admin):
     flash("Product added successfully.")
     return redirect(url_for("admin_dashboard"))
 
+@app.route("/debug/check-images")
+def check_images():
+    """TEMPORARY - REMOVE AFTER DEBUGGING"""
+    try:
+        products = list(products_collection.find().limit(5))
+        result = []
+        for p in products:
+            result.append({
+                "name": p.get("name"),
+                "image": p.get("image", "NO IMAGE FIELD"),
+                "id": str(p.get("_id"))
+            })
+        return jsonify({
+            "total_products": products_collection.count_documents({}),
+            "sample": result,
+            "mongo_connected": True
+        })
+    except Exception as e:
+        return jsonify({
+            "error": str(e),
+            "mongo_connected": False
+        })
+        
 @app.route("/admin/delete-product/<product_id>")
 @token_required
 def delete_product(current_admin, product_id):
@@ -508,12 +529,6 @@ def update_order(current_admin, reference):
         flash("Order status updated.")
     return redirect(url_for("admin_dashboard"))
 
-# ==========================
-# SERVE UPLOADED FILES
-# ==========================
-@app.route('/uploads/<filename>')
-def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 # ==========================
 # ERROR HANDLERS
