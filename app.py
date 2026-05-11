@@ -156,12 +156,21 @@ def about():
 
 @app.route("/collection")
 def collection():
-    return redirect(url_for("shop"))
+    category = request.args.get("category", "").strip()
+    if category:
+        products = convert_cursor(products_collection.find({"category": category}))
+    else:
+        products = convert_cursor(products_collection.find())
+    return render_template("shop.html", products=products, active_category=category)
 
 @app.route("/shop")
 def shop():
-    products = convert_cursor(products_collection.find())
-    return render_template("shop.html", products=products)
+    category = request.args.get("category", "").strip()
+    if category:
+        products = convert_cursor(products_collection.find({"category": category}))
+    else:
+        products = convert_cursor(products_collection.find())
+    return render_template("shop.html", products=products, active_category=category)
 
 @app.route("/cart")
 def cart():
