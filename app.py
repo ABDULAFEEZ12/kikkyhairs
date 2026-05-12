@@ -74,14 +74,14 @@ def safe_objectid(id_str):
         return None
 
 def convert_doc(doc):
-    """Convert a MongoDB document to a JSON‑friendly dict (ObjectId → str)."""
+    """Convert a MongoDB document to a JSON-friendly dict (ObjectId -> str)."""
     if not doc:
         return doc
     doc["_id"] = str(doc["_id"])
     return doc
 
 def convert_cursor(cursor):
-    """Convert a cursor of MongoDB documents to a list of JSON‑friendly dicts."""
+    """Convert a cursor of MongoDB documents to a list of JSON-friendly dicts."""
     return [convert_doc(doc) for doc in cursor]
 
 def validate_product_data(name, price, stock, length, category):
@@ -257,7 +257,7 @@ def verify_payment():
         if stock_errors:
             return jsonify({"message": "Stock validation failed", "errors": stock_errors}), 400
 
-        # All good – update stock and save order
+        # All good - update stock and save order
         for item in items:
             product_id = item.get("productId")
             quantity = item.get("quantity", 1)
@@ -314,12 +314,11 @@ def admin_login_page():
         )
 
         response = redirect(url_for("admin_dashboard"))
-        # Secure cookie flags
         response.set_cookie(
             "admin_token",
             token,
             httponly=True,
-            secure=os.getenv("FLASK_ENV") == "production",  # only secure in production
+            secure=os.getenv("FLASK_ENV") == "production",
             samesite="Lax"
         )
         flash("Login successful.")
@@ -393,7 +392,6 @@ def edit_product(current_admin, product_id):
             flash(error_msg)
             return redirect(url_for("edit_product", product_id=product_id))
 
-        # Prepare update data
         update_data = {
             "name": name,
             "price": float(price),
@@ -403,7 +401,6 @@ def edit_product(current_admin, product_id):
             "description": description
         }
 
-        # Check if new image was uploaded
         if 'image' in request.files and request.files['image'].filename != '':
             file = request.files['image']
             
@@ -411,7 +408,6 @@ def edit_product(current_admin, product_id):
                 flash("Invalid file type. Allowed: png, jpg, jpeg, gif, webp.")
                 return redirect(url_for("edit_product", product_id=product_id))
             
-            # Upload new image to Cloudinary
             try:
                 image_url = upload_to_cloudinary(file)
                 update_data["image"] = image_url
@@ -419,7 +415,6 @@ def edit_product(current_admin, product_id):
                 flash(f"Image upload failed: {str(e)}")
                 return redirect(url_for("edit_product", product_id=product_id))
 
-        # Update product in database
         products_collection.update_one(
             {"_id": obj_id},
             {"$set": update_data}
@@ -434,7 +429,6 @@ def edit_product(current_admin, product_id):
 @app.route("/admin/add-product", methods=["POST"])
 @token_required
 def add_product(current_admin):
-    # Validate required fields
     name = request.form.get("name", "").strip()
     price = request.form.get("price")
     description = request.form.get("description", "").strip()
@@ -447,7 +441,6 @@ def add_product(current_admin):
         flash(error_msg)
         return redirect(url_for("admin_dashboard"))
 
-    # Handle file upload
     if 'image' not in request.files:
         flash("No image file provided.")
         return redirect(url_for("admin_dashboard"))
@@ -461,14 +454,12 @@ def add_product(current_admin):
         flash("Invalid file type. Allowed: png, jpg, jpeg, gif, webp.")
         return redirect(url_for("admin_dashboard"))
 
-    # Upload to Cloudinary
     try:
         image_url = upload_to_cloudinary(file)
     except Exception as e:
         flash(f"Image upload failed: {str(e)}")
         return redirect(url_for("admin_dashboard"))
 
-    # Insert product
     product_data = {
         "name": name,
         "price": float(price),
@@ -504,7 +495,7 @@ def check_images():
             "error": str(e),
             "mongo_connected": False
         })
-        
+
 @app.route("/admin/delete-product/<product_id>")
 @token_required
 def delete_product(current_admin, product_id):
@@ -540,15 +531,16 @@ def update_order(current_admin, reference):
 
 
 # ==========================
-# ERROR HANDLERS
+# ERROR HANDLERS — FIXED
 # ==========================
 @app.errorhandler(404)
 def page_not_found(e):
-    return render_template("404.html"), 404
+    return "", 404
 
 @app.errorhandler(500)
 def internal_server_error(e):
-    return render_template("500.html"), 500
+    return "", 500
+
 
 # ==========================
 # RUN SERVER
