@@ -102,7 +102,7 @@ def generate_order_reference():
     """Generate a unique-enough, human-readable order reference."""
     return "KIKKY-" + secrets.token_hex(4).upper()
 
-def validate_product_data(name, price, stock, length, category):
+def validate_product_data(name, price, stock, length, category, sale_price=None):
     """Validate common product fields. Return (is_valid, error_message)."""
     if not name or not name.strip():
         return False, "Product name is required."
@@ -112,6 +112,16 @@ def validate_product_data(name, price, stock, length, category):
             return False, "Price cannot be negative."
     except (ValueError, TypeError):
         return False, "Price must be a valid number."
+
+    if sale_price is not None and str(sale_price).strip() != "":
+        try:
+            sale_price_val = float(sale_price)
+            if sale_price_val < 0:
+                return False, "Sale price cannot be negative."
+            if sale_price_val >= price_val:
+                return False, "Sale price must be less than the normal price."
+        except (ValueError, TypeError):
+            return False, "Sale price must be a valid number."
 
     try:
         stock_val = int(stock)
@@ -131,6 +141,14 @@ def validate_product_data(name, price, stock, length, category):
         return False, "Category is required."
 
     return True, ""
+
+def get_effective_price(product):
+    """Return the sale price if it's set and valid (positive, less than the normal price), else the normal price."""
+    price = product.get("price", 0) or 0
+    sale_price = product.get("sale_price")
+    if sale_price and sale_price > 0 and sale_price < price:
+        return sale_price
+    return price
 
 # ==========================
 # AUTH DECORATOR
@@ -320,7 +338,7 @@ def place_order():
             )
             continue
 
-        price = product.get("price", 0)
+        price = get_effective_price(product)
         order_items.append({
             "productId": str(obj_id),
             "name": product.get("name", "Product"),
@@ -530,12 +548,13 @@ def edit_product(current_admin, product_id):
     if request.method == "POST":
         name = request.form.get("name", "").strip()
         price = request.form.get("price")
+        sale_price = request.form.get("sale_price")
         category = request.form.get("category", "").strip()
         length = request.form.get("length")
         stock = request.form.get("stock")
         description = request.form.get("description", "").strip()
 
-        is_valid, error_msg = validate_product_data(name, price, stock, length, category)
+        is_valid, error_msg = validate_product_data(name, price, stock, length, category, sale_price)
         if not is_valid:
             flash(error_msg)
             return redirect(url_for("edit_product", product_id=product_id))
@@ -544,6 +563,7 @@ def edit_product(current_admin, product_id):
         update_data = {
             "name": name,
             "price": float(price),
+            "sale_price": float(sale_price) if sale_price and sale_price.strip() else None,
             "category": category,
             "length": int(length),
             "stock": int(stock),
@@ -585,12 +605,13 @@ def add_product(current_admin):
     # Validate required fields
     name = request.form.get("name", "").strip()
     price = request.form.get("price")
+    sale_price = request.form.get("sale_price")
     description = request.form.get("description", "").strip()
     stock = request.form.get("stock")
     category = request.form.get("category", "").strip()
     length = request.form.get("length")
 
-    is_valid, error_msg = validate_product_data(name, price, stock, length, category)
+    is_valid, error_msg = validate_product_data(name, price, stock, length, category, sale_price)
     if not is_valid:
         flash(error_msg)
         return redirect(url_for("admin_add_product_page"))
@@ -620,6 +641,7 @@ def add_product(current_admin):
     product_data = {
         "name": name,
         "price": float(price),
+        "sale_price": float(sale_price) if sale_price and sale_price.strip() else None,
         "image": image_url,
         "description": description,
         "stock": int(stock),

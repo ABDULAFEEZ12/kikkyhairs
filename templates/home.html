@@ -760,6 +760,14 @@
       color: var(--gold);
     }
 
+    .card-price-old {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #888;
+      text-decoration: line-through;
+      margin-right: 6px;
+    }
+
     /* VALUE STRIP */
     .value-strip {
       background: #0a0806;
@@ -1139,9 +1147,15 @@
 
   // Products from Flask
   const productsFromServer = {{ products | tojson }};
-  const products = productsFromServer.map(p => ({
-    id: p._id, name: p.name || 'Luxury wig', cat: p.category || 'Signature', price: p.price || 0, image: p.image || 'https://via.placeholder.com/400x500/2a241f/b38728?text=Kikky'
-  }));
+  const products = productsFromServer.map(p => {
+    const normalPrice = p.price || 0;
+    const salePrice = (p.sale_price && p.sale_price > 0 && p.sale_price < normalPrice) ? p.sale_price : null;
+    return {
+      id: p._id, name: p.name || 'Luxury wig', cat: p.category || 'Signature',
+      price: salePrice || normalPrice, oldPrice: salePrice ? normalPrice : null,
+      image: p.image || 'https://via.placeholder.com/400x500/2a241f/b38728?text=Kikky'
+    };
+  });
 
   // Cart logic
   let cart = JSON.parse(localStorage.getItem('kikkyCart') || '[]');
@@ -1177,7 +1191,7 @@
   grid.innerHTML = products.slice(0,4).map(p => `
     <div class="product-card">
       <div class="card-img-wrap"><span class="card-badge">Luxury</span><img class="product-image" src="${p.image}" alt="${p.name}"><button class="quick-add-btn add-to-cart" data-id="${p.id}" data-name="${p.name.replace(/[&<>]/g, '')}" data-price="${p.price}"><i class="ri-shopping-bag-line"></i></button></div>
-      <div class="card-body"><span class="card-category">${p.cat}</span><h3 class="card-name">${p.name}</h3><div class="card-footer"><span class="card-price">₦${p.price.toLocaleString()}</span><a href="/product/${p.id}" class="card-view">View <i class="ri-arrow-right-line"></i></a></div></div>
+      <div class="card-body"><span class="card-category">${p.cat}</span><h3 class="card-name">${p.name}</h3><div class="card-footer"><span>${p.oldPrice ? `<span class="card-price-old">₦${p.oldPrice.toLocaleString()}</span>` : ''}<span class="card-price">₦${p.price.toLocaleString()}</span></span><a href="/product/${p.id}" class="card-view">View <i class="ri-arrow-right-line"></i></a></div></div>
     </div>
   `).join('');
   

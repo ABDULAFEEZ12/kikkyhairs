@@ -281,6 +281,7 @@
       margin-top: auto;
     }
     .card-price { font-weight: 700; font-size: 1.05rem; color: var(--gold); }
+    .card-price-old { font-weight: 500; font-size: 0.78rem; color: #888; text-decoration: line-through; margin-right: 6px; }
     .card-view {
       width: 30px; height: 30px; border-radius: 50%;
       background: rgba(179,135,40,0.12); border: 1px solid rgba(179,135,40,0.3);
@@ -568,14 +569,19 @@
 
   // ===== PRODUCTS FROM FLASK =====
   const raw = {{ products | tojson }};
-  const products = raw.map(p => ({
-    id:    p._id && p._id.$oid ? p._id.$oid : p._id,
-    name:  p.name  || 'Luxury Wig',
-    cat:   p.category || 'uncategorized',
-    price: p.price || 0,
-    length: p.length || 0,
-    image: p.image || 'https://via.placeholder.com/400x530/1e1814/b38728?text=Kikky'
-  }));
+  const products = raw.map(p => {
+    const normalPrice = p.price || 0;
+    const salePrice = (p.sale_price && p.sale_price > 0 && p.sale_price < normalPrice) ? p.sale_price : null;
+    return {
+      id:    p._id && p._id.$oid ? p._id.$oid : p._id,
+      name:  p.name  || 'Luxury Wig',
+      cat:   p.category || 'uncategorized',
+      price: salePrice || normalPrice,
+      oldPrice: salePrice ? normalPrice : null,
+      length: p.length || 0,
+      image: p.image || 'https://via.placeholder.com/400x530/1e1814/b38728?text=Kikky'
+    };
+  });
 
   // ===== CATEGORIES =====
   const CATS = [
@@ -638,7 +644,7 @@
           <div class="card-cat">${esc(p.cat)}</div>
           <div class="card-name">${esc(p.name)}</div>
           <div class="card-foot">
-            <span class="card-price">&#8358;${p.price.toLocaleString()}</span>
+            <span>${p.oldPrice ? `<span class="card-price-old">&#8358;${p.oldPrice.toLocaleString()}</span>` : ''}<span class="card-price">&#8358;${p.price.toLocaleString()}</span></span>
             <a href="/product/${esc(p.id)}" class="card-view"><i class="ri-arrow-right-line"></i></a>
           </div>
         </div>

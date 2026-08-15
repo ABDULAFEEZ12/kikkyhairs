@@ -106,7 +106,14 @@ tr:last-child td{ border-bottom:none; }
           <td>{{ product.name }}</td>
           <td>{{ product.category }}</td>
           <td>{{ product.length }}"</td>
-          <td>&#8358;{{ "{:,.0f}".format(product.price) }}</td>
+          <td>
+            {% if product.sale_price and product.sale_price > 0 and product.sale_price < product.price %}
+            <span style="text-decoration:line-through; color:#777; font-size:0.75rem; display:block;">&#8358;{{ "{:,.0f}".format(product.price) }}</span>
+            <span style="color:#81c784; font-weight:700;">&#8358;{{ "{:,.0f}".format(product.sale_price) }}</span>
+            {% else %}
+            &#8358;{{ "{:,.0f}".format(product.price) }}
+            {% endif %}
+          </td>
           <td>{{ product.stock }}</td>
           <td>
             <div class="action-links">

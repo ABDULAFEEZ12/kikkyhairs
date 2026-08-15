@@ -233,6 +233,13 @@
       display: inline-block;
       width: 100%;
     }
+    .product-price-old {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #888;
+      text-decoration: line-through;
+      margin-right: 12px;
+    }
     .product-description {
       margin: 25px 0;
       color: #ddd;
@@ -406,6 +413,13 @@
       color: var(--gold);
       font-size: 1rem;
     }
+    .related-price-old {
+      font-weight: 500;
+      color: #888;
+      font-size: 0.78rem;
+      text-decoration: line-through;
+      margin-right: 6px;
+    }
     @media (max-width: 600px) {
       .related-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -539,7 +553,13 @@
           {% if product.length %}
           <div class="product-length">{{ product.length }}" Length</div>
           {% endif %}
-          <div class="product-price">₦{{ "{:,.0f}".format(product.price) }}</div>
+          <div class="product-price">
+            {% if product.sale_price and product.sale_price > 0 and product.sale_price < product.price %}
+            <span class="product-price-old">₦{{ "{:,.0f}".format(product.price) }}</span>₦{{ "{:,.0f}".format(product.sale_price) }}
+            {% else %}
+            ₦{{ "{:,.0f}".format(product.price) }}
+            {% endif %}
+          </div>
           
           <div class="product-description">
             <h3>Description</h3>
@@ -591,7 +611,13 @@
           <div class="related-info">
             <div class="related-category">{{ rel.category if rel.category else 'Premium' }}</div>
             <div class="related-name">{{ rel.name }}</div>
-            <div class="related-price">₦{{ "{:,.0f}".format(rel.price) }}</div>
+            <div class="related-price">
+              {% if rel.sale_price and rel.sale_price > 0 and rel.sale_price < rel.price %}
+              <span class="related-price-old">₦{{ "{:,.0f}".format(rel.price) }}</span>₦{{ "{:,.0f}".format(rel.sale_price) }}
+              {% else %}
+              ₦{{ "{:,.0f}".format(rel.price) }}
+              {% endif %}
+            </div>
           </div>
         </a>
         {% endfor %}
@@ -668,7 +694,7 @@
       const product = {
         id: {{ product.id|tojson }},
         name: {{ product.name|tojson }},
-        price: {{ product.price|tojson }},
+        price: {{ (product.sale_price if product.sale_price and product.sale_price > 0 and product.sale_price < product.price else product.price)|tojson }},
         image: {{ product.image|tojson }},
         badge: {{ product.badge|tojson if product.badge else ''|tojson }}
       };

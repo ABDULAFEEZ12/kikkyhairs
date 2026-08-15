@@ -112,6 +112,9 @@ margin-bottom:20px;
 <label>Price (₦):</label>
 <input type="number" name="price" value="{{ product.price }}" required>
 
+<label>Sale Price (₦) — optional, leave blank if not on sale:</label>
+<input type="number" name="sale_price" value="{{ product.sale_price if product.sale_price else '' }}" placeholder="Leave blank if not on sale">
+
 <label>Category:</label>
 <select name="category" required>
 <option value="">Select Wig Category</option>
