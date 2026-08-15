@@ -4,7 +4,6 @@ import secrets
 import bcrypt
 import jwt
 import datetime
-import requests
 import certifi
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, abort, Response
@@ -28,8 +27,6 @@ app.secret_key = os.getenv("JWT_SECRET")
 # ==========================
 MONGO_URI = os.getenv("MONGO_URI")
 JWT_SECRET = os.getenv("JWT_SECRET")
-PAYSTACK_SECRET = os.getenv("PAYSTACK_SECRET")
-PAYSTACK_PUBLIC_KEY = os.getenv("PAYSTACK_PUBLIC_KEY")
 
 # ==========================
 # FILE UPLOAD CONFIGURATION
@@ -262,78 +259,11 @@ def product_detail(product_id):
     return render_template("product.html", product=product, related_products=related_products)
 
 # ==========================
-# CHECKOUT & PAYMENT ROUTES
+# CHECKOUT ROUTES
 # ==========================
 @app.route("/checkout")
 def checkout():
-    return render_template("checkout.html", public_key=PAYSTACK_PUBLIC_KEY)
-
-@app.route("/verify-payment", methods=["POST"])
-def verify_payment():
-    data = request.get_json()
-    if not data:
-        return jsonify({"message": "Invalid request"}), 400
-
-    reference = data.get("reference")
-    order_data = data.get("orderData", {})
-
-    if not reference or not order_data:
-        return jsonify({"message": "Missing reference or order data"}), 400
-
-    # Verify with Paystack
-    try:
-        response = requests.get(
-            f"https://api.paystack.co/transaction/verify/{reference}",
-            headers={"Authorization": f"Bearer {PAYSTACK_SECRET}"}
-        )
-        result = response.json()
-    except Exception as e:
-        return jsonify({"message": "Paystack verification failed", "error": str(e)}), 500
-
-    if result.get("status") and result["data"]["status"] == "success":
-        # Validate stock before updating (prevent negative stock)
-        items = order_data.get("items", [])
-        stock_errors = []
-        for item in items:
-            product_id = item.get("productId")
-            quantity = item.get("quantity", 1)
-            obj_id = safe_objectid(product_id)
-            if not obj_id:
-                stock_errors.append(f"Invalid product ID: {product_id}")
-                continue
-            product = products_collection.find_one({"_id": obj_id})
-            if not product:
-                stock_errors.append(f"Product not found: {product_id}")
-                continue
-            current_stock = product.get("stock", 0)
-            if current_stock < quantity:
-                stock_errors.append(
-                    f"Insufficient stock for {product.get('name', product_id)}. "
-                    f"Available: {current_stock}, requested: {quantity}"
-                )
-        if stock_errors:
-            return jsonify({"message": "Stock validation failed", "errors": stock_errors}), 400
-
-        # All good – update stock and save order
-        for item in items:
-            product_id = item.get("productId")
-            quantity = item.get("quantity", 1)
-            obj_id = safe_objectid(product_id)
-            if obj_id:
-                products_collection.update_one(
-                    {"_id": obj_id},
-                    {"$inc": {"stock": -quantity}}
-                )
-
-        order_data["paymentReference"] = reference
-        order_data["status"] = "Pending"
-        order_data["createdAt"] = datetime.datetime.utcnow()
-        order_data["paidAt"] = datetime.datetime.utcnow()
-        orders_collection.insert_one(order_data)
-
-        return jsonify({"message": "Payment verified and order saved", "reference": reference})
-
-    return jsonify({"message": "Payment verification failed", "details": result}), 400
+    return render_template("checkout.html")
 
 @app.route("/order/<reference>")
 def order_status(reference):
