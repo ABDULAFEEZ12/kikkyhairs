@@ -381,32 +381,77 @@ return total;
 
 const total=renderCart();
 
-document.getElementById("placeOrder").onclick=function(){
+const placeOrderBtn=document.getElementById("placeOrder");
+const placeOrderBtnDefaultText=placeOrderBtn.textContent;
 
-const name=document.getElementById("fullName").value;
-const phone=document.getElementById("phone").value;
-const address=document.getElementById("address").value;
+placeOrderBtn.onclick=async function(){
+
+const name=document.getElementById("fullName").value.trim();
+const email=document.getElementById("email").value.trim();
+const phone=document.getElementById("phone").value.trim();
+const address=document.getElementById("address").value.trim();
 
 if(!name||!phone||!address){
 alert("Please fill all required fields");
 return;
 }
 
-const reference="KIKKY_"+Math.floor(Math.random()*100000000);
+const cart=getCart();
+
+if(!cart.length){
+alert("Your cart is empty");
+return;
+}
+
+placeOrderBtn.disabled=true;
+placeOrderBtn.textContent="placing order...";
+
+let data;
+try{
+const res=await fetch("/place-order",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+name:name,
+email:email,
+phone:phone,
+whatsapp:phone,
+address:address,
+items:cart.map(item=>({id:item.id,quantity:item.quantity||1}))
+})
+});
+data=await res.json();
+
+if(!res.ok){
+alert(data.message||"Could not place order. Please try again.");
+placeOrderBtn.disabled=false;
+placeOrderBtn.textContent=placeOrderBtnDefaultText;
+return;
+}
+}catch(err){
+alert("Network error. Please check your connection and try again.");
+placeOrderBtn.disabled=false;
+placeOrderBtn.textContent=placeOrderBtnDefaultText;
+return;
+}
+
+const reference=data.reference;
 
 document.getElementById("bankBox").style.display="block";
 
 let itemsList="";
-const cart=getCart();
 
 cart.forEach(item=>{
 itemsList += `${item.name} (x${item.quantity || 1})%0A`;
 });
 
-const message=`Hello Kikky Hairs,%0AI just placed an order.%0A%0AOrder Ref: ${reference}%0A%0AItems:%0A${itemsList}%0AAmount: ₦${total}%0A%0ACustomer Details:%0AName: ${name}%0APhone: ${phone}%0ADelivery Address: ${address}%0A%0AI have sent payment.`;
+const message=`Hello Kikky Hairs,%0AI just placed an order.%0A%0AOrder Ref: ${reference}%0A%0AItems:%0A${itemsList}%0AAmount: ₦${data.amount}%0A%0ACustomer Details:%0AName: ${name}%0APhone: ${phone}%0ADelivery Address: ${address}%0A%0AI have sent payment.`;
 
 document.getElementById("whatsappLink").href=
 "https://wa.me/2348147014346?text="+message;
+
+localStorage.removeItem("kikkyCart");
+placeOrderBtn.textContent="order placed ✓";
 
 }
 

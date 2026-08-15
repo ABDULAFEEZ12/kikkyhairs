@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orders · KikkyHairs Admin</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+:root{
+  --gold:#b38728;
+  --gold-light:#d4af37;
+  --charcoal:#120e0c;
+  --charcoal-light:#1e1814;
+  --charcoal-lighter:#2a241f;
+  --border:#3a3a3a;
+  --white-off:#f4f4f4;
+  --font-heading:'Playfair Display', serif;
+  --font-body:'Montserrat', sans-serif;
+}
+body{ font-family:var(--font-body); background:var(--charcoal); color:var(--white-off); line-height:1.6; padding:32px 5%; min-height:100vh; }
+h1,h2,h3{ font-family:var(--font-heading); font-weight:500; letter-spacing:1px; }
+h1{ font-size:2.2rem; color:var(--gold); margin-bottom:0; }
+h2{ font-size:1.3rem; color:#fff; margin-bottom:1.2rem; display:flex; align-items:center; gap:10px; }
+a{ color:inherit; }
+.admin-container{ max-width:1400px; margin:0 auto; }
+.admin-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:1.2rem; flex-wrap:wrap; gap:1rem; }
+.admin-actions{ display:flex; gap:0.7rem; flex-wrap:wrap; }
+.btn{ display:inline-flex; align-items:center; gap:8px; padding:10px 20px; background:transparent; border:1px solid var(--border); color:#ccc; font-family:var(--font-body); font-size:0.75rem; font-weight:600; letter-spacing:1px; text-transform:uppercase; cursor:pointer; transition:all 0.2s; border-radius:8px; text-decoration:none; }
+.btn:hover{ border-color:var(--gold); color:var(--gold); }
+.btn-small{ padding:6px 14px; font-size:0.65rem; }
+.btn-danger-sm{ padding:6px 10px; font-size:0.6rem; background:transparent; border:1px solid #a85a5a; color:#e8a0a0; cursor:pointer; border-radius:8px; text-decoration:none; display:inline-flex; align-items:center; }
+.btn-danger-sm:hover{ background:#8b3f3f; color:#fff; border-color:#8b3f3f; }
+.admin-nav-bar{ display:flex; gap:0.25rem; margin-bottom:2rem; border-bottom:1px solid var(--border); flex-wrap:wrap; }
+.admin-nav-link{ display:inline-flex; align-items:center; gap:8px; padding:12px 18px; color:#999; text-decoration:none; font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; border-bottom:2px solid transparent; transition:all 0.2s; }
+.admin-nav-link:hover{ color:#fff; }
+.admin-nav-link.active{ color:var(--gold); border-bottom-color:var(--gold); }
+.admin-nav-link .badge{ background:var(--gold); color:#000; font-size:0.65rem; font-weight:800; border-radius:50%; padding:2px 6px; }
+.section{ background:var(--charcoal-light); border:1px solid var(--border); border-radius:16px; padding:1.8rem; margin-bottom:2rem; }
+select{ background:var(--charcoal-lighter); border:1px solid var(--border); padding:8px 12px; border-radius:8px; color:#fff; font-family:var(--font-body); font-size:0.7rem; outline:none; }
+select:focus{ border-color:var(--gold); }
+.table-wrapper{ overflow-x:auto; }
+table{ width:100%; border-collapse:collapse; font-size:0.82rem; }
+th{ text-align:left; padding:0.9rem 0.7rem; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:var(--gold); font-size:0.65rem; border-bottom:1px solid var(--border); white-space:nowrap; }
+td{ padding:0.9rem 0.7rem; border-bottom:1px solid rgba(179,135,40,0.12); vertical-align:middle; }
+tr:last-child td{ border-bottom:none; }
+.status-badge{ display:inline-block; padding:5px 14px; font-size:0.65rem; text-transform:uppercase; letter-spacing:1px; border-radius:20px; font-weight:700; white-space:nowrap; }
+.status-badge.pending, .status-badge.pending-payment{ background:rgba(179,135,40,0.15); color:var(--gold-light); border:1px solid rgba(179,135,40,0.3); }
+.status-badge.paid{ background:rgba(76,175,80,0.15); color:#81c784; border:1px solid rgba(76,175,80,0.3); }
+.status-badge.shipped{ background:rgba(33,150,243,0.15); color:#64b5f6; border:1px solid rgba(33,150,243,0.3); }
+.status-badge.delivered{ background:rgba(76,175,80,0.2); color:#a5d6a7; border:1px solid rgba(76,175,80,0.3); }
+.order-update-form{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.flash-messages{ margin-bottom:1.5rem; }
+.flash{ padding:12px 18px; margin-bottom:0.5rem; background:var(--charcoal-light); border-left:3px solid var(--gold); color:var(--white-off); font-size:0.85rem; border-radius:8px; }
+.logout-link{ color:#999; font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
+.logout-link:hover{ color:#fff; }
+.view-details-summary{ cursor:pointer; color:#999; font-size:0.78rem; }
+.view-details-summary:hover{ color:var(--gold); }
+.order-detail-grid{ display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:0.8rem; }
+.order-detail-grid strong{ color:var(--gold); }
+.order-detail-grid ul{ list-style:none; margin-top:4px; }
+.order-detail-grid li{ padding:2px 0; }
+@media (max-width:768px){ body{ padding:20px 4%; } h1{ font-size:1.6rem; } .section{ padding:1.2rem; } .admin-header{ flex-direction:column; align-items:flex-start; } .order-update-form{ flex-direction:column; align-items:flex-start; } }
+</style>
+</head>
+
+<body>
+
+<div class="admin-container">
+{% set active_page = 'orders' %}
+{% include "_admin_header.html" %}
+
+<div class="section">
+  <h2><i class="ri-shopping-cart-line"></i> Orders <span style="color:#777; font-size:0.9rem; font-weight:400;">({{ orders|length }})</span></h2>
+  <div class="table-wrapper">
+    <table>
+      <thead><tr><th>Reference</th><th>Customer</th><th>Phone</th><th>Amount</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for order in orders %}
+        <tr style="{% if order.status == 'Paid' %}border-left:3px solid #4CAF50;{% elif order.status == 'Shipped' %}border-left:3px solid #2196F3;{% elif order.status == 'Delivered' %}border-left:3px solid #81C784;{% else %}border-left:3px solid #b38728;{% endif %}">
+          <td><code style="background:var(--charcoal-lighter); padding:4px 8px; border-radius:6px; font-size:0.7rem;">{{ order.paymentReference or '—' }}</code></td>
+          <td><strong>{{ order.customerName or '—' }}</strong>{% if order.customerEmail %}<br><small style="color:#888;">{{ order.customerEmail }}</small>{% endif %}</td>
+          <td>{{ order.customerPhone or '—' }}</td>
+          <td><strong>&#8358;{{ "{:,.0f}".format(order.amount) if order.amount else 0 }}</strong></td>
+          <td><span class="status-badge {{ order.status|lower|replace(' ', '-') if order.status else 'pending' }}">{{ order.status or 'Pending' }}</span></td>
+          <td>{% if order.createdAt %}{{ order.createdAt.strftime('%d/%m/%y %H:%M') }}{% else %}—{% endif %}</td>
+          <td>
+            <div class="order-update-form">
+              <form method="POST" action="{{ url_for('update_order', reference=order.paymentReference) }}" style="display:flex;gap:6px;align-items:center;">
+                <select name="status">
+                  <option value="Pending Payment" {% if order.status == 'Pending Payment' %}selected{% endif %}>Pending Payment</option>
+                  <option value="Pending" {% if order.status == 'Pending' %}selected{% endif %}>Pending</option>
+                  <option value="Paid" {% if order.status == 'Paid' %}selected{% endif %}>Paid</option>
+                  <option value="Shipped" {% if order.status == 'Shipped' %}selected{% endif %}>Shipped</option>
+                  <option value="Delivered" {% if order.status == 'Delivered' %}selected{% endif %}>Delivered</option>
+                </select>
+                <button type="submit" class="btn btn-small">Update</button>
+              </form>
+              <a href="#" class="btn-danger-sm" onclick="if(confirm('Delete this order permanently?')){window.location.href='{{ url_for('delete_order', reference=order.paymentReference) }}';}return false;" title="Delete Order"><i class="ri-delete-bin-line"></i></a>
+            </div>
+          </td>
+        </tr>
+        <tr style="background:rgba(0,0,0,0.15);">
+          <td colspan="7" style="padding:0.5rem 1rem; font-size:0.75rem; color:#999;">
+            <details>
+              <summary class="view-details-summary">View Full Order Details</summary>
+              <div class="order-detail-grid">
+                <div>
+                  <strong>Items:</strong>
+                  {% if order['items'] %}
+                  <ul>
+                    {% for item in order['items'] %}
+                    <li>{{ item.name }} × {{ item.quantity|default(1) }} — &#8358;{{ "{:,.0f}".format(item.price * item.quantity) if item.price else 0 }}</li>
+                    {% endfor %}
+                  </ul>
+                  {% else %}<p>No items listed</p>{% endif %}
+                </div>
+                <div>
+                  <strong>Delivery Address:</strong>
+                  <p>{{ order.customerAddress or 'Not provided' }}</p>
+                  <strong style="display:block; margin-top:8px;">WhatsApp:</strong>
+                  <p>{{ order.customerWhatsapp or '—' }}</p>
+                </div>
+              </div>
+            </details>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" style="text-align:center;padding:3rem;color:#777;"><i class="ri-shopping-cart-line" style="font-size:2rem;display:block;margin-bottom:1rem;"></i>No orders yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</div>
+
+</body>
+</html>

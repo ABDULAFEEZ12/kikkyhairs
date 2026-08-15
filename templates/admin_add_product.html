@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Product · KikkyHairs Admin</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+:root{
+  --gold:#b38728;
+  --gold-light:#d4af37;
+  --charcoal:#120e0c;
+  --charcoal-light:#1e1814;
+  --charcoal-lighter:#2a241f;
+  --border:#3a3a3a;
+  --white-off:#f4f4f4;
+  --font-heading:'Playfair Display', serif;
+  --font-body:'Montserrat', sans-serif;
+}
+body{ font-family:var(--font-body); background:var(--charcoal); color:var(--white-off); line-height:1.6; padding:32px 5%; min-height:100vh; }
+h1,h2,h3{ font-family:var(--font-heading); font-weight:500; letter-spacing:1px; }
+h1{ font-size:2.2rem; color:var(--gold); margin-bottom:0; }
+h2{ font-size:1.3rem; color:#fff; margin-bottom:1.2rem; display:flex; align-items:center; gap:10px; }
+a{ color:inherit; }
+.admin-container{ max-width:1400px; margin:0 auto; }
+.admin-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:1.2rem; flex-wrap:wrap; gap:1rem; }
+.admin-actions{ display:flex; gap:0.7rem; flex-wrap:wrap; }
+.btn{ display:inline-flex; align-items:center; gap:8px; padding:10px 20px; background:transparent; border:1px solid var(--border); color:#ccc; font-family:var(--font-body); font-size:0.75rem; font-weight:600; letter-spacing:1px; text-transform:uppercase; cursor:pointer; transition:all 0.2s; border-radius:8px; text-decoration:none; }
+.btn:hover{ border-color:var(--gold); color:var(--gold); }
+.btn-primary{ background:var(--gold); color:#000; border-color:var(--gold); }
+.btn-primary:hover{ background:var(--gold-light); color:#000; }
+.btn-small{ padding:6px 14px; font-size:0.65rem; }
+.btn-danger{ background:transparent; border:1px solid #a85a5a; color:#e8a0a0; }
+.btn-danger:hover{ background:#8b3f3f; color:#fff; border-color:#8b3f3f; }
+.btn-danger-sm{ padding:6px 10px; font-size:0.6rem; background:transparent; border:1px solid #a85a5a; color:#e8a0a0; cursor:pointer; border-radius:8px; }
+.btn-danger-sm:hover{ background:#8b3f3f; color:#fff; border-color:#8b3f3f; }
+.admin-nav-bar{ display:flex; gap:0.25rem; margin-bottom:2rem; border-bottom:1px solid var(--border); flex-wrap:wrap; }
+.admin-nav-link{ display:inline-flex; align-items:center; gap:8px; padding:12px 18px; color:#999; text-decoration:none; font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; border-bottom:2px solid transparent; transition:all 0.2s; }
+.admin-nav-link:hover{ color:#fff; }
+.admin-nav-link.active{ color:var(--gold); border-bottom-color:var(--gold); }
+.admin-nav-link .badge{ background:var(--gold); color:#000; font-size:0.65rem; font-weight:800; border-radius:50%; padding:2px 6px; }
+.section{ background:var(--charcoal-light); border:1px solid var(--border); border-radius:16px; padding:1.8rem; margin-bottom:2rem; }
+.section-head{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.2rem; }
+.form-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:1.2rem; }
+.form-group{ display:flex; flex-direction:column; gap:0.4rem; }
+.form-group label{ font-size:0.7rem; text-transform:uppercase; letter-spacing:1.5px; color:var(--gold); }
+input, select, textarea{ background:var(--charcoal-lighter); border:1px solid var(--border); padding:12px 14px; border-radius:8px; color:#fff; font-family:var(--font-body); font-size:0.85rem; outline:none; width:100%; }
+input:focus, select:focus, textarea:focus{ border-color:var(--gold); }
+input::placeholder{ color:#777; }
+textarea{ min-height:80px; resize:vertical; }
+.file-input-wrapper{ position:relative; display:flex; align-items:center; }
+.file-input-wrapper input[type="file"]{ position:absolute; opacity:0; width:100%; height:100%; cursor:pointer; }
+.file-input-custom{ width:100%; padding:12px 14px; background:var(--charcoal-lighter); border:1px solid var(--border); border-radius:8px; color:#999; font-size:0.85rem; cursor:pointer; }
+.file-input-custom i{ margin-right:8px; }
+.file-input-wrapper:hover .file-input-custom{ border-color:var(--gold); }
+.table-wrapper{ overflow-x:auto; }
+table{ width:100%; border-collapse:collapse; font-size:0.82rem; }
+th{ text-align:left; padding:0.9rem 0.7rem; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:var(--gold); font-size:0.65rem; border-bottom:1px solid var(--border); white-space:nowrap; }
+td{ padding:0.9rem 0.7rem; border-bottom:1px solid rgba(179,135,40,0.12); vertical-align:middle; }
+tr:last-child td{ border-bottom:none; }
+.product-image{ width:50px; height:50px; object-fit:cover; border-radius:8px; background:var(--charcoal-lighter); }
+.action-links{ display:flex; gap:1rem; align-items:center; flex-wrap:wrap; }
+.action-links a{ color:var(--gold); text-decoration:none; font-size:0.72rem; text-transform:uppercase; letter-spacing:1px; display:inline-flex; align-items:center; gap:4px; }
+.action-links a:hover{ color:var(--gold-light); }
+.action-links .delete-link{ color:#e8a0a0; }
+.action-links .delete-link:hover{ color:#ff6b6b; }
+.status-badge{ display:inline-block; padding:5px 14px; font-size:0.65rem; text-transform:uppercase; letter-spacing:1px; border-radius:20px; font-weight:700; white-space:nowrap; }
+.status-badge.pending, .status-badge.pending-payment{ background:rgba(179,135,40,0.15); color:var(--gold-light); border:1px solid rgba(179,135,40,0.3); }
+.status-badge.paid{ background:rgba(76,175,80,0.15); color:#81c784; border:1px solid rgba(76,175,80,0.3); }
+.status-badge.shipped{ background:rgba(33,150,243,0.15); color:#64b5f6; border:1px solid rgba(33,150,243,0.3); }
+.status-badge.delivered{ background:rgba(76,175,80,0.2); color:#a5d6a7; border:1px solid rgba(76,175,80,0.3); }
+.status-badge.in-stock{ background:rgba(76,175,80,0.15); color:#81c784; border:1px solid rgba(76,175,80,0.3); }
+.status-badge.low-stock{ background:rgba(179,135,40,0.15); color:var(--gold-light); border:1px solid rgba(179,135,40,0.3); }
+.status-badge.sold-out{ background:rgba(232,160,160,0.15); color:#e8a0a0; border:1px solid rgba(232,160,160,0.3); }
+.order-update-form{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.order-update-form select{ width:auto; padding:8px 12px; font-size:0.7rem; }
+.flash-messages{ margin-bottom:1.5rem; }
+.flash{ padding:12px 18px; margin-bottom:0.5rem; background:var(--charcoal-light); border-left:3px solid var(--gold); color:var(--white-off); font-size:0.85rem; border-radius:8px; }
+.logout-link{ color:#999; font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
+.logout-link:hover{ color:#fff; }
+.view-details-summary{ cursor:pointer; color:#999; font-size:0.78rem; }
+.view-details-summary:hover{ color:var(--gold); }
+.order-detail-grid{ display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:0.8rem; }
+.order-detail-grid strong{ color:var(--gold); }
+.order-detail-grid ul{ list-style:none; margin-top:4px; }
+.order-detail-grid li{ padding:2px 0; }
+.stat-row{ display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:1.2rem; margin-bottom:2rem; }
+.stat-card{ background:var(--charcoal-light); border:1px solid var(--border); border-radius:16px; padding:1.4rem; text-align:center; }
+.stat-card .num{ font-family:var(--font-heading); font-size:2rem; color:var(--gold); }
+.stat-card .label{ font-size:0.68rem; text-transform:uppercase; letter-spacing:1.5px; color:#999; margin-top:4px; }
+@media (max-width:768px){ body{ padding:20px 4%; } h1{ font-size:1.6rem; } .section{ padding:1.2rem; } .admin-header{ flex-direction:column; align-items:flex-start; } .order-update-form{ flex-direction:column; align-items:flex-start; } }
+</style>
+</head>
+
+<body>
+
+<div class="admin-container">
+{% set active_page = 'add_product' %}
+{% include "_admin_header.html" %}
+
+<div class="section">
+  <h2><i class="ri-add-line"></i> Add New Product</h2>
+  <form method="POST" action="{{ url_for('add_product') }}" enctype="multipart/form-data">
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Product Name *</label>
+        <input type="text" name="name" placeholder="e.g., 14 inch Bone Straight Closure" required>
+      </div>
+      <div class="form-group">
+        <label>Price (&#8358;) *</label>
+        <input type="number" name="price" placeholder="0" step="0.01" min="0" required>
+      </div>
+      <div class="form-group">
+        <label>Category *</label>
+        <select name="category" required>
+          <option value="">Select Wig Category</option>
+          <option value="Frontals and ponytail collections">Frontals and ponytail collections</option>
+          <option value="Black bone straight">Black bone straight</option>
+          <option value="Colored bone straight">Colored bone straight</option>
+          <option value="Bounce curls / wavy units">Bounce curls / wavy units</option>
+          <option value="Deepwave units">Deepwave units</option>
+          <option value="Pixie curls units">Pixie curls units</option>
+          <option value="Closure bobs / frontal bobs units">Closure bobs / frontal bobs units</option>
+          <option value="Silky straight units">Silky straight units</option>
+          <option value="Wigtools.ng by Kikkyhairs">Wigtools.ng by Kikkyhairs</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Length (inches)</label>
+        <input type="number" name="length" placeholder="0" min="0">
+      </div>
+      <div class="form-group">
+        <label>Stock *</label>
+        <input type="number" name="stock" placeholder="0" min="0" required>
+      </div>
+      <div class="form-group">
+        <label>Product Image *</label>
+        <div class="file-input-wrapper">
+          <input type="file" name="image" accept="image/*" required>
+          <div class="file-input-custom"><i class="ri-image-line"></i> Choose image...</div>
+        </div>
+      </div>
+      <div class="form-group" style="grid-column: span 2;">
+        <label>Description</label>
+        <textarea name="description" placeholder="Short product description..."></textarea>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary" style="margin-top:1.5rem;"><i class="ri-add-line"></i> Add Product</button>
+  </form>
+</div>
+
+</div>
+
+<script>
+document.querySelectorAll('.file-input-wrapper input[type="file"]').forEach(input => {
+  input.addEventListener('change', function() {
+    const customDisplay = this.parentElement.querySelector('.file-input-custom');
+    if (this.files && this.files[0]) {
+      customDisplay.innerHTML = `<i class="ri-file-line"></i> ${this.files[0].name}`;
+    } else {
+      customDisplay.innerHTML = `<i class="ri-image-line"></i> Choose image...`;
+    }
+  });
+});
+</script>
+
+</body>
+</html>

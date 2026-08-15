@@ -1,18 +1,20 @@
 import os
+import re
+import secrets
 import bcrypt
 import jwt
 import datetime
 import requests
 import certifi
 from functools import wraps
-from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, abort
+from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, abort, Response
 from flask_cors import CORS
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from bson.objectid import ObjectId
 from bson.errors import InvalidId
-import cloudinary
-import cloudinary.uploader
+from gridfs import GridFSBucket
+from gridfs.errors import NoFile
 
 load_dotenv()
 
@@ -30,16 +32,6 @@ PAYSTACK_SECRET = os.getenv("PAYSTACK_SECRET")
 PAYSTACK_PUBLIC_KEY = os.getenv("PAYSTACK_PUBLIC_KEY")
 
 # ==========================
-# CLOUDINARY CONFIGURATION
-# ==========================
-cloudinary.config(
-    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
-    api_key=os.getenv("CLOUDINARY_API_KEY"),
-    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
-    secure=True
-)
-
-# ==========================
 # FILE UPLOAD CONFIGURATION
 # ==========================
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
@@ -49,11 +41,6 @@ def allowed_file(filename):
     """Check if the uploaded file has an allowed extension."""
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def upload_to_cloudinary(file):
-    """Upload a file to Cloudinary and return the secure URL."""
-    result = cloudinary.uploader.upload(file, folder="kikkyhairs")
-    return result["secure_url"]
-
 # ==========================
 # DATABASE
 # ==========================
@@ -62,6 +49,33 @@ db = client["kikky"]
 products_collection = db["products"]
 orders_collection = db["orders"]
 admins_collection = db["admins"]
+messages_collection = db["messages"]
+fs_bucket = GridFSBucket(db)
+
+def upload_to_gridfs(file):
+    """Upload a file to GridFS and return a servable URL path."""
+    file_id = fs_bucket.upload_from_stream(
+        file.filename,
+        file.stream,
+        metadata={"contentType": file.mimetype}
+    )
+    return url_for("serve_image", file_id=str(file_id))
+
+def delete_gridfs_image(image_path):
+    """Delete a GridFS-backed image given the stored /media/<id> path. No-op for external URLs."""
+    if not image_path or not image_path.startswith("/media/"):
+        return
+    file_id = safe_objectid(image_path.rsplit("/", 1)[-1])
+    if file_id:
+        try:
+            fs_bucket.delete(file_id)
+        except NoFile:
+            pass
+
+try:
+    orders_collection.create_index("paymentReference", unique=True)
+except Exception:
+    pass
 
 # ==========================
 # HELPER FUNCTIONS
@@ -83,6 +97,13 @@ def convert_doc(doc):
 def convert_cursor(cursor):
     """Convert a cursor of MongoDB documents to a list of JSON‑friendly dicts."""
     return [convert_doc(doc) for doc in cursor]
+
+def unread_messages_count():
+    return messages_collection.count_documents({"read": False})
+
+def generate_order_reference():
+    """Generate a unique-enough, human-readable order reference."""
+    return "KIKKY-" + secrets.token_hex(4).upper()
 
 def validate_product_data(name, price, stock, length, category):
     """Validate common product fields. Return (is_valid, error_message)."""
@@ -158,7 +179,8 @@ def about():
 def collection():
     category = request.args.get("category", "").strip()
     if category:
-        products = convert_cursor(products_collection.find({"category": category}))
+        query = {"category": {"$regex": f"^{re.escape(category)}$", "$options": "i"}}
+        products = convert_cursor(products_collection.find(query))
     else:
         products = convert_cursor(products_collection.find())
     return render_template("shop.html", products=products, active_category=category)
@@ -167,7 +189,8 @@ def collection():
 def shop():
     category = request.args.get("category", "").strip()
     if category:
-        products = convert_cursor(products_collection.find({"category": category}))
+        query = {"category": {"$regex": f"^{re.escape(category)}$", "$options": "i"}}
+        products = convert_cursor(products_collection.find(query))
     else:
         products = convert_cursor(products_collection.find())
     return render_template("shop.html", products=products, active_category=category)
@@ -176,9 +199,43 @@ def shop():
 def cart():
     return render_template("cart.html")
 
-@app.route("/contact")
+@app.route("/contact", methods=["GET", "POST"])
 def contact():
+    if request.method == "POST":
+        data = request.get_json(silent=True) or request.form
+        name = (data.get("name") or "").strip()
+        email = (data.get("email") or "").strip()
+        subject = (data.get("subject") or "").strip()
+        message = (data.get("message") or "").strip()
+
+        if not name or not email or not message:
+            return jsonify({"message": "Name, email and message are required."}), 400
+
+        messages_collection.insert_one({
+            "name": name,
+            "email": email,
+            "subject": subject,
+            "message": message,
+            "createdAt": datetime.datetime.utcnow(),
+            "read": False
+        })
+        return jsonify({"message": "Message sent successfully."})
+
     return render_template("contact.html")
+
+@app.route("/media/<file_id>")
+def serve_image(file_id):
+    obj_id = safe_objectid(file_id)
+    if not obj_id:
+        abort(404, description="Invalid image ID.")
+    try:
+        grid_out = fs_bucket.open_download_stream(obj_id)
+    except NoFile:
+        abort(404, description="Image not found.")
+    content_type = (grid_out.metadata or {}).get("contentType", "application/octet-stream")
+    response = Response(grid_out.read(), mimetype=content_type)
+    response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+    return response
 
 @app.route("/product/<product_id>")
 def product_detail(product_id):
@@ -286,6 +343,110 @@ def order_status(reference):
     order = convert_doc(order)
     return render_template("order_status.html", order=order)
 
+@app.route("/place-order", methods=["POST"])
+def place_order():
+    """Save a bank-transfer order (payment confirmed manually by admin, not automatically)."""
+    data = request.get_json(silent=True)
+    if not data:
+        return jsonify({"message": "Invalid request"}), 400
+
+    name = (data.get("name") or "").strip()
+    phone = (data.get("phone") or "").strip()
+    whatsapp = (data.get("whatsapp") or "").strip()
+    email = (data.get("email") or "").strip()
+    address = (data.get("address") or "").strip()
+    cart_items = data.get("items", [])
+
+    if not name or not phone or not address:
+        return jsonify({"message": "Name, phone and delivery address are required."}), 400
+    if not cart_items:
+        return jsonify({"message": "Your cart is empty."}), 400
+
+    order_items = []
+    amount = 0
+    stock_errors = []
+    for item in cart_items:
+        product_id = item.get("id") or item.get("productId")
+        quantity = item.get("quantity", 1)
+        try:
+            quantity = int(quantity)
+        except (ValueError, TypeError):
+            quantity = 1
+        if quantity < 1:
+            quantity = 1
+
+        obj_id = safe_objectid(product_id)
+        if not obj_id:
+            stock_errors.append(f"Invalid product: {product_id}")
+            continue
+        product = products_collection.find_one({"_id": obj_id})
+        if not product:
+            stock_errors.append(f"Product not found: {product_id}")
+            continue
+        if product.get("stock", 0) < quantity:
+            stock_errors.append(
+                f"Insufficient stock for {product.get('name', product_id)}. "
+                f"Available: {product.get('stock', 0)}, requested: {quantity}"
+            )
+            continue
+
+        price = product.get("price", 0)
+        order_items.append({
+            "productId": str(obj_id),
+            "name": product.get("name", "Product"),
+            "price": price,
+            "quantity": quantity
+        })
+        amount += price * quantity
+
+    if stock_errors:
+        return jsonify({"message": "Stock validation failed", "errors": stock_errors}), 400
+    if not order_items:
+        return jsonify({"message": "No valid items in cart."}), 400
+
+    order_doc = {
+        "customerName": name,
+        "customerPhone": phone,
+        "customerWhatsapp": whatsapp,
+        "customerEmail": email,
+        "customerAddress": address,
+        "items": order_items,
+        "amount": amount,
+        "status": "Pending Payment",
+        "stockDeducted": False,
+        "createdAt": datetime.datetime.utcnow(),
+        "paidAt": None
+    }
+
+    for _ in range(5):
+        reference = generate_order_reference()
+        order_doc["paymentReference"] = reference
+        try:
+            orders_collection.insert_one(order_doc)
+            return jsonify({"message": "Order placed", "reference": reference, "amount": amount})
+        except Exception:
+            continue
+
+    return jsonify({"message": "Could not generate a unique order reference, please try again."}), 500
+
+@app.route("/track-order", methods=["GET", "POST"])
+def track_order():
+    orders = None
+    searched = False
+    if request.method == "POST":
+        searched = True
+        query_value = (request.form.get("query") or "").strip()
+        if query_value:
+            orders = convert_cursor(orders_collection.find({
+                "$or": [
+                    {"customerPhone": query_value},
+                    {"customerWhatsapp": query_value},
+                    {"customerEmail": query_value},
+                    {"paymentReference": query_value}
+                ]
+            }).sort("createdAt", -1))
+    return render_template("track-order.html", orders=orders, searched=searched)
+
 # ==========================
 # ADMIN ROUTES
 # ==========================
@@ -313,7 +474,7 @@ def admin_login_page():
             algorithm="HS256"
         )
 
-        response = redirect(url_for("admin_dashboard"))
+        response = redirect(url_for("admin_products"))
         # Secure cookie flags
         response.set_cookie(
             "admin_token",
@@ -327,12 +488,68 @@ def admin_login_page():
 
     return render_template("admin_login.html")
 
+@app.route("/admin/logout")
+@token_required
+def admin_logout(current_admin):
+    response = redirect(url_for("admin_login_page"))
+    response.delete_cookie("admin_token")
+    flash("You have been logged out.")
+    return response
+
 @app.route("/admin/dashboard")
 @token_required
 def admin_dashboard(current_admin):
+    return redirect(url_for("admin_products"))
+
+@app.route("/admin/add-product-page")
+@token_required
+def admin_add_product_page(current_admin):
+    return render_template("admin_add_product.html", unread_messages=unread_messages_count())
+
+@app.route("/admin/products")
+@token_required
+def admin_products(current_admin):
     products = convert_cursor(products_collection.find())
-    orders = convert_cursor(orders_collection.find())
-    return render_template("admin.html", products=products, orders=orders)
+    return render_template("admin_products.html", products=products, unread_messages=unread_messages_count())
+
+@app.route("/admin/stock")
+@token_required
+def admin_stock(current_admin):
+    products = convert_cursor(products_collection.find())
+    total_stock = sum(p.get("stock", 0) for p in products)
+    sold_out_count = sum(1 for p in products if p.get("stock", 0) <= 0)
+
+    sold_by_product = {}
+    for order in orders_collection.find({"status": {"$in": ["Paid", "Shipped", "Delivered"]}}):
+        for item in order.get("items", []):
+            pid = item.get("productId")
+            sold_by_product[pid] = sold_by_product.get(pid, 0) + item.get("quantity", 0)
+
+    for p in products:
+        p["sold"] = sold_by_product.get(p["_id"], 0)
+    total_sold = sum(sold_by_product.values())
+
+    return render_template(
+        "admin_stock.html",
+        products=products,
+        total_stock=total_stock,
+        sold_out_count=sold_out_count,
+        total_sold=total_sold,
+        unread_messages=unread_messages_count()
+    )
+
+@app.route("/admin/orders")
+@token_required
+def admin_orders(current_admin):
+    orders = convert_cursor(orders_collection.find().sort("createdAt", -1))
+    return render_template("admin_orders.html", orders=orders, unread_messages=unread_messages_count())
+
+@app.route("/admin/messages")
+@token_required
+def admin_messages(current_admin):
+    messages = convert_cursor(messages_collection.find().sort("createdAt", -1))
+    messages_collection.update_many({"read": False}, {"$set": {"read": True}})
+    return render_template("admin_messages.html", messages=messages, unread_messages=0)
 
 @app.route("/admin/register", methods=["GET", "POST"])
 @token_required
@@ -363,7 +580,7 @@ def admin_register(current_admin):
         })
 
         flash("New admin created successfully!")
-        return redirect(url_for("admin_dashboard"))
+        return redirect(url_for("admin_products"))
 
     return render_template("admin_register.html")
 
@@ -373,12 +590,12 @@ def edit_product(current_admin, product_id):
     obj_id = safe_objectid(product_id)
     if not obj_id:
         flash("Invalid product ID.")
-        return redirect(url_for("admin_dashboard"))
+        return redirect(url_for("admin_products"))
 
     product = products_collection.find_one({"_id": obj_id})
     if not product:
         flash("Product not found.")
-        return redirect(url_for("admin_dashboard"))
+        return redirect(url_for("admin_products"))
 
     if request.method == "POST":
         name = request.form.get("name", "").strip()
@@ -411,10 +628,11 @@ def edit_product(current_admin, product_id):
                 flash("Invalid file type. Allowed: png, jpg, jpeg, gif, webp.")
                 return redirect(url_for("edit_product", product_id=product_id))
             
-            # Upload new image to Cloudinary
+            # Upload new image to GridFS, then clean up the old one
             try:
-                image_url = upload_to_cloudinary(file)
+                image_url = upload_to_gridfs(file)
                 update_data["image"] = image_url
+                delete_gridfs_image(product.get("image", ""))
             except Exception as e:
                 flash(f"Image upload failed: {str(e)}")
                 return redirect(url_for("edit_product", product_id=product_id))
@@ -426,7 +644,7 @@ def edit_product(current_admin, product_id):
         )
         
         flash("Product updated successfully.")
-        return redirect(url_for("admin_dashboard"))
+        return redirect(url_for("admin_products"))
 
     product = convert_doc(product)
     return render_template("edit_product.html", product=product)
@@ -445,28 +663,28 @@ def add_product(current_admin):
     is_valid, error_msg = validate_product_data(name, price, stock, length, category)
     if not is_valid:
         flash(error_msg)
-        return redirect(url_for("admin_dashboard"))
+        return redirect(url_for("admin_add_product_page"))
 
     # Handle file upload
     if 'image' not in request.files:
         flash("No image file provided.")
-        return redirect(url_for("admin_dashboard"))
+        return redirect(url_for("admin_add_product_page"))
 
     file = request.files['image']
     if file.filename == '':
         flash("No selected file.")
-        return redirect(url_for("admin_dashboard"))
+        return redirect(url_for("admin_add_product_page"))
 
     if not allowed_file(file.filename):
         flash("Invalid file type. Allowed: png, jpg, jpeg, gif, webp.")
-        return redirect(url_for("admin_dashboard"))
+        return redirect(url_for("admin_add_product_page"))
 
-    # Upload to Cloudinary
+    # Upload to GridFS
     try:
-        image_url = upload_to_cloudinary(file)
+        image_url = upload_to_gridfs(file)
     except Exception as e:
         flash(f"Image upload failed: {str(e)}")
-        return redirect(url_for("admin_dashboard"))
+        return redirect(url_for("admin_add_product_page"))
 
     # Insert product
     product_data = {
@@ -480,45 +698,35 @@ def add_product(current_admin):
     }
     products_collection.insert_one(product_data)
     flash("Product added successfully.")
-    return redirect(url_for("admin_dashboard"))
+    return redirect(url_for("admin_products"))
 
-@app.route("/debug/check-images")
-def check_images():
-    """TEMPORARY - REMOVE AFTER DEBUGGING"""
-    try:
-        products = list(products_collection.find().limit(5))
-        result = []
-        for p in products:
-            result.append({
-                "name": p.get("name"),
-                "image": p.get("image", "NO IMAGE FIELD"),
-                "id": str(p.get("_id"))
-            })
-        return jsonify({
-            "total_products": products_collection.count_documents({}),
-            "sample": result,
-            "mongo_connected": True
-        })
-    except Exception as e:
-        return jsonify({
-            "error": str(e),
-            "mongo_connected": False
-        })
-        
 @app.route("/admin/delete-product/<product_id>")
 @token_required
 def delete_product(current_admin, product_id):
     obj_id = safe_objectid(product_id)
     if not obj_id:
         flash("Invalid product ID.")
-        return redirect(url_for("admin_dashboard"))
+        return redirect(url_for("admin_products"))
 
+    product = products_collection.find_one({"_id": obj_id})
     result = products_collection.delete_one({"_id": obj_id})
     if result.deleted_count == 0:
         flash("Product not found.")
     else:
+        if product:
+            delete_gridfs_image(product.get("image", ""))
         flash("Product deleted successfully.")
-    return redirect(url_for("admin_dashboard"))
+    return redirect(url_for("admin_products"))
+
+@app.route("/admin/delete-all-products", methods=["POST"])
+@token_required
+def delete_all_products(current_admin):
+    products = list(products_collection.find({}, {"image": 1}))
+    for product in products:
+        delete_gridfs_image(product.get("image", ""))
+    result = products_collection.delete_many({})
+    flash(f"Deleted {result.deleted_count} product(s) and their images.")
+    return redirect(url_for("admin_products"))
 
 @app.route("/admin/update-order/<reference>", methods=["POST"])
 @token_required
@@ -526,17 +734,43 @@ def update_order(current_admin, reference):
     new_status = request.form.get("status")
     if not new_status:
         flash("Status is required.")
-        return redirect(url_for("admin_dashboard"))
+        return redirect(url_for("admin_orders"))
 
-    result = orders_collection.update_one(
-        {"paymentReference": reference},
-        {"$set": {"status": new_status}}
-    )
-    if result.matched_count == 0:
+    order = orders_collection.find_one({"paymentReference": reference})
+    if not order:
+        flash("Order not found.")
+        return redirect(url_for("admin_orders"))
+
+    update_fields = {"status": new_status}
+
+    # Decrement stock the first time an order is confirmed Paid.
+    # Orders without a "stockDeducted" field come from the old Paystack flow,
+    # which already decremented stock at insert time - treat those as done.
+    if new_status == "Paid" and not order.get("stockDeducted", True):
+        for item in order.get("items", []):
+            obj_id = safe_objectid(item.get("productId"))
+            quantity = item.get("quantity", 1)
+            if obj_id:
+                products_collection.update_one(
+                    {"_id": obj_id, "stock": {"$gte": quantity}},
+                    {"$inc": {"stock": -quantity}}
+                )
+        update_fields["stockDeducted"] = True
+        update_fields["paidAt"] = datetime.datetime.utcnow()
+
+    orders_collection.update_one({"paymentReference": reference}, {"$set": update_fields})
+    flash("Order status updated.")
+    return redirect(url_for("admin_orders"))
+
+@app.route("/admin/delete-order/<reference>")
+@token_required
+def delete_order(current_admin, reference):
+    result = orders_collection.delete_one({"paymentReference": reference})
+    if result.deleted_count == 0:
         flash("Order not found.")
     else:
-        flash("Order status updated.")
-    return redirect(url_for("admin_dashboard"))
+        flash("Order deleted successfully.")
+    return redirect(url_for("admin_orders"))
 
 
 # ==========================

@@ -403,11 +403,11 @@
       <ul>
         <li><a href="{{ url_for('home') }}"><i class="ri-home-4-line"></i> Home</a></li>
         <li><a href="{{ url_for('shop') }}"><i class="ri-store-line"></i> Shop</a></li>
-        <li><a href="{{ url_for('collection') }}?cat=bone"><i class="ri-folder-line"></i> Bone straight</a></li>
-        <li><a href="{{ url_for('collection') }}?cat=bounce"><i class="ri-folder-line"></i> Bounce curls</a></li>
-        <li><a href="{{ url_for('collection') }}?cat=colored"><i class="ri-folder-line"></i> Colored units</a></li>
-        <li><a href="{{ url_for('collection') }}?cat=wave"><i class="ri-folder-line"></i> Deep wave</a></li>
-        <li><a href="{{ url_for('collection') }}?cat=frontal"><i class="ri-folder-line"></i> Frontal wigs</a></li>
+        <li><a href="{{ url_for('collection') }}?category=Black bone straight"><i class="ri-folder-line"></i> Black bone straight</a></li>
+        <li><a href="{{ url_for('collection') }}?category=Bounce curls / wavy units"><i class="ri-folder-line"></i> Bounce curls / wavy</a></li>
+        <li><a href="{{ url_for('collection') }}?category=Colored bone straight"><i class="ri-folder-line"></i> Colored bone straight</a></li>
+        <li><a href="{{ url_for('collection') }}?category=Deepwave units"><i class="ri-folder-line"></i> Deepwave units</a></li>
+        <li><a href="{{ url_for('collection') }}?category=Frontals and ponytail collections"><i class="ri-folder-line"></i> Frontals & ponytail</a></li>
         <li><a href="{{ url_for('contact') }}"><i class="ri-customer-service-line"></i> Contact</a></li>
       </ul>
     </nav>
@@ -498,20 +498,21 @@
       <!-- RIGHT: CONTACT FORM -->
       <div class="contact-form">
         <h3>send a message</h3>
-        <form>
+        <form id="contactForm">
           <div class="form-group">
-            <input type="text" placeholder="Your Name" required>
+            <input type="text" id="contactName" name="name" placeholder="Your Name" required>
           </div>
           <div class="form-group">
-            <input type="email" placeholder="Your Email" required>
+            <input type="email" id="contactEmail" name="email" placeholder="Your Email" required>
           </div>
           <div class="form-group">
-            <input type="text" placeholder="Subject">
+            <input type="text" id="contactSubject" name="subject" placeholder="Subject">
           </div>
           <div class="form-group">
-            <textarea placeholder="Your Message" required></textarea>
+            <textarea id="contactMessage" name="message" placeholder="Your Message" required></textarea>
           </div>
-          <button type="submit" class="submit-btn">Send Message</button>
+          <div id="contactStatus" style="display:none; margin-bottom:15px; padding:12px 18px; border-radius:12px; font-size:0.9rem;"></div>
+          <button type="submit" class="submit-btn" id="contactSubmitBtn">Send Message</button>
         </form>
       </div>
     </div>
@@ -599,11 +600,56 @@
       }
       updateCartCount();
 
-      // Basic form handling (just prevent default for now)
-      document.querySelector('form')?.addEventListener('submit', (e) => {
-        e.preventDefault();
-        alert('Message sent! (demo)');
-      });
+      // ----- CONTACT FORM SUBMISSION -----
+      const contactForm = document.getElementById('contactForm');
+      if (contactForm) {
+        contactForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const statusEl = document.getElementById('contactStatus');
+          const submitBtn = document.getElementById('contactSubmitBtn');
+          const payload = {
+            name: document.getElementById('contactName').value.trim(),
+            email: document.getElementById('contactEmail').value.trim(),
+            subject: document.getElementById('contactSubject').value.trim(),
+            message: document.getElementById('contactMessage').value.trim()
+          };
+
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Sending...';
+
+          try {
+            const res = await fetch('/contact', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+
+            statusEl.style.display = 'block';
+            if (res.ok) {
+              statusEl.style.background = 'rgba(37,211,102,0.12)';
+              statusEl.style.color = '#8bc48a';
+              statusEl.style.border = '1px solid rgba(37,211,102,0.4)';
+              statusEl.textContent = "Message sent! We'll get back to you soon.";
+              contactForm.reset();
+            } else {
+              statusEl.style.background = 'rgba(255,80,80,0.1)';
+              statusEl.style.color = '#ff9f9f';
+              statusEl.style.border = '1px solid rgba(255,80,80,0.4)';
+              statusEl.textContent = data.message || 'Something went wrong. Please try again.';
+            }
+          } catch (err) {
+            statusEl.style.display = 'block';
+            statusEl.style.background = 'rgba(255,80,80,0.1)';
+            statusEl.style.color = '#ff9f9f';
+            statusEl.style.border = '1px solid rgba(255,80,80,0.4)';
+            statusEl.textContent = 'Network error. Please check your connection and try again.';
+          } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Send Message';
+          }
+        });
+      }
     })();
   </script>
 </body>
