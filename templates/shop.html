@@ -247,6 +247,7 @@
       background: #2a241f;
       aspect-ratio: 3/4;
     }
+    .card-img-link { display: block; width: 100%; height: 100%; }
     .product-img {
       width: 100%; height: 100%; object-fit: cover;
       display: block;
@@ -632,7 +633,9 @@
     grid.innerHTML = page.map(p => `
       <div class="product-card">
         <div class="card-img-wrap">
-          <img class="product-img" src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy">
+          <a href="/product/${esc(p.id)}" class="card-img-link">
+            <img class="product-img" src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy">
+          </a>
           <button class="quick-add add-btn"
             data-id="${esc(p.id)}"
             data-name="${esc(p.name)}"
