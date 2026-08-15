@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Page Not Found | KikkyHair</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --gold: #b38728;
+      --gold-gradient: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+      --deep-brown: #2c2420;
+      --bg-dark: #0c0a08;
+      --bg-soft: #1e1814;
+      --white-off: #f4f4f4;
+      --font-heading: 'Playfair Display', serif;
+      --font-body: 'Montserrat', sans-serif;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: linear-gradient(to bottom, #0c0c0c, #111111);
+      color: var(--white-off);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    h1, h2, h3 { font-family: var(--font-heading); font-weight: 500; }
+
+    #top-bar {
+      height: 70px;
+      background: rgba(12, 10, 8, 0.95);
+      backdrop-filter: blur(14px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid rgba(179, 135, 40, 0.25);
+    }
+
+    .brand-logo img { height: 45px; width: auto; }
+
+    .error-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 4rem 20px;
+    }
+
+    .error-code {
+      font-family: var(--font-heading);
+      font-size: clamp(4rem, 15vw, 9rem);
+      font-weight: 700;
+      background: var(--gold-gradient);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1;
+    }
+
+    .error-title {
+      font-size: 1.6rem;
+      margin: 1rem 0 0.75rem;
+      color: #fff;
+    }
+
+    .error-desc {
+      color: #bbb;
+      max-width: 420px;
+      margin: 0 auto 2rem;
+      font-size: 0.95rem;
+    }
+
+    .btn-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--gold-gradient);
+      color: #000;
+      padding: 14px 32px;
+      border-radius: 50px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-size: 0.85rem;
+      transition: transform 0.2s;
+    }
+
+    .btn-home:hover { transform: translateY(-3px); }
+
+    footer {
+      background: #0a0806;
+      padding: 1.5rem 5%;
+      border-top: 1px solid rgba(179, 135, 40, 0.2);
+      text-align: center;
+      font-size: 0.7rem;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+
+<header id="top-bar">
+  <div class="brand-logo">
+    <a href="{{ url_for('home') }}"><img src="{{ url_for('static', filename='kikkyhairs.jpeg') }}" alt="Kikky Hairs"></a>
+  </div>
+</header>
+
+<main class="error-wrap">
+  <div>
+    <div class="error-code">404</div>
+    <h1 class="error-title">This page has wandered off</h1>
+    <p class="error-desc">The page you're looking for doesn't exist or may have been moved. Let's get you back to shopping.</p>
+    <a href="{{ url_for('home') }}" class="btn-home"><i class="ri-home-4-line"></i> Back to Home</a>
+  </div>
+</main>
+
+<footer>© 2026 Kikky Hairs — All rights reserved.</footer>
+
+</body>
+</html>

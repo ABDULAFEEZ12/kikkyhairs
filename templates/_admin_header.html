@@ -1,0 +1,26 @@
+<div class="admin-header">
+  <h1>KikkyHairs<br><span style="font-size:0.75rem; letter-spacing:3px; color:#999; font-family:var(--font-body); font-weight:600; text-transform:uppercase;">Administration</span></h1>
+  <div class="admin-actions">
+    <a href="{{ url_for('admin_register') }}" class="btn btn-small"><i class="ri-user-add-line"></i> New Admin</a>
+    <a href="{{ url_for('home') }}" class="btn btn-small"><i class="ri-store-line"></i> View Store</a>
+    <a href="{{ url_for('admin_logout') }}" class="logout-link"><i class="ri-logout-box-r-line"></i> Logout</a>
+  </div>
+</div>
+
+<nav class="admin-nav-bar">
+  <a href="{{ url_for('admin_add_product_page') }}" class="admin-nav-link {{ 'active' if active_page == 'add_product' else '' }}"><i class="ri-add-line"></i> Add Product</a>
+  <a href="{{ url_for('admin_products') }}" class="admin-nav-link {{ 'active' if active_page == 'products' else '' }}"><i class="ri-shopping-bag-3-line"></i> Products</a>
+  <a href="{{ url_for('admin_stock') }}" class="admin-nav-link {{ 'active' if active_page == 'stock' else '' }}"><i class="ri-archive-line"></i> Stock</a>
+  <a href="{{ url_for('admin_orders') }}" class="admin-nav-link {{ 'active' if active_page == 'orders' else '' }}"><i class="ri-shopping-cart-line"></i> Orders</a>
+  <a href="{{ url_for('admin_messages') }}" class="admin-nav-link {{ 'active' if active_page == 'messages' else '' }}"><i class="ri-mail-line"></i> Messages{% if unread_messages %} <span class="badge">{{ unread_messages }}</span>{% endif %}</a>
+</nav>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div class="flash-messages">
+      {% for message in messages %}
+        <div class="flash">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}

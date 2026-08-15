@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stock · KikkyHairs Admin</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+:root{
+  --gold:#b38728;
+  --gold-light:#d4af37;
+  --charcoal:#120e0c;
+  --charcoal-light:#1e1814;
+  --charcoal-lighter:#2a241f;
+  --border:#3a3a3a;
+  --white-off:#f4f4f4;
+  --font-heading:'Playfair Display', serif;
+  --font-body:'Montserrat', sans-serif;
+}
+body{ font-family:var(--font-body); background:var(--charcoal); color:var(--white-off); line-height:1.6; padding:32px 5%; min-height:100vh; }
+h1,h2,h3{ font-family:var(--font-heading); font-weight:500; letter-spacing:1px; }
+h1{ font-size:2.2rem; color:var(--gold); margin-bottom:0; }
+h2{ font-size:1.3rem; color:#fff; margin-bottom:1.2rem; display:flex; align-items:center; gap:10px; }
+a{ color:inherit; }
+.admin-container{ max-width:1400px; margin:0 auto; }
+.admin-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:1.2rem; flex-wrap:wrap; gap:1rem; }
+.admin-actions{ display:flex; gap:0.7rem; flex-wrap:wrap; }
+.btn{ display:inline-flex; align-items:center; gap:8px; padding:10px 20px; background:transparent; border:1px solid var(--border); color:#ccc; font-family:var(--font-body); font-size:0.75rem; font-weight:600; letter-spacing:1px; text-transform:uppercase; cursor:pointer; transition:all 0.2s; border-radius:8px; text-decoration:none; }
+.btn:hover{ border-color:var(--gold); color:var(--gold); }
+.btn-small{ padding:6px 14px; font-size:0.65rem; }
+.admin-nav-bar{ display:flex; gap:0.25rem; margin-bottom:2rem; border-bottom:1px solid var(--border); flex-wrap:wrap; }
+.admin-nav-link{ display:inline-flex; align-items:center; gap:8px; padding:12px 18px; color:#999; text-decoration:none; font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; border-bottom:2px solid transparent; transition:all 0.2s; }
+.admin-nav-link:hover{ color:#fff; }
+.admin-nav-link.active{ color:var(--gold); border-bottom-color:var(--gold); }
+.admin-nav-link .badge{ background:var(--gold); color:#000; font-size:0.65rem; font-weight:800; border-radius:50%; padding:2px 6px; }
+.section{ background:var(--charcoal-light); border:1px solid var(--border); border-radius:16px; padding:1.8rem; margin-bottom:2rem; }
+.stat-row{ display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:1.2rem; margin-bottom:2rem; }
+.stat-card{ background:var(--charcoal-light); border:1px solid var(--border); border-radius:16px; padding:1.4rem; text-align:center; }
+.stat-card .num{ font-family:var(--font-heading); font-size:2rem; color:var(--gold); }
+.stat-card .label{ font-size:0.68rem; text-transform:uppercase; letter-spacing:1.5px; color:#999; margin-top:4px; }
+.table-wrapper{ overflow-x:auto; }
+table{ width:100%; border-collapse:collapse; font-size:0.82rem; }
+th{ text-align:left; padding:0.9rem 0.7rem; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:var(--gold); font-size:0.65rem; border-bottom:1px solid var(--border); white-space:nowrap; }
+td{ padding:0.9rem 0.7rem; border-bottom:1px solid rgba(179,135,40,0.12); vertical-align:middle; }
+tr:last-child td{ border-bottom:none; }
+.product-image{ width:50px; height:50px; object-fit:cover; border-radius:8px; background:var(--charcoal-lighter); }
+.status-badge{ display:inline-block; padding:5px 14px; font-size:0.65rem; text-transform:uppercase; letter-spacing:1px; border-radius:20px; font-weight:700; white-space:nowrap; }
+.status-badge.in-stock{ background:rgba(76,175,80,0.15); color:#81c784; border:1px solid rgba(76,175,80,0.3); }
+.status-badge.low-stock{ background:rgba(179,135,40,0.15); color:var(--gold-light); border:1px solid rgba(179,135,40,0.3); }
+.status-badge.sold-out{ background:rgba(232,160,160,0.15); color:#e8a0a0; border:1px solid rgba(232,160,160,0.3); }
+.flash-messages{ margin-bottom:1.5rem; }
+.flash{ padding:12px 18px; margin-bottom:0.5rem; background:var(--charcoal-light); border-left:3px solid var(--gold); color:var(--white-off); font-size:0.85rem; border-radius:8px; }
+.logout-link{ color:#999; font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
+.logout-link:hover{ color:#fff; }
+@media (max-width:768px){ body{ padding:20px 4%; } h1{ font-size:1.6rem; } .section{ padding:1.2rem; } .admin-header{ flex-direction:column; align-items:flex-start; } }
+</style>
+</head>
+
+<body>
+
+<div class="admin-container">
+{% set active_page = 'stock' %}
+{% include "_admin_header.html" %}
+
+<div class="stat-row">
+  <div class="stat-card"><div class="num">{{ total_stock }}</div><div class="label">Units In Stock</div></div>
+  <div class="stat-card"><div class="num">{{ total_sold }}</div><div class="label">Units Sold</div></div>
+  <div class="stat-card"><div class="num">{{ sold_out_count }}</div><div class="label">Sold Out Products</div></div>
+  <div class="stat-card"><div class="num">{{ products|length }}</div><div class="label">Total Products</div></div>
+</div>
+
+<div class="section">
+  <h2><i class="ri-archive-line"></i> Stock</h2>
+  <div class="table-wrapper">
+    <table>
+      <thead><tr><th>Image</th><th>Name</th><th>Category</th><th>In Stock</th><th>Sold</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for product in products %}
+        <tr>
+          <td><img src="{{ product.image }}" alt="{{ product.name }}" class="product-image"></td>
+          <td>{{ product.name }}</td>
+          <td>{{ product.category }}</td>
+          <td><strong>{{ product.stock|default(0) }}</strong></td>
+          <td>{{ product.sold|default(0) }}</td>
+          <td>
+            {% if (product.stock|default(0)) <= 0 %}<span class="status-badge sold-out">Sold Out</span>
+            {% elif (product.stock|default(0)) <= 5 %}<span class="status-badge low-stock">Low Stock</span>
+            {% else %}<span class="status-badge in-stock">In Stock</span>{% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" style="text-align:center;padding:3rem;color:#777;"><i class="ri-inbox-line" style="font-size:2rem;display:block;margin-bottom:1rem;"></i>No products yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</div>
+
+</body>
+</html>

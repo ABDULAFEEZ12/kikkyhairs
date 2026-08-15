@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kikky Hairs · Track Order</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+
+<style>
+:root{
+--gold:#b38728;
+--gold-gradient:linear-gradient(135deg,#bf953f,#fcf6ba,#b38728,#fbf5b7,#aa771c);
+--bg-soft:#1e1814;
+--white-off:#f4f4f4;
+--font-heading:'Playfair Display',serif;
+--font-body:'Montserrat',sans-serif;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+font-family:var(--font-body);
+background:linear-gradient(to bottom,#0c0c0c,#111);
+color:var(--white-off);
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:20px;
+}
+
+a{text-decoration:none;color:inherit;}
+
+.track-container{
+max-width:700px;
+width:100%;
+background:var(--bg-soft);
+border:1px solid rgba(179,135,40,0.3);
+border-radius:32px;
+padding:40px;
+box-shadow:0 20px 40px rgba(0,0,0,0.6);
+}
+
+h1{
+font-family:var(--font-heading);
+font-size:2rem;
+margin-bottom:6px;
+}
+
+h1 span{color:var(--gold);}
+
+.subtitle{
+color:#aaa;
+margin-bottom:25px;
+font-size:0.9rem;
+}
+
+.search-form{
+display:flex;
+gap:10px;
+margin-bottom:30px;
+flex-wrap:wrap;
+}
+
+.search-form input{
+flex:1;
+min-width:200px;
+padding:14px 20px;
+background:#2a241f;
+border:1px solid #3a3a3a;
+border-radius:60px;
+color:#fff;
+font-family:var(--font-body);
+font-size:1rem;
+}
+
+.search-form input:focus{
+outline:none;
+border-color:var(--gold);
+box-shadow:0 0 0 2px rgba(179,135,40,0.3);
+}
+
+.search-form button{
+padding:14px 28px;
+background:var(--gold-gradient);
+border:none;
+border-radius:60px;
+font-weight:700;
+color:#000;
+cursor:pointer;
+white-space:nowrap;
+}
+
+.order-card{
+background:#2a241f;
+border-radius:24px;
+padding:20px;
+margin-bottom:14px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+gap:10px;
+}
+
+.order-ref{
+font-family:monospace;
+font-size:1rem;
+color:var(--gold);
+}
+
+.order-meta{
+font-size:0.85rem;
+color:#aaa;
+margin-top:4px;
+}
+
+.status-badge{
+display:inline-block;
+padding:6px 16px;
+border-radius:50px;
+font-weight:600;
+text-transform:uppercase;
+font-size:0.75rem;
+}
+
+.status-pending, .status-pending\ payment{background:#3a3a3a;color:#ccc;}
+.status-paid{background:#1e3a2a;color:#8bc34a;}
+.status-shipped{background:#2a3a4a;color:#64b5f6;}
+.status-delivered{background:#2a3a2a;color:#81c784;}
+
+.view-link{
+color:var(--gold);
+font-weight:600;
+font-size:0.85rem;
+}
+
+.empty-state{
+text-align:center;
+padding:40px 20px;
+color:#888;
+}
+
+.empty-state i{
+font-size:2.5rem;
+color:var(--gold);
+margin-bottom:12px;
+display:block;
+}
+
+.btn-home{
+display:inline-block;
+margin-top:20px;
+padding:12px 26px;
+background:var(--gold-gradient);
+border-radius:50px;
+color:#000;
+font-weight:700;
+}
+
+@media (max-width:600px){
+.track-container{padding:24px;}
+.search-form{flex-direction:column;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="track-container">
+
+<h1>track your <span>order</span></h1>
+<div class="subtitle">enter your phone number, email, or order reference</div>
+
+<form class="search-form" method="POST" action="{{ url_for('track_order') }}">
+  <input type="text" name="query" placeholder="Phone, email or order reference" required>
+  <button type="submit">Search</button>
+</form>
+
+{% if searched %}
+  {% if orders %}
+    {% for order in orders %}
+    <div class="order-card">
+      <div>
+        <div class="order-ref">#{{ order.paymentReference }}</div>
+        <div class="order-meta">
+          {{ order.createdAt.strftime('%d %b %Y') if order.createdAt else '' }} · ₦{{ "{:,.0f}".format(order.amount) if order.amount else 0 }}
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:14px;">
+        <span class="status-badge status-{{ order.status|lower }}">{{ order.status }}</span>
+        <a href="{{ url_for('order_status', reference=order.paymentReference) }}" class="view-link">View <i class="ri-arrow-right-line"></i></a>
+      </div>
+    </div>
+    {% endfor %}
+  {% else %}
+    <div class="empty-state">
+      <i class="ri-search-line"></i>
+      <p>No orders found for that phone, email or reference.</p>
+    </div>
+  {% endif %}
+{% endif %}
+
+<a href="{{ url_for('home') }}" class="btn-home">back to home</a>
+
+</div>
+
+</body>
+</html>
