@@ -12,3 +12,4 @@ certifi==2024.2.2
 python-dotenv==1.0.1
 bcrypt==4.1.2
 PyJWT==2.8.0
+Pillow==10.4.0

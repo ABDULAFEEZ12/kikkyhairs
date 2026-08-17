@@ -1,5 +1,6 @@
 import os
 import re
+import io
 import secrets
 import bcrypt
 import jwt
@@ -16,6 +17,7 @@ from bson.objectid import ObjectId
 from bson.errors import InvalidId
 from gridfs import GridFSBucket
 from gridfs.errors import NoFile
+from PIL import Image, ImageOps
 
 load_dotenv()
 
@@ -58,12 +60,43 @@ admins_collection = db["admins"]
 messages_collection = db["messages"]
 fs_bucket = GridFSBucket(db)
 
+IMAGE_MAX_DIMENSION = 1200
+IMAGE_JPEG_QUALITY = 80
+
+def compress_image(raw_bytes, fallback_content_type):
+    """Resize/compress an image for fast web delivery. Falls back to the
+    original bytes untouched if Pillow can't decode the file for any reason."""
+    try:
+        img = Image.open(io.BytesIO(raw_bytes))
+        img = ImageOps.exif_transpose(img)
+
+        if img.width > IMAGE_MAX_DIMENSION or img.height > IMAGE_MAX_DIMENSION:
+            img.thumbnail((IMAGE_MAX_DIMENSION, IMAGE_MAX_DIMENSION), Image.LANCZOS)
+
+        has_alpha = img.mode in ("RGBA", "LA") or (img.mode == "P" and "transparency" in img.info)
+        buf = io.BytesIO()
+        if has_alpha:
+            img.convert("RGBA").save(buf, format="PNG", optimize=True)
+            content_type = "image/png"
+        else:
+            img.convert("RGB").save(buf, format="JPEG", quality=IMAGE_JPEG_QUALITY, optimize=True)
+            content_type = "image/jpeg"
+
+        compressed = buf.getvalue()
+        if len(compressed) < len(raw_bytes):
+            return compressed, content_type
+        return raw_bytes, fallback_content_type
+    except Exception:
+        return raw_bytes, fallback_content_type
+
 def upload_to_gridfs(file):
-    """Upload a file to GridFS and return a servable URL path."""
+    """Compress the image, then upload it to GridFS and return a servable URL path."""
+    raw_bytes = file.read()
+    data, content_type = compress_image(raw_bytes, file.mimetype)
     file_id = fs_bucket.upload_from_stream(
         file.filename,
-        file.stream,
-        metadata={"contentType": file.mimetype}
+        io.BytesIO(data),
+        metadata={"contentType": content_type}
     )
     return url_for("serve_image", file_id=str(file_id))
 
