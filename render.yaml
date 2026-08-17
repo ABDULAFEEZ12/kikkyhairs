@@ -3,7 +3,7 @@ services:
     name: kikkyhairs
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app --workers 3 --threads 2
+    startCommand: gunicorn app:app --worker-class gthread --workers 3 --threads 4 --timeout 60
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0

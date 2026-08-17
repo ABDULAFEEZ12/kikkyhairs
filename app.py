@@ -5,6 +5,8 @@ import bcrypt
 import jwt
 import datetime
 import certifi
+import threading
+from collections import OrderedDict
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, abort, Response
 from flask_cors import CORS
@@ -41,7 +43,14 @@ def allowed_file(filename):
 # ==========================
 # DATABASE
 # ==========================
-client = MongoClient(MONGO_URI, tlsCAFile=certifi.where())
+client = MongoClient(
+    MONGO_URI,
+    tlsCAFile=certifi.where(),
+    serverSelectionTimeoutMS=5000,
+    connectTimeoutMS=5000,
+    socketTimeoutMS=15000,
+    maxPoolSize=20
+)
 db = client["kikky"]
 products_collection = db["products"]
 orders_collection = db["orders"]
@@ -68,6 +77,32 @@ def delete_gridfs_image(image_path):
             fs_bucket.delete(file_id)
         except NoFile:
             pass
+
+# ==========================
+# IN-PROCESS IMAGE CACHE
+# ==========================
+# GridFS reads on the free-tier Atlas cluster are slow (multi-second for a single
+# image). Every product photo would otherwise be re-fetched from Mongo on every
+# single page view by every shopper, which overwhelms the small gunicorn worker
+# pool under real traffic. Caching bytes in memory means each image is only ever
+# fetched from GridFS once per worker process, not once per request.
+_IMAGE_CACHE_MAX_ITEMS = 150
+_image_cache = OrderedDict()
+_image_cache_lock = threading.Lock()
+
+def _get_cached_image(file_id_str):
+    with _image_cache_lock:
+        entry = _image_cache.get(file_id_str)
+        if entry is not None:
+            _image_cache.move_to_end(file_id_str)
+        return entry
+
+def _store_cached_image(file_id_str, data, content_type):
+    with _image_cache_lock:
+        _image_cache[file_id_str] = (data, content_type)
+        _image_cache.move_to_end(file_id_str)
+        while len(_image_cache) > _IMAGE_CACHE_MAX_ITEMS:
+            _image_cache.popitem(last=False)
 
 try:
     orders_collection.create_index("paymentReference", unique=True)
@@ -243,12 +278,20 @@ def serve_image(file_id):
     obj_id = safe_objectid(file_id)
     if not obj_id:
         abort(404, description="Invalid image ID.")
-    try:
-        grid_out = fs_bucket.open_download_stream(obj_id)
-    except NoFile:
-        abort(404, description="Image not found.")
-    content_type = (grid_out.metadata or {}).get("contentType", "application/octet-stream")
-    response = Response(grid_out.read(), mimetype=content_type)
+
+    cached = _get_cached_image(file_id)
+    if cached is not None:
+        data, content_type = cached
+    else:
+        try:
+            grid_out = fs_bucket.open_download_stream(obj_id)
+        except NoFile:
+            abort(404, description="Image not found.")
+        content_type = (grid_out.metadata or {}).get("contentType", "application/octet-stream")
+        data = grid_out.read()
+        _store_cached_image(file_id, data, content_type)
+
+    response = Response(data, mimetype=content_type)
     response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
     return response
 
