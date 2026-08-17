@@ -73,6 +73,45 @@
     }
 
     .header-actions { display: flex; gap: 12px; align-items: center; }
+
+    .search-toggle {
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.25rem; color: var(--white-off);
+      background: transparent; border: none; cursor: pointer;
+      transition: background 0.2s;
+    }
+    .search-toggle:hover { background: rgba(179,135,40,0.15); }
+
+    .search-overlay {
+      position: fixed; top: 64px; left: 0; right: 0;
+      background: rgba(12,10,8,0.98);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(179,135,40,0.3);
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+      z-index: 1001;
+    }
+    .search-overlay.active { max-height: 100px; padding: 16px 20px; }
+    .search-overlay-form {
+      max-width: 600px; margin: 0 auto;
+      display: flex; align-items: center; gap: 10px;
+      background: #2a241f; border: 1px solid #3a3a3a;
+      border-radius: 60px; padding: 6px 8px 6px 20px;
+    }
+    .search-overlay-form i { color: var(--gold); font-size: 1.1rem; }
+    .search-overlay-form input {
+      flex: 1; background: transparent; border: none; outline: none;
+      color: #fff; font-family: var(--font-body); font-size: 0.9rem;
+    }
+    .search-overlay-form input::placeholder { color: #888; }
+    .search-overlay-submit {
+      background: var(--gold-gradient); color: #000; border: none;
+      border-radius: 50px; padding: 10px 20px; font-weight: 700;
+      font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;
+      cursor: pointer; white-space: nowrap;
+    }
+
     .cart-icon { font-size: 1.4rem; position: relative; cursor: pointer; padding: 6px; }
     #cartCount {
       position: absolute; top: -4px; right: -4px;
@@ -480,6 +519,7 @@
     <a href="{{ url_for('contact') }}">Contact</a>
   </nav>
   <div class="header-actions">
+    <button id="searchToggle" class="search-toggle" aria-label="Search"><i class="ri-search-line"></i></button>
     <div class="cart-icon" id="cartToggle">
       <i class="ri-shopping-cart-line"></i>
       <span id="cartCount">0</span>
@@ -487,9 +527,17 @@
   </div>
 </header>
 
+<div id="searchOverlay" class="search-overlay{% if search_query %} active{% endif %}">
+  <form action="{{ url_for('shop') }}" method="GET" class="search-overlay-form">
+    <i class="ri-search-line"></i>
+    <input type="text" name="search" placeholder="Search wigs, styles, lengths..." autocomplete="off" value="{{ search_query|default('') }}">
+    <button type="submit" class="search-overlay-submit">Search</button>
+  </form>
+</div>
+
 <!-- COLLECTION HEADER -->
 <div class="collection-header">
-  <h2>{% if active_category %}{{ active_category }}{% else %}explore collection{% endif %}</h2>
+  <h2>{% if search_query %}Results for "{{ search_query }}"{% elif active_category %}{{ active_category }}{% else %}explore collection{% endif %}</h2>
   <div class="gold-label">Affordable &amp; Luxury</div>
 </div>
 
@@ -568,6 +616,16 @@
   document.getElementById('closeSidebar').addEventListener('click', closeMenu);
   overlay.addEventListener('click', closeMenu);
 
+  // ===== SEARCH =====
+  const searchToggle = document.getElementById('searchToggle');
+  const searchOverlay = document.getElementById('searchOverlay');
+  searchToggle.addEventListener('click', () => {
+    searchOverlay.classList.toggle('active');
+    if (searchOverlay.classList.contains('active')) {
+      searchOverlay.querySelector('input').focus();
+    }
+  });
+
   // ===== PRODUCTS FROM FLASK =====
   const raw = {{ products | tojson }};
   const products = raw.map(p => {
@@ -598,7 +656,8 @@
   ];
 
   // Active category seeded from Flask URL param
-  let currentCat  = '{{ active_category | default("") }}' || 'all';
+  const isSearchResults = {{ 'true' if search_query else 'false' }};
+  let currentCat  = isSearchResults ? 'all' : ('{{ active_category | default("") }}' || 'all');
   let currentPage = 1;
   const PER_PAGE  = 9;
 

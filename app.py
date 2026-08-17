@@ -258,25 +258,34 @@ def home():
 def about():
     return render_template("about.html")
 
+def find_shop_products(category, search_query):
+    """Search takes priority over category browsing when both are present."""
+    if search_query:
+        pattern = re.escape(search_query)
+        query = {"$or": [
+            {"name": {"$regex": pattern, "$options": "i"}},
+            {"category": {"$regex": pattern, "$options": "i"}},
+            {"description": {"$regex": pattern, "$options": "i"}},
+        ]}
+    elif category:
+        query = {"category": {"$regex": f"^{re.escape(category)}$", "$options": "i"}}
+    else:
+        query = {}
+    return convert_cursor(products_collection.find(query))
+
 @app.route("/collection")
 def collection():
     category = request.args.get("category", "").strip()
-    if category:
-        query = {"category": {"$regex": f"^{re.escape(category)}$", "$options": "i"}}
-        products = convert_cursor(products_collection.find(query))
-    else:
-        products = convert_cursor(products_collection.find())
-    return render_template("shop.html", products=products, active_category=category)
+    search_query = request.args.get("search", "").strip()
+    products = find_shop_products(category, search_query)
+    return render_template("shop.html", products=products, active_category=category, search_query=search_query)
 
 @app.route("/shop")
 def shop():
     category = request.args.get("category", "").strip()
-    if category:
-        query = {"category": {"$regex": f"^{re.escape(category)}$", "$options": "i"}}
-        products = convert_cursor(products_collection.find(query))
-    else:
-        products = convert_cursor(products_collection.find())
-    return render_template("shop.html", products=products, active_category=category)
+    search_query = request.args.get("search", "").strip()
+    products = find_shop_products(category, search_query)
+    return render_template("shop.html", products=products, active_category=category, search_query=search_query)
 
 @app.route("/cart")
 def cart():
