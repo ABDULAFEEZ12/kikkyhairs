@@ -322,7 +322,7 @@
       text-align: center;
       color: #fff;
     }
-    .add-to-cart-btn-main, .whatsapp-btn {
+    .add-to-cart-btn-main {
       background: var(--gold);
       color: #000;
       border: none;
@@ -338,16 +338,9 @@
       margin-top: 10px;
       margin-right: 12px;
     }
-    .add-to-cart-btn-main:hover, .whatsapp-btn:hover {
+    .add-to-cart-btn-main:hover {
       background: #cf9f2e;
       transform: scale(1.02);
-    }
-    .whatsapp-btn {
-      background: #25D366;
-      color: #fff;
-    }
-    .whatsapp-btn:hover {
-      background: #128C7E;
     }
     .trust-section {
       margin: 30px 0 20px;
@@ -502,7 +495,7 @@
       .product-detail-container { padding: 20px; flex-direction: column; }
       .product-title { font-size: 1.6rem; }
       .product-price { font-size: 1.5rem; }
-      .add-to-cart-btn-main, .whatsapp-btn {
+      .add-to-cart-btn-main {
         width: 100%;
         justify-content: center;
         margin-right: 0;
@@ -622,9 +615,6 @@
           </div>
           <button class="add-to-cart-btn-main" id="mainAddToCart">
             <i class="ri-shopping-cart-2-line"></i> Add to Cart
-          </button>
-          <button class="whatsapp-btn" id="whatsappOrderBtn">
-            <i class="fab fa-whatsapp"></i> Order via WhatsApp
           </button>
 
           <!-- Trust Section -->
@@ -772,15 +762,6 @@
       if (addToCartBtn) {
         addToCartBtn.addEventListener('click', () => {
           addToCart(product.id, product.name, product.price, qty);
-        });
-      }
-      
-      const whatsappBtn = document.getElementById('whatsappOrderBtn');
-      if (whatsappBtn) {
-        whatsappBtn.addEventListener('click', () => {
-          const message = `Hello, I want to order ${product.name}%0APrice: ₦${product.price.toLocaleString()}`;
-          const url = `https://wa.me/2348147014346?text=${message}`;
-          window.open(url, '_blank');
         });
       }
       

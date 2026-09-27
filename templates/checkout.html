@@ -361,7 +361,7 @@ data=await res.json();
 
 if(!res.ok){
 if(data.reference){
-alert((data.message||"Payment gateway error.")+" Your order "+data.reference+" was saved - please contact us on WhatsApp (+234 814 701 4346) to complete payment.");
+alert((data.message||"Payment gateway error.")+" Your order "+data.reference+" was saved. Please try again in a moment.");
 }else{
 alert(data.message||"Could not place order. Please try again.");
 }
