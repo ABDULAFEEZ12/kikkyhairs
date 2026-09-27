@@ -7,6 +7,7 @@ import jwt
 import datetime
 import certifi
 import threading
+import requests
 from collections import OrderedDict
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, abort, Response
@@ -31,6 +32,17 @@ app.secret_key = os.getenv("JWT_SECRET")
 # ==========================
 MONGO_URI = os.getenv("MONGO_URI")
 JWT_SECRET = os.getenv("JWT_SECRET")
+
+# ==========================
+# SQUAD PAYMENT GATEWAY
+# ==========================
+SQUAD_SECRET_KEY = os.getenv("SQUAD_SECRET_KEY")
+SQUAD_PUBLIC_KEY = os.getenv("SQUAD_PUBLIC_KEY")
+SQUAD_IS_SANDBOX = bool(SQUAD_SECRET_KEY) and SQUAD_SECRET_KEY.startswith("sandbox_sk_")
+SQUAD_BASE_URL = (
+    "https://sandbox-api-d.squadco.com" if SQUAD_IS_SANDBOX
+    else "https://api-d.squadco.com"
+)
 
 # ==========================
 # FILE UPLOAD CONFIGURATION
@@ -218,6 +230,76 @@ def get_effective_price(product):
         return sale_price
     return price
 
+def mark_order_paid(reference, order):
+    """Decrement stock for an order the first time it's confirmed Paid, and record when.
+    Safe to call more than once - only acts if stock hasn't already been deducted."""
+    if order.get("stockDeducted", True):
+        return
+    for item in order.get("items", []):
+        obj_id = safe_objectid(item.get("productId"))
+        quantity = item.get("quantity", 1)
+        if obj_id:
+            products_collection.update_one(
+                {"_id": obj_id, "stock": {"$gte": quantity}},
+                {"$inc": {"stock": -quantity}}
+            )
+    orders_collection.update_one(
+        {"paymentReference": reference},
+        {"$set": {
+            "status": "Paid",
+            "stockDeducted": True,
+            "paidAt": datetime.datetime.utcnow()
+        }}
+    )
+
+# ==========================
+# SQUAD PAYMENT HELPERS
+# ==========================
+def squad_initiate_transaction(reference, amount, email, customer_name, callback_url):
+    """Ask Squad to open a checkout session. Returns the checkout_url, or None on failure."""
+    try:
+        response = requests.post(
+            f"{SQUAD_BASE_URL}/transaction/initiate",
+            headers={
+                "Authorization": f"Bearer {SQUAD_SECRET_KEY}",
+                "Content-Type": "application/json"
+            },
+            json={
+                "email": email,
+                "amount": int(round(amount * 100)),  # kobo
+                "currency": "NGN",
+                "initiate_type": "inline",
+                "transaction_ref": reference,
+                "callback_url": callback_url,
+                "customer_name": customer_name,
+                "payment_channels": ["card", "bank", "ussd", "transfer"]
+            },
+            timeout=15
+        )
+        result = response.json()
+    except Exception:
+        return None, "Could not reach the payment gateway. Please try again."
+
+    if response.status_code == 200 and result.get("data", {}).get("checkout_url"):
+        return result["data"]["checkout_url"], None
+    return None, result.get("message", "Payment gateway declined the request.")
+
+def squad_verify_transaction(reference):
+    """Check the real status of a transaction with Squad. Returns 'Success', 'Failed', or None on error."""
+    try:
+        response = requests.get(
+            f"{SQUAD_BASE_URL}/transaction/verify/{reference}",
+            headers={"Authorization": f"Bearer {SQUAD_SECRET_KEY}"},
+            timeout=15
+        )
+        result = response.json()
+    except Exception:
+        return None
+
+    if response.status_code == 200 and result.get("success"):
+        return result.get("data", {}).get("transaction_status")
+    return "Failed"
+
 # ==========================
 # AUTH DECORATOR
 # ==========================
@@ -378,7 +460,7 @@ def order_status(reference):
 
 @app.route("/place-order", methods=["POST"])
 def place_order():
-    """Save a bank-transfer order (payment confirmed manually by admin, not automatically)."""
+    """Create the order, then hand off to Squad for payment. Stock is only deducted once Squad confirms payment."""
     data = request.get_json(silent=True)
     if not data:
         return jsonify({"message": "Invalid request"}), 400
@@ -390,8 +472,8 @@ def place_order():
     address = (data.get("address") or "").strip()
     cart_items = data.get("items", [])
 
-    if not name or not phone or not address:
-        return jsonify({"message": "Name, phone and delivery address are required."}), 400
+    if not name or not phone or not address or not email:
+        return jsonify({"message": "Name, email, phone and delivery address are required."}), 400
     if not cart_items:
         return jsonify({"message": "Your cart is empty."}), 400
 
@@ -451,16 +533,55 @@ def place_order():
         "paidAt": None
     }
 
+    reference = None
     for _ in range(5):
-        reference = generate_order_reference()
-        order_doc["paymentReference"] = reference
+        candidate = generate_order_reference()
+        order_doc["paymentReference"] = candidate
         try:
             orders_collection.insert_one(order_doc)
-            return jsonify({"message": "Order placed", "reference": reference, "amount": amount})
+            reference = candidate
+            break
         except Exception:
             continue
 
-    return jsonify({"message": "Could not generate a unique order reference, please try again."}), 500
+    if not reference:
+        return jsonify({"message": "Could not generate a unique order reference, please try again."}), 500
+
+    callback_url = url_for("squad_callback", reference=reference, _external=True)
+    checkout_url, error = squad_initiate_transaction(reference, amount, email, name, callback_url)
+
+    if not checkout_url:
+        return jsonify({
+            "message": "Order saved, but the payment gateway couldn't be reached.",
+            "reference": reference,
+            "amount": amount,
+            "payment_error": error
+        }), 502
+
+    return jsonify({
+        "message": "Order placed",
+        "reference": reference,
+        "amount": amount,
+        "checkout_url": checkout_url
+    })
+
+@app.route("/squad/callback")
+def squad_callback():
+    """Squad redirects the customer's browser here after they finish (or abandon) checkout.
+    Never trust the redirect alone - always verify the real status with Squad server-side."""
+    reference = request.args.get("reference", "").strip()
+    if not reference:
+        abort(404, description="Missing order reference.")
+
+    order = orders_collection.find_one({"paymentReference": reference})
+    if not order:
+        abort(404, description="Order not found.")
+
+    status = squad_verify_transaction(reference)
+    if status == "Success":
+        mark_order_paid(reference, order)
+
+    return redirect(url_for("order_status", reference=reference))
 
 @app.route("/track-order", methods=["GET", "POST"])
 def track_order():
@@ -778,24 +899,11 @@ def update_order(current_admin, reference):
         flash("Order not found.")
         return redirect(url_for("admin_orders"))
 
-    update_fields = {"status": new_status}
+    if new_status == "Paid":
+        mark_order_paid(reference, order)
+    else:
+        orders_collection.update_one({"paymentReference": reference}, {"$set": {"status": new_status}})
 
-    # Decrement stock the first time an order is confirmed Paid.
-    # Orders without a "stockDeducted" field come from the old Paystack flow,
-    # which already decremented stock at insert time - treat those as done.
-    if new_status == "Paid" and not order.get("stockDeducted", True):
-        for item in order.get("items", []):
-            obj_id = safe_objectid(item.get("productId"))
-            quantity = item.get("quantity", 1)
-            if obj_id:
-                products_collection.update_one(
-                    {"_id": obj_id, "stock": {"$gte": quantity}},
-                    {"$inc": {"stock": -quantity}}
-                )
-        update_fields["stockDeducted"] = True
-        update_fields["paidAt"] = datetime.datetime.utcnow()
-
-    orders_collection.update_one({"paymentReference": reference}, {"$set": update_fields})
     flash("Order status updated.")
     return redirect(url_for("admin_orders"))
 

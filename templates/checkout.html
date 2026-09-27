@@ -149,48 +149,17 @@ letter-spacing:0.5px;
 
 .btn-pay:active{transform:scale(0.98);}
 
-.bank-box{
-margin-top:28px;
-padding:24px;
-border-radius:28px;
-background:#2a241f;
-border:1px dashed var(--gold);
-display:none;
-backdrop-filter:blur(4px);
+.secure-note{
+display:flex;
+align-items:center;
+gap:8px;
+justify-content:center;
+margin-top:16px;
+color:#888;
+font-size:0.8rem;
 }
 
-.bank-box h3{
-color:var(--gold);
-font-family:var(--font-heading);
-margin-bottom:16px;
-font-size:1.2rem;
-}
-
-.bank-box p{
-margin:8px 0;
-font-size:0.9rem;
-line-height:1.5;
-word-break:break-word;
-}
-
-.bank-box strong{color:#ddd;}
-
-.whatsapp-btn{
-display:block;
-text-align:center;
-margin-top:20px;
-padding:14px;
-border-radius:60px;
-background:#25D366;
-color:#fff;
-font-weight:700;
-text-decoration:none;
-transition:background 0.2s, transform 0.1s;
-font-size:1rem;
-}
-
-.whatsapp-btn:active{transform:scale(0.97);}
-.whatsapp-btn:hover{background:#20b859;}
+.secure-note i{color:var(--gold);}
 
 /* ========== MOBILE IMPROVEMENTS ========== */
 @media (max-width: 768px) {
@@ -210,8 +179,6 @@ font-size:1rem;
   .cart-total{font-size:1rem;}
   .total-amount{font-size:1.3rem;}
   .btn-pay{padding:16px; font-size:0.95rem; margin-top:24px;}
-  .bank-box{padding:20px; margin-top:24px;}
-  .whatsapp-btn{padding:14px;}
 }
 
 @media (max-width: 480px) {
@@ -241,18 +208,6 @@ font-size:1rem;
     border-radius:50px;
     margin-top:20px;
   }
-  .bank-box{
-    padding:16px;
-    margin-top:20px;
-    border-radius:24px;
-  }
-  .bank-box h3{font-size:1.1rem; margin-bottom:12px;}
-  .bank-box p{font-size:0.8rem; margin:6px 0;}
-  .whatsapp-btn{
-    padding:12px;
-    font-size:0.9rem;
-    margin-top:16px;
-  }
 }
 
 /* extra small devices */
@@ -270,7 +225,7 @@ font-size:1rem;
 <div class="checkout-container">
 
 <h1>complete <span>checkout</span></h1>
-<div class="subtitle">secure payment via bank transfer</div>
+<div class="subtitle">secure payment powered by Squad</div>
 
 <div class="checkout-grid">
 
@@ -288,7 +243,7 @@ font-size:1rem;
 
 <div class="form-group">
 <label>Email *</label>
-<input id="email" required>
+<input id="email" type="email" required>
 </div>
 
 <div class="form-group">
@@ -314,25 +269,7 @@ font-size:1rem;
 
 <button class="btn-pay" id="placeOrder">place order</button>
 
-<div class="bank-box" id="bankBox">
-
-<h3>Complete payment</h3>
-
-<p>Send payment to:</p>
-
-<p><strong>Bank:</strong> Opay</p>
-<p><strong>Account Name:</strong> Tella Azeezat Olamide</p>
-<p><strong>Account Number:</strong> 8147014346</p>
-
-<p style="margin-top:10px;font-size:0.9rem;color:#aaa;">
-After payment send screenshot on WhatsApp to confirm your order.
-</p>
-
-<a id="whatsappLink" class="whatsapp-btn" target="_blank">
-Confirm Payment on WhatsApp
-</a>
-
-</div>
+<div class="secure-note"><i class="ri-lock-2-line"></i> You'll be redirected to Squad to pay securely by card, bank transfer, or USSD</div>
 
 </div>
 
@@ -423,7 +360,11 @@ items:cart.map(item=>({id:item.id,quantity:item.quantity||1}))
 data=await res.json();
 
 if(!res.ok){
+if(data.reference){
+alert((data.message||"Payment gateway error.")+" Your order "+data.reference+" was saved - please contact us on WhatsApp (+234 814 701 4346) to complete payment.");
+}else{
 alert(data.message||"Could not place order. Please try again.");
+}
 placeOrderBtn.disabled=false;
 placeOrderBtn.textContent=placeOrderBtnDefaultText;
 return;
@@ -435,23 +376,9 @@ placeOrderBtn.textContent=placeOrderBtnDefaultText;
 return;
 }
 
-const reference=data.reference;
-
-document.getElementById("bankBox").style.display="block";
-
-let itemsList="";
-
-cart.forEach(item=>{
-itemsList += `${item.name} (x${item.quantity || 1})%0A`;
-});
-
-const message=`Hello Kikky Hairs,%0AI just placed an order.%0A%0AOrder Ref: ${reference}%0A%0AItems:%0A${itemsList}%0AAmount: ₦${data.amount}%0A%0ACustomer Details:%0AName: ${name}%0APhone: ${phone}%0ADelivery Address: ${address}%0A%0AI have sent payment.`;
-
-document.getElementById("whatsappLink").href=
-"https://wa.me/2348147014346?text="+message;
-
 localStorage.removeItem("kikkyCart");
-placeOrderBtn.textContent="order placed ✓";
+placeOrderBtn.textContent="redirecting to payment...";
+window.location.href=data.checkout_url;
 
 }
 
