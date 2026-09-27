@@ -272,7 +272,8 @@ def squad_initiate_transaction(reference, amount, email, customer_name, callback
                 "transaction_ref": reference,
                 "callback_url": callback_url,
                 "customer_name": customer_name,
-                "payment_channels": ["card", "bank", "ussd", "transfer"]
+                "payment_channels": ["card", "bank", "ussd", "transfer"],
+                "pass_charge": True  # customer pays Squad's fee on top; merchant is settled the full order amount
             },
             timeout=15
         )
