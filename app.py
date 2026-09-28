@@ -14,7 +14,7 @@ from collections import OrderedDict
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, abort, Response
 from flask_cors import CORS
-from pymongo import MongoClient
+from pymongo import MongoClient, ReturnDocument
 from dotenv import load_dotenv
 from bson.objectid import ObjectId
 from bson.errors import InvalidId
@@ -232,12 +232,24 @@ def get_effective_price(product):
         return sale_price
     return price
 
-def mark_order_paid(reference, order):
-    """Decrement stock for an order the first time it's confirmed Paid, and record when.
-    Safe to call more than once - only acts if stock hasn't already been deducted."""
-    if order.get("stockDeducted", True):
-        return
-    for item in order.get("items", []):
+def mark_order_paid(reference, order=None):
+    """Atomically claim an order as Paid and decrement stock. Safe to call concurrently from
+    the browser callback and the webhook for the same payment - the filter below (only matching
+    orders not already stockDeducted) means only one caller can ever win the claim, so stock is
+    never decremented twice even if both arrive at nearly the same time."""
+    claimed = orders_collection.find_one_and_update(
+        {"paymentReference": reference, "stockDeducted": {"$ne": True}},
+        {"$set": {
+            "status": "Paid",
+            "stockDeducted": True,
+            "paidAt": datetime.datetime.utcnow()
+        }},
+        return_document=ReturnDocument.AFTER
+    )
+    if claimed is None:
+        return  # already claimed by a concurrent call, or the order doesn't exist
+
+    for item in claimed.get("items", []):
         obj_id = safe_objectid(item.get("productId"))
         quantity = item.get("quantity", 1)
         if obj_id:
@@ -245,14 +257,6 @@ def mark_order_paid(reference, order):
                 {"_id": obj_id, "stock": {"$gte": quantity}},
                 {"$inc": {"stock": -quantity}}
             )
-    orders_collection.update_one(
-        {"paymentReference": reference},
-        {"$set": {
-            "status": "Paid",
-            "stockDeducted": True,
-            "paidAt": datetime.datetime.utcnow()
-        }}
-    )
 
 # ==========================
 # SQUAD PAYMENT HELPERS
@@ -607,9 +611,32 @@ def squad_webhook():
         return jsonify({"message": "Ignored"}), 200
 
     reference = body.get("transaction_ref") or payload.get("TransactionRef")
-    order = orders_collection.find_one({"paymentReference": reference}) if reference else None
+    if not reference:
+        return jsonify({"message": "Ignored"}), 200
+
+    order = orders_collection.find_one({"paymentReference": reference})
     if order:
         mark_order_paid(reference, order)
+    else:
+        # No matching order - Squad confirmed real money regardless, so record it flagged for
+        # manual follow-up rather than silently losing all trace of the payment.
+        try:
+            orders_collection.insert_one({
+                "paymentReference": reference,
+                "customerName": "Unknown - recovered from Squad webhook, check Squad dashboard",
+                "customerPhone": "",
+                "customerWhatsapp": "",
+                "customerEmail": body.get("email", ""),
+                "customerAddress": "",
+                "items": [],
+                "amount": (body.get("amount", 0) or 0) / 100,
+                "status": "Paid",
+                "stockDeducted": True,
+                "createdAt": datetime.datetime.utcnow(),
+                "paidAt": datetime.datetime.utcnow()
+            })
+        except Exception:
+            pass  # a concurrent request already recorded this same reference
 
     return jsonify({"message": "OK"}), 200
 
