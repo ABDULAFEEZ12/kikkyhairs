@@ -3,6 +3,7 @@ import re
 import io
 import hmac
 import hashlib
+import smtplib
 import secrets
 import bcrypt
 import jwt
@@ -10,6 +11,7 @@ import datetime
 import certifi
 import threading
 import requests
+from email.mime.text import MIMEText
 from collections import OrderedDict
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, abort, Response
@@ -45,6 +47,49 @@ SQUAD_BASE_URL = (
     "https://sandbox-api-d.squadco.com" if SQUAD_IS_SANDBOX
     else "https://api-d.squadco.com"
 )
+
+# ==========================
+# ORDER EMAIL NOTIFICATIONS
+# ==========================
+MAIL_SERVER = os.getenv("MAIL_SERVER")
+MAIL_PORT = int(os.getenv("MAIL_PORT", "587") or "587")
+MAIL_USE_TLS = os.getenv("MAIL_USE_TLS", "true").lower() == "true"
+MAIL_USERNAME = os.getenv("MAIL_USERNAME")
+MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
+ORDER_NOTIFY_EMAIL = os.getenv("ORDER_NOTIFY_EMAIL") or MAIL_USERNAME
+
+def send_order_notification(order):
+    """Best-effort email to the store owner when an order is confirmed Paid. Never blocks or
+    fails the order itself - if mail isn't configured or sending fails, it's silently skipped."""
+    if not (MAIL_SERVER and MAIL_USERNAME and MAIL_PASSWORD and ORDER_NOTIFY_EMAIL):
+        return
+    try:
+        items_text = "\n".join(
+            f"- {item.get('name', 'Item')} x{item.get('quantity', 1)} (₦{item.get('price', 0):,.0f})"
+            for item in order.get("items", [])
+        ) or "No items listed"
+        body = (
+            f"New paid order!\n\n"
+            f"Reference: {order.get('paymentReference')}\n"
+            f"Customer: {order.get('customerName')}\n"
+            f"Phone: {order.get('customerPhone')}\n"
+            f"WhatsApp: {order.get('customerWhatsapp')}\n"
+            f"Email: {order.get('customerEmail')}\n"
+            f"Amount: ₦{order.get('amount', 0):,.0f}\n\n"
+            f"Items:\n{items_text}\n\n"
+            f"Delivery address: {order.get('customerAddress')}"
+        )
+        msg = MIMEText(body)
+        msg["Subject"] = f"New Order - {order.get('paymentReference')}"
+        msg["From"] = MAIL_USERNAME
+        msg["To"] = ORDER_NOTIFY_EMAIL
+        with smtplib.SMTP(MAIL_SERVER, MAIL_PORT, timeout=10) as server:
+            if MAIL_USE_TLS:
+                server.starttls()
+            server.login(MAIL_USERNAME, MAIL_PASSWORD)
+            server.sendmail(MAIL_USERNAME, [ORDER_NOTIFY_EMAIL], msg.as_string())
+    except Exception as e:
+        print(f"Order notification email failed: {e}")
 
 # ==========================
 # FILE UPLOAD CONFIGURATION
@@ -257,6 +302,8 @@ def mark_order_paid(reference, order=None):
                 {"_id": obj_id, "stock": {"$gte": quantity}},
                 {"$inc": {"stock": -quantity}}
             )
+
+    send_order_notification(claimed)
 
 # ==========================
 # SQUAD PAYMENT HELPERS
@@ -621,7 +668,7 @@ def squad_webhook():
         # No matching order - Squad confirmed real money regardless, so record it flagged for
         # manual follow-up rather than silently losing all trace of the payment.
         try:
-            orders_collection.insert_one({
+            recovered = {
                 "paymentReference": reference,
                 "customerName": "Unknown - recovered from Squad webhook, check Squad dashboard",
                 "customerPhone": "",
@@ -634,7 +681,9 @@ def squad_webhook():
                 "stockDeducted": True,
                 "createdAt": datetime.datetime.utcnow(),
                 "paidAt": datetime.datetime.utcnow()
-            })
+            }
+            orders_collection.insert_one(recovered)
+            send_order_notification(recovered)
         except Exception:
             pass  # a concurrent request already recorded this same reference
 
