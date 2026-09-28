@@ -642,11 +642,11 @@ def admin_login_page():
 
         admin = admins_collection.find_one({"email": email})
         if not admin:
-            flash("Invalid email or password.")
+            flash("Invalid email or password.", "error")
             return redirect(url_for("admin_login_page"))
 
         if not bcrypt.checkpw(password.encode(), admin["password"]):
-            flash("Invalid email or password.")
+            flash("Invalid email or password.", "error")
             return redirect(url_for("admin_login_page"))
 
         token = jwt.encode(
@@ -667,7 +667,7 @@ def admin_login_page():
             secure=os.getenv("FLASK_ENV") == "production",  # only secure in production
             samesite="Lax"
         )
-        flash("Login successful.")
+        flash("Login successful.", "success")
         return response
 
     return render_template("admin_login.html")
@@ -744,15 +744,15 @@ def admin_register(current_admin):
         confirm = request.form.get("confirm_password", "")
 
         if not email or not password:
-            flash("Email and password are required.")
+            flash("Email and password are required.", "error")
             return redirect(url_for("admin_register"))
 
         if password != confirm:
-            flash("Passwords do not match.")
+            flash("Passwords do not match.", "error")
             return redirect(url_for("admin_register"))
 
         if admins_collection.find_one({"email": email}):
-            flash("An admin with that email already exists.")
+            flash("An admin with that email already exists.", "error")
             return redirect(url_for("admin_register"))
 
         hashed = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
@@ -763,7 +763,7 @@ def admin_register(current_admin):
             "role": "admin"
         })
 
-        flash("New admin created successfully!")
+        flash("New admin created successfully!", "success")
         return redirect(url_for("admin_products"))
 
     return render_template("admin_register.html")
