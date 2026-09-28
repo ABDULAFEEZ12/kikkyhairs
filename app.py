@@ -1,6 +1,8 @@
 import os
 import re
 import io
+import hmac
+import hashlib
 import secrets
 import bcrypt
 import jwt
@@ -583,6 +585,33 @@ def squad_callback():
         mark_order_paid(reference, order)
 
     return redirect(url_for("order_status", reference=reference))
+
+@app.route("/squad/webhook", methods=["POST"])
+def squad_webhook():
+    """Server-to-server notification from Squad - the reliable path for marking orders Paid.
+    The browser redirect in /squad/callback is a nice-to-have for fast confirmation, but if a
+    customer pays and then closes the tab, loses signal, or never makes it back to our site,
+    this webhook is what actually credits the sale and reduces stock. Must be configured once
+    in the Squad dashboard under Profile > API & Webhook."""
+    raw_body = request.get_data()
+    signature = request.headers.get("x-squad-encrypted-body", "")
+
+    expected = hmac.new(SQUAD_SECRET_KEY.encode(), raw_body, hashlib.sha512).hexdigest().upper()
+    if not signature or not hmac.compare_digest(expected, signature.upper()):
+        return jsonify({"message": "Invalid signature"}), 401
+
+    payload = request.get_json(silent=True) or {}
+    body = payload.get("Body", {})
+
+    if payload.get("Event") != "charge_successful" or body.get("transaction_status") != "Success":
+        return jsonify({"message": "Ignored"}), 200
+
+    reference = body.get("transaction_ref") or payload.get("TransactionRef")
+    order = orders_collection.find_one({"paymentReference": reference}) if reference else None
+    if order:
+        mark_order_paid(reference, order)
+
+    return jsonify({"message": "OK"}), 200
 
 @app.route("/track-order", methods=["GET", "POST"])
 def track_order():
