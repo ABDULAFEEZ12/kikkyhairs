@@ -56,7 +56,7 @@ MAIL_PORT = int(os.getenv("MAIL_PORT", "587") or "587")
 MAIL_USE_TLS = os.getenv("MAIL_USE_TLS", "true").lower() == "true"
 MAIL_USERNAME = os.getenv("MAIL_USERNAME")
 MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
-ORDER_NOTIFY_EMAIL = os.getenv("ORDER_NOTIFY_EMAIL") or MAIL_USERNAME
+ORDER_NOTIFY_EMAIL = os.getenv("ORDER_NOTIFY_EMAIL") or os.getenv("ADMIN_EMAIL") or MAIL_USERNAME
 
 def send_order_notification(order):
     """Best-effort email to the store owner when an order is confirmed Paid. Never blocks or
