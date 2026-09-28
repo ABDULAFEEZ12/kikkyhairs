@@ -91,6 +91,47 @@ def send_order_notification(order):
     except Exception as e:
         print(f"Order notification email failed: {e}")
 
+TERMII_API_KEY = os.getenv("TERMII_API_KEY")
+TERMII_SENDER_ID = os.getenv("TERMII_SENDER_ID")
+TERMII_BASE_URL = os.getenv("TERMII_BASE_URL", "https://api.ng.termii.com")
+ORDER_NOTIFY_PHONE = os.getenv("ORDER_NOTIFY_PHONE")
+
+def send_order_sms_notification(order):
+    """Best-effort SMS to the store owner when an order is confirmed Paid, via Termii. Never
+    blocks or fails the order itself - if SMS isn't configured or sending fails, it's silently
+    skipped. Kept short since SMS is billed per ~160-character segment."""
+    if not (TERMII_API_KEY and TERMII_SENDER_ID and ORDER_NOTIFY_PHONE):
+        return
+    try:
+        text = (
+            f"New paid order {order.get('paymentReference')}: "
+            f"₦{order.get('amount', 0):,.0f} from {order.get('customerName')} "
+            f"({order.get('customerPhone')}). Check admin for details."
+        )
+        response = requests.post(
+            f"{TERMII_BASE_URL}/api/sms/send",
+            json={
+                "api_key": TERMII_API_KEY,
+                "to": ORDER_NOTIFY_PHONE,
+                "from": TERMII_SENDER_ID,
+                "sms": text,
+                "type": "plain",
+                "channel": "dnd"
+            },
+            timeout=10
+        )
+        if response.status_code != 200:
+            print(f"Order notification SMS failed: HTTP {response.status_code} {response.text}")
+    except Exception as e:
+        print(f"Order notification SMS failed: {e}")
+
+def notify_order_paid(order):
+    """Fire every configured notification channel for a confirmed-Paid order. Each channel is
+    independently optional and self-guards if unconfigured, so this is safe to call regardless
+    of which (if any) the store owner has actually set up."""
+    send_order_notification(order)
+    send_order_sms_notification(order)
+
 # ==========================
 # FILE UPLOAD CONFIGURATION
 # ==========================
@@ -303,7 +344,7 @@ def mark_order_paid(reference, order=None):
                 {"$inc": {"stock": -quantity}}
             )
 
-    send_order_notification(claimed)
+    notify_order_paid(claimed)
 
 # ==========================
 # SQUAD PAYMENT HELPERS
@@ -683,7 +724,7 @@ def squad_webhook():
                 "paidAt": datetime.datetime.utcnow()
             }
             orders_collection.insert_one(recovered)
-            send_order_notification(recovered)
+            notify_order_paid(recovered)
         except Exception:
             pass  # a concurrent request already recorded this same reference
 
